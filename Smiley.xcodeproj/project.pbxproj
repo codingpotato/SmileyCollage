@@ -1,0 +1,490 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FC46714018C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
+		FC46714218C2CAF600E472BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714118C2CAF600E472BF /* CoreGraphics.framework */; };
+		FC46714418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
+		FC46714A18C2CAF600E472BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC46714818C2CAF600E472BF /* InfoPlist.strings */; };
+		FC46714C18C2CAF600E472BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46714B18C2CAF600E472BF /* main.m */; };
+		FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46714F18C2CAF600E472BF /* CPAppDelegate.m */; };
+		FC46715318C2CAF600E472BF /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC46715118C2CAF600E472BF /* Main_iPhone.storyboard */; };
+		FC46715618C2CAF600E472BF /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC46715418C2CAF600E472BF /* Main_iPad.storyboard */; };
+		FC46715918C2CAF600E472BF /* CPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46715818C2CAF600E472BF /* CPViewController.m */; };
+		FC46715B18C2CAF600E472BF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC46715A18C2CAF600E472BF /* Images.xcassets */; };
+		FC46716218C2CAF600E472BF /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46716118C2CAF600E472BF /* XCTest.framework */; };
+		FC46716318C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
+		FC46716418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
+		FC46716C18C2CAF600E472BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC46716A18C2CAF600E472BF /* InfoPlist.strings */; };
+		FC46716E18C2CAF600E472BF /* SmileyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46716D18C2CAF600E472BF /* SmileyTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FC46716518C2CAF600E472BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FC46713418C2CAF600E472BF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FC46713B18C2CAF600E472BF;
+			remoteInfo = Smiley;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		FC46713C18C2CAF600E472BF /* Smiley.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Smiley.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC46713F18C2CAF600E472BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FC46714118C2CAF600E472BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FC46714318C2CAF600E472BF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FC46714718C2CAF600E472BF /* Smiley-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Smiley-Info.plist"; sourceTree = "<group>"; };
+		FC46714918C2CAF600E472BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FC46714B18C2CAF600E472BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FC46714D18C2CAF600E472BF /* Smiley-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Smiley-Prefix.pch"; sourceTree = "<group>"; };
+		FC46714E18C2CAF600E472BF /* CPAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPAppDelegate.h; sourceTree = "<group>"; };
+		FC46714F18C2CAF600E472BF /* CPAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPAppDelegate.m; sourceTree = "<group>"; };
+		FC46715218C2CAF600E472BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
+		FC46715518C2CAF600E472BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		FC46715718C2CAF600E472BF /* CPViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPViewController.h; sourceTree = "<group>"; };
+		FC46715818C2CAF600E472BF /* CPViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPViewController.m; sourceTree = "<group>"; };
+		FC46715A18C2CAF600E472BF /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FC46716018C2CAF600E472BF /* SmileyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SmileyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC46716118C2CAF600E472BF /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		FC46716918C2CAF600E472BF /* SmileyTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmileyTests-Info.plist"; sourceTree = "<group>"; };
+		FC46716B18C2CAF600E472BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FC46716D18C2CAF600E472BF /* SmileyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SmileyTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FC46713918C2CAF600E472BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC46714218C2CAF600E472BF /* CoreGraphics.framework in Frameworks */,
+				FC46714418C2CAF600E472BF /* UIKit.framework in Frameworks */,
+				FC46714018C2CAF600E472BF /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC46715D18C2CAF600E472BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC46716218C2CAF600E472BF /* XCTest.framework in Frameworks */,
+				FC46716418C2CAF600E472BF /* UIKit.framework in Frameworks */,
+				FC46716318C2CAF600E472BF /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FC46713318C2CAF600E472BF = {
+			isa = PBXGroup;
+			children = (
+				FC46714518C2CAF600E472BF /* Smiley */,
+				FC46716718C2CAF600E472BF /* SmileyTests */,
+				FC46713E18C2CAF600E472BF /* Frameworks */,
+				FC46713D18C2CAF600E472BF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FC46713D18C2CAF600E472BF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FC46713C18C2CAF600E472BF /* Smiley.app */,
+				FC46716018C2CAF600E472BF /* SmileyTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FC46713E18C2CAF600E472BF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FC46713F18C2CAF600E472BF /* Foundation.framework */,
+				FC46714118C2CAF600E472BF /* CoreGraphics.framework */,
+				FC46714318C2CAF600E472BF /* UIKit.framework */,
+				FC46716118C2CAF600E472BF /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FC46714518C2CAF600E472BF /* Smiley */ = {
+			isa = PBXGroup;
+			children = (
+				FC46714E18C2CAF600E472BF /* CPAppDelegate.h */,
+				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
+				FC46715118C2CAF600E472BF /* Main_iPhone.storyboard */,
+				FC46715418C2CAF600E472BF /* Main_iPad.storyboard */,
+				FC46715718C2CAF600E472BF /* CPViewController.h */,
+				FC46715818C2CAF600E472BF /* CPViewController.m */,
+				FC46715A18C2CAF600E472BF /* Images.xcassets */,
+				FC46714618C2CAF600E472BF /* Supporting Files */,
+			);
+			path = Smiley;
+			sourceTree = "<group>";
+		};
+		FC46714618C2CAF600E472BF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FC46714718C2CAF600E472BF /* Smiley-Info.plist */,
+				FC46714818C2CAF600E472BF /* InfoPlist.strings */,
+				FC46714B18C2CAF600E472BF /* main.m */,
+				FC46714D18C2CAF600E472BF /* Smiley-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FC46716718C2CAF600E472BF /* SmileyTests */ = {
+			isa = PBXGroup;
+			children = (
+				FC46716D18C2CAF600E472BF /* SmileyTests.m */,
+				FC46716818C2CAF600E472BF /* Supporting Files */,
+			);
+			path = SmileyTests;
+			sourceTree = "<group>";
+		};
+		FC46716818C2CAF600E472BF /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FC46716918C2CAF600E472BF /* SmileyTests-Info.plist */,
+				FC46716A18C2CAF600E472BF /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FC46713B18C2CAF600E472BF /* Smiley */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC46717118C2CAF600E472BF /* Build configuration list for PBXNativeTarget "Smiley" */;
+			buildPhases = (
+				FC46713818C2CAF600E472BF /* Sources */,
+				FC46713918C2CAF600E472BF /* Frameworks */,
+				FC46713A18C2CAF600E472BF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Smiley;
+			productName = Smiley;
+			productReference = FC46713C18C2CAF600E472BF /* Smiley.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FC46715F18C2CAF600E472BF /* SmileyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC46717418C2CAF600E472BF /* Build configuration list for PBXNativeTarget "SmileyTests" */;
+			buildPhases = (
+				FC46715C18C2CAF600E472BF /* Sources */,
+				FC46715D18C2CAF600E472BF /* Frameworks */,
+				FC46715E18C2CAF600E472BF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FC46716618C2CAF600E472BF /* PBXTargetDependency */,
+			);
+			name = SmileyTests;
+			productName = SmileyTests;
+			productReference = FC46716018C2CAF600E472BF /* SmileyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FC46713418C2CAF600E472BF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = CP;
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = codingpotato;
+				TargetAttributes = {
+					FC46715F18C2CAF600E472BF = {
+						TestTargetID = FC46713B18C2CAF600E472BF;
+					};
+				};
+			};
+			buildConfigurationList = FC46713718C2CAF600E472BF /* Build configuration list for PBXProject "Smiley" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = FC46713318C2CAF600E472BF;
+			productRefGroup = FC46713D18C2CAF600E472BF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FC46713B18C2CAF600E472BF /* Smiley */,
+				FC46715F18C2CAF600E472BF /* SmileyTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FC46713A18C2CAF600E472BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC46715618C2CAF600E472BF /* Main_iPad.storyboard in Resources */,
+				FC46715B18C2CAF600E472BF /* Images.xcassets in Resources */,
+				FC46715318C2CAF600E472BF /* Main_iPhone.storyboard in Resources */,
+				FC46714A18C2CAF600E472BF /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC46715E18C2CAF600E472BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC46716C18C2CAF600E472BF /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FC46713818C2CAF600E472BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC46714C18C2CAF600E472BF /* main.m in Sources */,
+				FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */,
+				FC46715918C2CAF600E472BF /* CPViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC46715C18C2CAF600E472BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC46716E18C2CAF600E472BF /* SmileyTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FC46716618C2CAF600E472BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FC46713B18C2CAF600E472BF /* Smiley */;
+			targetProxy = FC46716518C2CAF600E472BF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		FC46714818C2CAF600E472BF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FC46714918C2CAF600E472BF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		FC46715118C2CAF600E472BF /* Main_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FC46715218C2CAF600E472BF /* Base */,
+			);
+			name = Main_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		FC46715418C2CAF600E472BF /* Main_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FC46715518C2CAF600E472BF /* Base */,
+			);
+			name = Main_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+		FC46716A18C2CAF600E472BF /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FC46716B18C2CAF600E472BF /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FC46716F18C2CAF600E472BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		FC46717018C2CAF600E472BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FC46717218C2CAF600E472BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Smiley/Smiley-Prefix.pch";
+				INFOPLIST_FILE = "Smiley/Smiley-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		FC46717318C2CAF600E472BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Smiley/Smiley-Prefix.pch";
+				INFOPLIST_FILE = "Smiley/Smiley-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		FC46717518C2CAF600E472BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Smiley.app/Smiley";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Smiley/Smiley-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "SmileyTests/SmileyTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		FC46717618C2CAF600E472BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Smiley.app/Smiley";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Smiley/Smiley-Prefix.pch";
+				INFOPLIST_FILE = "SmileyTests/SmileyTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FC46713718C2CAF600E472BF /* Build configuration list for PBXProject "Smiley" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC46716F18C2CAF600E472BF /* Debug */,
+				FC46717018C2CAF600E472BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FC46717118C2CAF600E472BF /* Build configuration list for PBXNativeTarget "Smiley" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC46717218C2CAF600E472BF /* Debug */,
+				FC46717318C2CAF600E472BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		FC46717418C2CAF600E472BF /* Build configuration list for PBXNativeTarget "SmileyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC46717518C2CAF600E472BF /* Debug */,
+				FC46717618C2CAF600E472BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FC46713418C2CAF600E472BF /* Project object */;
+}
