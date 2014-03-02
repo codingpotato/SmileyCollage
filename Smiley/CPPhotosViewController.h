@@ -6,6 +6,6 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@interface CPPhotosViewController : UICollectionViewController
+@interface CPPhotosViewController : UICollectionViewController <UICollectionViewDelegateFlowLayout>
 
 @end
