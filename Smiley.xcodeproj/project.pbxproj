@@ -14,13 +14,15 @@
 		FC46714C18C2CAF600E472BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46714B18C2CAF600E472BF /* main.m */; };
 		FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46714F18C2CAF600E472BF /* CPAppDelegate.m */; };
 		FC46715318C2CAF600E472BF /* Smiley.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC46715118C2CAF600E472BF /* Smiley.storyboard */; };
-		FC46715918C2CAF600E472BF /* CPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46715818C2CAF600E472BF /* CPViewController.m */; };
 		FC46715B18C2CAF600E472BF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC46715A18C2CAF600E472BF /* Images.xcassets */; };
 		FC46716218C2CAF600E472BF /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46716118C2CAF600E472BF /* XCTest.framework */; };
 		FC46716318C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
 		FC46716418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
 		FC46716C18C2CAF600E472BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC46716A18C2CAF600E472BF /* InfoPlist.strings */; };
 		FC46716E18C2CAF600E472BF /* SmileyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46716D18C2CAF600E472BF /* SmileyTests.m */; };
+		FCF8FE9618C2D016007FA358 /* CPPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */; };
+		FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */; };
+		FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,14 +47,17 @@
 		FC46714E18C2CAF600E472BF /* CPAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPAppDelegate.h; sourceTree = "<group>"; };
 		FC46714F18C2CAF600E472BF /* CPAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPAppDelegate.m; sourceTree = "<group>"; };
 		FC46715218C2CAF600E472BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Smiley.storyboard; sourceTree = "<group>"; };
-		FC46715718C2CAF600E472BF /* CPViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPViewController.h; sourceTree = "<group>"; };
-		FC46715818C2CAF600E472BF /* CPViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPViewController.m; sourceTree = "<group>"; };
 		FC46715A18C2CAF600E472BF /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FC46716018C2CAF600E472BF /* SmileyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SmileyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC46716118C2CAF600E472BF /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		FC46716918C2CAF600E472BF /* SmileyTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmileyTests-Info.plist"; sourceTree = "<group>"; };
 		FC46716B18C2CAF600E472BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC46716D18C2CAF600E472BF /* SmileyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SmileyTests.m; sourceTree = "<group>"; };
+		FCF8FE9418C2D016007FA358 /* CPPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPhotosViewController.h; sourceTree = "<group>"; };
+		FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhotosViewController.m; sourceTree = "<group>"; };
+		FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPhotoCell.h; sourceTree = "<group>"; };
+		FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhotoCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */,
 				FC46714218C2CAF600E472BF /* CoreGraphics.framework in Frameworks */,
 				FC46714418C2CAF600E472BF /* UIKit.framework in Frameworks */,
 				FC46714018C2CAF600E472BF /* Foundation.framework in Frameworks */,
@@ -101,8 +107,9 @@
 		FC46713E18C2CAF600E472BF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FC46713F18C2CAF600E472BF /* Foundation.framework */,
+				FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */,
 				FC46714118C2CAF600E472BF /* CoreGraphics.framework */,
+				FC46713F18C2CAF600E472BF /* Foundation.framework */,
 				FC46714318C2CAF600E472BF /* UIKit.framework */,
 				FC46716118C2CAF600E472BF /* XCTest.framework */,
 			);
@@ -114,8 +121,10 @@
 			children = (
 				FC46714E18C2CAF600E472BF /* CPAppDelegate.h */,
 				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
-				FC46715718C2CAF600E472BF /* CPViewController.h */,
-				FC46715818C2CAF600E472BF /* CPViewController.m */,
+				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
+				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
+				FCF8FE9418C2D016007FA358 /* CPPhotosViewController.h */,
+				FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
 				FC46715118C2CAF600E472BF /* Smiley.storyboard */,
 				FC46714618C2CAF600E472BF /* Supporting Files */,
@@ -251,8 +260,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC46714C18C2CAF600E472BF /* main.m in Sources */,
+				FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */,
 				FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */,
-				FC46715918C2CAF600E472BF /* CPViewController.m in Sources */,
+				FCF8FE9618C2D016007FA358 /* CPPhotosViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,6 +473,7 @@
 				FC46717318C2CAF600E472BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FC46717418C2CAF600E472BF /* Build configuration list for PBXNativeTarget "SmileyTests" */ = {
 			isa = XCConfigurationList;
@@ -471,6 +482,7 @@
 				FC46717618C2CAF600E472BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
