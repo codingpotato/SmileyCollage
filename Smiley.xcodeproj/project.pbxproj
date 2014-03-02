@@ -13,8 +13,7 @@
 		FC46714A18C2CAF600E472BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC46714818C2CAF600E472BF /* InfoPlist.strings */; };
 		FC46714C18C2CAF600E472BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46714B18C2CAF600E472BF /* main.m */; };
 		FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46714F18C2CAF600E472BF /* CPAppDelegate.m */; };
-		FC46715318C2CAF600E472BF /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC46715118C2CAF600E472BF /* Main_iPhone.storyboard */; };
-		FC46715618C2CAF600E472BF /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC46715418C2CAF600E472BF /* Main_iPad.storyboard */; };
+		FC46715318C2CAF600E472BF /* Smiley.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC46715118C2CAF600E472BF /* Smiley.storyboard */; };
 		FC46715918C2CAF600E472BF /* CPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46715818C2CAF600E472BF /* CPViewController.m */; };
 		FC46715B18C2CAF600E472BF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC46715A18C2CAF600E472BF /* Images.xcassets */; };
 		FC46716218C2CAF600E472BF /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46716118C2CAF600E472BF /* XCTest.framework */; };
@@ -45,8 +44,7 @@
 		FC46714D18C2CAF600E472BF /* Smiley-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Smiley-Prefix.pch"; sourceTree = "<group>"; };
 		FC46714E18C2CAF600E472BF /* CPAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPAppDelegate.h; sourceTree = "<group>"; };
 		FC46714F18C2CAF600E472BF /* CPAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPAppDelegate.m; sourceTree = "<group>"; };
-		FC46715218C2CAF600E472BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
-		FC46715518C2CAF600E472BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		FC46715218C2CAF600E472BF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Smiley.storyboard; sourceTree = "<group>"; };
 		FC46715718C2CAF600E472BF /* CPViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPViewController.h; sourceTree = "<group>"; };
 		FC46715818C2CAF600E472BF /* CPViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPViewController.m; sourceTree = "<group>"; };
 		FC46715A18C2CAF600E472BF /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -116,11 +114,10 @@
 			children = (
 				FC46714E18C2CAF600E472BF /* CPAppDelegate.h */,
 				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
-				FC46715118C2CAF600E472BF /* Main_iPhone.storyboard */,
-				FC46715418C2CAF600E472BF /* Main_iPad.storyboard */,
 				FC46715718C2CAF600E472BF /* CPViewController.h */,
 				FC46715818C2CAF600E472BF /* CPViewController.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
+				FC46715118C2CAF600E472BF /* Smiley.storyboard */,
 				FC46714618C2CAF600E472BF /* Supporting Files */,
 			);
 			path = Smiley;
@@ -232,9 +229,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC46715618C2CAF600E472BF /* Main_iPad.storyboard in Resources */,
 				FC46715B18C2CAF600E472BF /* Images.xcassets in Resources */,
-				FC46715318C2CAF600E472BF /* Main_iPhone.storyboard in Resources */,
+				FC46715318C2CAF600E472BF /* Smiley.storyboard in Resources */,
 				FC46714A18C2CAF600E472BF /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -287,20 +283,12 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		FC46715118C2CAF600E472BF /* Main_iPhone.storyboard */ = {
+		FC46715118C2CAF600E472BF /* Smiley.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				FC46715218C2CAF600E472BF /* Base */,
 			);
-			name = Main_iPhone.storyboard;
-			sourceTree = "<group>";
-		};
-		FC46715418C2CAF600E472BF /* Main_iPad.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				FC46715518C2CAF600E472BF /* Base */,
-			);
-			name = Main_iPad.storyboard;
+			name = Smiley.storyboard;
 			sourceTree = "<group>";
 		};
 		FC46716A18C2CAF600E472BF /* InfoPlist.strings */ = {

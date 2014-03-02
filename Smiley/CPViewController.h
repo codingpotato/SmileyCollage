@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
 @interface CPViewController : UIViewController
 
 @end
