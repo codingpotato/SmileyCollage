@@ -6,12 +6,8 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@class ALAsset;
-
 @interface CPPhotoCell : UICollectionViewCell
 
-@property (strong, nonatomic) ALAsset *assert;
-
-@property (nonatomic) CGRect face;
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 
 @end

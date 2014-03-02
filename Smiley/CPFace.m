@@ -1,13 +1,13 @@
 //
-//  CPSmileDetector.h
+//  CPFace.m
 //  Smiley
 //
 //  Created by wangyw on 3/2/14.
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@interface CPSmileDetector : NSObject
+#import "CPFace.h"
 
-+ (NSArray *)facesInImage:(CGImageRef)image;
+@implementation CPFace
 
 @end

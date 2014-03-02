@@ -42,8 +42,23 @@
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="78" height="78"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uJu-jh-BSa">
+                                            <rect key="frame" x="0.0" y="0.0" width="78" height="78"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        </imageView>
+                                    </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="uJu-jh-BSa" secondAttribute="bottom" id="GXh-kM-m1w"/>
+                                    <constraint firstItem="uJu-jh-BSa" firstAttribute="leading" secondItem="0pu-Ir-GjZ" secondAttribute="leading" id="eu2-A6-ojK"/>
+                                    <constraint firstItem="uJu-jh-BSa" firstAttribute="top" secondItem="0pu-Ir-GjZ" secondAttribute="top" id="gNp-da-NWP"/>
+                                    <constraint firstAttribute="trailing" secondItem="uJu-jh-BSa" secondAttribute="trailing" id="z6Y-H9-4Rv"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="imageView" destination="uJu-jh-BSa" id="JNM-oD-J3c"/>
+                                </connections>
                             </collectionViewCell>
                         </cells>
                         <connections>
