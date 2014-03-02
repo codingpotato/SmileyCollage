@@ -23,6 +23,7 @@
 		FCF8FE9618C2D016007FA358 /* CPPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */; };
 		FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */; };
 		FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */; };
+		FCF8FE9F18C2E86F007FA358 /* CPSmileDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9E18C2E86F007FA358 /* CPSmileDetector.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,8 @@
 		FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPhotoCell.h; sourceTree = "<group>"; };
 		FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhotoCell.m; sourceTree = "<group>"; };
+		FCF8FE9D18C2E86F007FA358 /* CPSmileDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSmileDetector.h; sourceTree = "<group>"; };
+		FCF8FE9E18C2E86F007FA358 /* CPSmileDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSmileDetector.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +128,8 @@
 				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 				FCF8FE9418C2D016007FA358 /* CPPhotosViewController.h */,
 				FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */,
+				FCF8FE9D18C2E86F007FA358 /* CPSmileDetector.h */,
+				FCF8FE9E18C2E86F007FA358 /* CPSmileDetector.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
 				FC46715118C2CAF600E472BF /* Smiley.storyboard */,
 				FC46714618C2CAF600E472BF /* Supporting Files */,
@@ -260,6 +265,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC46714C18C2CAF600E472BF /* main.m in Sources */,
+				FCF8FE9F18C2E86F007FA358 /* CPSmileDetector.m in Sources */,
 				FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */,
 				FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */,
 				FCF8FE9618C2D016007FA358 /* CPPhotosViewController.m in Sources */,

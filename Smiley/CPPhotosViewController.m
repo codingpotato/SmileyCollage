@@ -9,10 +9,12 @@
 #import "CPPhotosViewController.h"
 
 #import "CPPhotoCell.h"
+#import "CPSmileDetector.h"
 
 @interface CPPhotosViewController ()
 
 @property (strong, nonatomic) NSArray *asserts;
+@property (strong, nonatomic) NSArray *faces;
 
 @end
 
@@ -30,16 +32,30 @@
     [super viewDidLoad];
     
     __block NSMutableArray *tempAsserts = [NSMutableArray array];
+    __block NSMutableArray *tempFaces = [NSMutableArray array];
     ALAssetsLibrary *assertsLibrary = [CPPhotosViewController defaultAssertsLibrary];
     [assertsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         if (group) {
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                 if (result) {
-                    [tempAsserts addObject:result];
+                    CGImageRef fullScreenImage = result.defaultRepresentation.fullScreenImage;
+                    CGImageRef thumbnail = result.thumbnail;
+                    CGPoint ratio = CGPointMake((CGFloat)CGImageGetWidth(thumbnail) / CGImageGetWidth(fullScreenImage), (CGFloat)CGImageGetHeight(thumbnail) / CGImageGetHeight(fullScreenImage));
+                    NSArray *faces = [CPSmileDetector facesInImage:thumbnail];
+                    CGFloat height = CGImageGetHeight(thumbnail);
+                    for (NSValue *face in faces) {
+                        CGRect faceRect = face.CGRectValue;
+                        CGRect newFaceRect = CGRectMake(faceRect.origin.x, height - faceRect.origin.y - faceRect.size.height, faceRect.size.width, faceRect.size.height);
+                        [tempAsserts addObject:result];
+                        [tempFaces addObject:[NSValue valueWithCGRect:newFaceRect]];
+                    }
                 }
             }];
         } else {
             self.asserts = [tempAsserts copy];
+            self.faces = [tempFaces copy];
+            NSAssert(self.asserts.count == self.faces.count, @"");
+            
             [self.collectionView reloadData];
         }
     } failureBlock:^(NSError *error) {
@@ -58,14 +74,14 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PhotoCell" forIndexPath:indexPath];
     cell.assert = [self.asserts objectAtIndex:indexPath.row];
+    cell.face = ((NSValue *)[self.faces objectAtIndex:indexPath.row]).CGRectValue;
     
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    static const int number = 3;
-    CGFloat width = (collectionView.bounds.size.width - number - 1) / number;
-    return CGSizeMake(width, width);
+    ALAsset *asset = [self.asserts objectAtIndex:indexPath.row];
+    return CGSizeMake(CGImageGetWidth(asset.thumbnail), CGImageGetHeight(asset.thumbnail));
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {

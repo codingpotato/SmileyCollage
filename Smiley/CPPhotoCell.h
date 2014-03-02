@@ -12,4 +12,6 @@
 
 @property (strong, nonatomic) ALAsset *assert;
 
+@property (nonatomic) CGRect face;
+
 @end
