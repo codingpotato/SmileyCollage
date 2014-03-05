@@ -22,6 +22,7 @@
 		FC46716E18C2CAF600E472BF /* SmileyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46716D18C2CAF600E472BF /* SmileyTests.m */; };
 		FC93443918C363F500657BBC /* CPFacesController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesController.m */; };
 		FC93443C18C371C800657BBC /* CPFace.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443B18C371C800657BBC /* CPFace.m */; };
+		FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD844C318C761C3003BA834 /* CoreImage.framework */; };
 		FCF8FE9618C2D016007FA358 /* CPPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */; };
 		FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */; };
 		FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */; };
@@ -59,6 +60,7 @@
 		FC93443818C363F500657BBC /* CPFacesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesController.m; sourceTree = "<group>"; };
 		FC93443A18C371C800657BBC /* CPFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFace.h; sourceTree = "<group>"; };
 		FC93443B18C371C800657BBC /* CPFace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFace.m; sourceTree = "<group>"; };
+		FCD844C318C761C3003BA834 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		FCF8FE9418C2D016007FA358 /* CPPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPhotosViewController.h; sourceTree = "<group>"; };
 		FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhotosViewController.m; sourceTree = "<group>"; };
 		FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -71,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */,
 				FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */,
 				FC46714218C2CAF600E472BF /* CoreGraphics.framework in Frameworks */,
 				FC46714418C2CAF600E472BF /* UIKit.framework in Frameworks */,
@@ -115,6 +118,7 @@
 			children = (
 				FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */,
 				FC46714118C2CAF600E472BF /* CoreGraphics.framework */,
+				FCD844C318C761C3003BA834 /* CoreImage.framework */,
 				FC46713F18C2CAF600E472BF /* Foundation.framework */,
 				FC46714318C2CAF600E472BF /* UIKit.framework */,
 				FC46716118C2CAF600E472BF /* XCTest.framework */,

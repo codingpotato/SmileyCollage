@@ -12,6 +12,4 @@
 
 @property (nonatomic) CGRect bounds;
 
-@property (nonatomic) CGImageRef image;
-
 @end

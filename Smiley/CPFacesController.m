@@ -29,10 +29,9 @@ static CPFacesController *g_facesController = nil;
 
 - (void)detectFacesWithRefreshBlock:(void (^)(void))refreshBlock {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyLow}];
+        CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
         NSDictionary *options = @{CIDetectorSmile: @(YES), CIDetectorEyeBlink: @(YES)};
         
-        //__block NSMutableArray *tempFaces = [NSMutableArray array];
         [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                 if (result) {
@@ -43,10 +42,9 @@ static CPFacesController *g_facesController = nil;
                         CPFace *face = [[CPFace alloc] init];
                         face.asset = result;
                         
-                        // reverse rectangle in y, because core image coordinate system is different
+                        // reverse rectangle in y, because coordinate system of core image is different
                         CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
                         face.bounds = CGRectInset(bounds, -bounds.size.width / 3, -bounds.size.height / 3);
-                        face.image = CGImageCreateWithImageInRect(image, face.bounds);
                         [self.faces addObject:face];
                         
                         dispatch_async(dispatch_get_main_queue(), ^{

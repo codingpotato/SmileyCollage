@@ -37,14 +37,19 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PhotoCell" forIndexPath:indexPath];
     CPFace *face = [[CPFacesController defaultController].faces objectAtIndex:indexPath.row];
-    cell.imageView.image = [UIImage imageWithCGImage:face.image];
+    CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullResolutionImage, face.bounds);
+    // TODO: scale the image to 100.0
+    cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / 100.0 orientation:UIImageOrientationUp];
+    CGImageRelease(faceImage);
     
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CPFace *face = [[CPFacesController defaultController].faces objectAtIndex:indexPath.row];
-    return CGSizeMake(CGImageGetWidth(face.image), CGImageGetHeight(face.image));
+    // TODO: 5 images each line
+    const int number = 5;
+    CGFloat width = (collectionView.bounds.size.width - (number + 1) * 1.0) / number;
+    return CGSizeMake(width, width);
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
