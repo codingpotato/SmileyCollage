@@ -14,6 +14,8 @@
 
 @property (strong, nonatomic) ALAssetsLibrary *assetsLibrary;
 
+@property (strong, nonatomic) NSMutableArray *selectedFaces;
+
 @end
 
 @implementation CPFacesController
@@ -59,6 +61,18 @@ static CPFacesController *g_facesController = nil;
     });
 }
 
+- (void)selectFaceByIndex:(NSUInteger)index {
+    if (index < self.faces.count) {
+        CPFace * face = [self.faces objectAtIndex:index];
+        face.isSelected = !face.isSelected;
+        if (face.isSelected) {
+            [self.selectedFaces addObject:face];
+        } else {
+            [self.selectedFaces removeObject:face];
+        }
+    }
+}
+
 #pragma mark - lazy init
 
 - (NSMutableArray *)faces {
@@ -73,6 +87,13 @@ static CPFacesController *g_facesController = nil;
         _assetsLibrary = [[ALAssetsLibrary alloc] init];
     }
     return _assetsLibrary;
+}
+
+- (NSMutableArray *)selectedFaces {
+    if (!_selectedFaces) {
+        _selectedFaces = [NSMutableArray array];
+    }
+    return _selectedFaces;
 }
 
 @end

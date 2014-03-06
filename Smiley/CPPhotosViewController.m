@@ -12,10 +12,6 @@
 #import "CPFacesController.h"
 #import "CPPhotoCell.h"
 
-@interface CPPhotosViewController ()
-
-@end
-
 @implementation CPPhotosViewController
 
 - (void)viewDidLoad {
@@ -42,6 +38,9 @@
     cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / 100.0 orientation:UIImageOrientationUp];
     CGImageRelease(faceImage);
     
+    cell.selectedIndicator.hidden = face.isSelected ? NO : YES;
+    cell.selectedIndicator.layer.cornerRadius = 5.0;
+    
     return cell;
 }
 
@@ -51,6 +50,13 @@
     CGFloat width = (collectionView.bounds.size.width - (number + 1) * 1.0) / number;
     return CGSizeMake(width, width);
 }
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [[CPFacesController defaultController] selectFaceByIndex:indexPath.row];
+    [collectionView reloadItemsAtIndexPaths:@[indexPath]];
+}
+
+#pragma mark - UICollectionViewDelegateFlowLayout implement
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     return UIEdgeInsetsMake(1.0, 1.0, 1.0, 1.0);

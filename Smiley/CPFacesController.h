@@ -14,4 +14,6 @@
 
 - (void)detectFacesWithRefreshBlock:(void (^)(void))refreshBlock;
 
+- (void)selectFaceByIndex:(NSUInteger)index;
+
 @end
