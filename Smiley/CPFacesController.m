@@ -14,8 +14,6 @@
 
 @property (strong, nonatomic) ALAssetsLibrary *assetsLibrary;
 
-@property (strong, nonatomic) NSMutableArray *selectedFaces;
-
 @end
 
 @implementation CPFacesController
@@ -37,7 +35,7 @@ static CPFacesController *g_facesController = nil;
         [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                 if (result) {
-                    CGImageRef image = result.defaultRepresentation.fullResolutionImage;
+                    CGImageRef image = result.defaultRepresentation.fullScreenImage;
                     CGFloat height = CGImageGetHeight(image);
                     NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
                     for (CIFeature *feature in features) {
@@ -58,6 +56,7 @@ static CPFacesController *g_facesController = nil;
         } failureBlock:^(NSError *error) {
             NSLog(@"Error loading photos: %@", error);
         }];
+        self.isFinished = YES;
     });
 }
 

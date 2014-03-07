@@ -1,27 +1,25 @@
 //
-//  CPPhotosViewController.m
+//  CPStitchViewController.m
 //  Smiley
 //
-//  Created by wangyw on 3/2/14.
+//  Created by wangyw on 3/7/14.
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import "CPPhotosViewController.h"
+#import "CPStitchViewController.h"
 
 #import "CPFace.h"
 #import "CPFacesController.h"
-#import "CPPhotoCell.h"
+#import "CPStitchCell.h"
 
-@implementation CPPhotosViewController
+@interface CPStitchViewController ()
+
+@end
+
+@implementation CPStitchViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.navigationItem.title = @"Smiles Searching: 0";
-    [[CPFacesController defaultController] detectFacesWithRefreshBlock:^{
-        self.navigationItem.title = [NSString stringWithFormat:@"Faces Searching: %d", [CPFacesController defaultController].faces.count];
-        [self.collectionView reloadData];
-    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,47 +27,50 @@
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [CPFacesController defaultController].faces.count;
+    return [CPFacesController defaultController].selectedFaces.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
-    CPFace *face = [[CPFacesController defaultController].faces objectAtIndex:indexPath.row];
+    CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
+    CPFace *face = [[CPFacesController defaultController].selectedFaces objectAtIndex:indexPath.row];
     CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, face.bounds);
-    // TODO: scale the image to 100.0
-    cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / 100.0 orientation:UIImageOrientationUp];
+    cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
     CGImageRelease(faceImage);
-    
-    cell.selectedIndicator.hidden = face.isSelected ? NO : YES;
-    cell.selectedIndicator.layer.cornerRadius = 5.0;
     
     return cell;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    // TODO: 5 images each line
-    const int number = 5;
-    CGFloat width = (collectionView.bounds.size.width - (number + 1) * 1.0) / number;
+    CGFloat width = self.widthOfStitchCell;
     return CGSizeMake(width, width);
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    [[CPFacesController defaultController] selectFaceByIndex:indexPath.row];
-    [collectionView reloadItemsAtIndexPaths:@[indexPath]];
+    [self performSegueWithIdentifier:@"CPEditViewControllerSegue" sender:nil];
+}
+
+- (CGFloat)widthOfStitchCell {
+    return self.collectionView.bounds.size.width / self.rowsOfStitchCell;
+}
+
+- (NSUInteger)rowsOfStitchCell {
+    NSUInteger faceNumber = [CPFacesController defaultController].selectedFaces.count;
+    float rows = sqrtf(faceNumber);
+    return (NSUInteger)rows == rows ? rows : rows + 1;
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(1.0, 1.0, 1.0, 1.0);
+    return UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0);
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 1.0;
+    return 0.0;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    return 1.0;
+    return 0.0;
 }
 
 @end
