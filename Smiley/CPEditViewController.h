@@ -6,6 +6,10 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
+@class CPFace;
+
 @interface CPEditViewController : UIViewController
+
+@property (weak, nonatomic) CPFace *face;
 
 @end

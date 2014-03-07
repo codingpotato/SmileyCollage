@@ -8,11 +8,14 @@
 
 #import "CPStitchViewController.h"
 
+#import "CPEditViewController.h"
 #import "CPFace.h"
 #import "CPFacesController.h"
 #import "CPStitchCell.h"
 
 @interface CPStitchViewController ()
+
+@property (nonatomic) NSUInteger selectedIndex;
 
 @end
 
@@ -24,6 +27,13 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
+        CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
+        editViewController.face = [[CPFacesController defaultController].selectedFaces objectAtIndex:self.selectedIndex];
+    }
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -46,6 +56,7 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    self.selectedIndex = indexPath.row;
     [self performSegueWithIdentifier:@"CPEditViewControllerSegue" sender:nil];
 }
 
