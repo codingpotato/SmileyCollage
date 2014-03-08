@@ -27,13 +27,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.imageView.image = [UIImage imageWithCGImage:self.face.asset.defaultRepresentation.fullScreenImage];
+    CGImageRef fullScreenImage = self.face.asset.defaultRepresentation.fullScreenImage;
+    self.imageView.image = [UIImage imageWithCGImage:fullScreenImage];
     self.faceIndicator.layer.borderColor = [UIColor redColor].CGColor;
     self.faceIndicator.layer.borderWidth = 1.0;
-    self.faceIndicatorLeadingConstraint.constant = self.face.bounds.origin.x;
-    self.faceIndicatorTopConstraint.constant = self.face.bounds.origin.y;
-    self.faceIndicatorWidthConstraint.constant = self.face.bounds.size.width;
-    self.faceIndicatorHeightConstraint.constant = self.face.bounds.size.height;
+    
+    CGSize imageViewSize = self.imageView.bounds.size;
+    CGSize imageSize = CGSizeMake(CGImageGetWidth(fullScreenImage), CGImageGetHeight(fullScreenImage));
+    CGFloat ratioWidth = imageViewSize.width / imageSize.width;
+    CGFloat ratioHeight = imageViewSize.height / imageSize.height;
+    CGFloat ratio = ratioWidth < ratioHeight ? ratioWidth : ratioHeight;
+    CGFloat leftGap = ratioWidth < ratioHeight ? 0.0 : (imageViewSize.width - imageSize.width * ratio) / 2;
+    CGFloat topGap = ratioWidth < ratioHeight ? (imageViewSize.height - imageSize.height * ratio) / 2 : 0.0;
+
+    self.faceIndicatorLeadingConstraint.constant = leftGap + self.face.bounds.origin.x * ratio;
+    self.faceIndicatorTopConstraint.constant = topGap + self.face.bounds.origin.y * ratio;
+    self.faceIndicatorWidthConstraint.constant = self.face.bounds.size.width * ratio;
+    self.faceIndicatorHeightConstraint.constant = self.face.bounds.size.height * ratio;
 }
 
 - (void)didReceiveMemoryWarning {
