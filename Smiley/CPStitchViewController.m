@@ -36,6 +36,11 @@
     }
 }
 
+- (IBAction)actionBarButtonPressed:(id)sender {
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save Photo", nil];
+    [actionSheet showFromBarButtonItem:sender animated:YES];
+}
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return [CPFacesController defaultController].selectedFaces.count;
 }
@@ -65,9 +70,22 @@
 }
 
 - (NSUInteger)rowsOfStitchCell {
-    NSUInteger faceNumber = [CPFacesController defaultController].selectedFaces.count;
-    float rows = sqrtf(faceNumber);
+    float rows = sqrtf([CPFacesController defaultController].selectedFaces.count);
     return (NSUInteger)rows == rows ? rows : rows + 1;
+}
+
+#pragma mark - UIActionSheetDelegate implement
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    switch (buttonIndex) {
+        case 0: {
+            UIImage *image = [CPFacesController defaultController].imageByStitchSelectedFaces;
+            [[CPFacesController defaultController] saveImage:image];
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement

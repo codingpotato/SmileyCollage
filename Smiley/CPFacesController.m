@@ -72,6 +72,37 @@ static CPFacesController *g_facesController = nil;
     }
 }
 
+- (UIImage *)imageByStitchSelectedFaces {
+    CGFloat rowsFloat = sqrtf([CPFacesController defaultController].selectedFaces.count);
+    NSUInteger rows = (NSUInteger)rowsFloat == rowsFloat ? rowsFloat : rowsFloat + 1;
+    CGFloat widthOfEachFace = 512.0;
+    CGFloat width = widthOfEachFace * rows;
+    UIGraphicsBeginImageContext(CGSizeMake(width, width));
+    
+    int x = 0.0;
+    int y = 0.0;
+    for (CPFace *face in self.selectedFaces) {
+        CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, face.bounds);
+        UIImage *image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / widthOfEachFace orientation:UIImageOrientationUp];
+        CGImageRelease(faceImage);
+        [image drawAtPoint:CGPointMake(x * widthOfEachFace, y * widthOfEachFace)];
+        x++;
+        if (x >= rows) {
+            x = 0;
+            y++;
+        }
+    }
+    
+    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return result;
+}
+
+- (void)saveImage:(UIImage *)image {
+    [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
+    }];
+}
+
 #pragma mark - lazy init
 
 - (NSMutableArray *)faces {

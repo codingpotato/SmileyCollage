@@ -137,7 +137,11 @@
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" title="Stitch Smiles" id="i1x-iK-f0z">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="5AT-P2-IYn"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="5AT-P2-IYn">
+                            <connections>
+                                <action selector="actionBarButtonPressed:" destination="R4b-4T-tfo" id="5sj-0d-YOR"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <segue destination="8HI-ey-MKV" kind="push" identifier="CPEditViewControllerSegue" id="y0Y-qa-WMO"/>
@@ -147,7 +151,7 @@
             </objects>
             <point key="canvasLocation" x="1164" y="-228"/>
         </scene>
-        <!--Edit View Controller - Edit Smiles-->
+        <!--Edit View Controller - Edit Smile-->
         <scene sceneID="LPt-de-zO5">
             <objects>
                 <viewController id="8HI-ey-MKV" customClass="CPEditViewController" sceneMemberID="viewController">
@@ -184,7 +188,7 @@
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" title="Edit Smiles" id="9k4-Qf-iWA"/>
+                    <navigationItem key="navigationItem" title="Edit Smile" id="9k4-Qf-iWA"/>
                     <connections>
                         <outlet property="faceIndicator" destination="MBA-x5-NeI" id="yG6-il-sYz"/>
                         <outlet property="faceIndicatorHeightConstraint" destination="Qpl-rd-5MA" id="Bt1-w5-X5e"/>

@@ -6,6 +6,6 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@interface CPStitchViewController : UICollectionViewController <UICollectionViewDelegateFlowLayout>
+@interface CPStitchViewController : UICollectionViewController <UIActionSheetDelegate, UICollectionViewDelegateFlowLayout>
 
 @end

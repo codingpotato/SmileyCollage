@@ -20,4 +20,8 @@
 
 - (void)selectFaceByIndex:(NSUInteger)index;
 
+- (UIImage *)imageByStitchSelectedFaces;
+
+- (void)saveImage:(UIImage *)image;
+
 @end
