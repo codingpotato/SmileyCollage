@@ -41,6 +41,13 @@
     [actionSheet showFromBarButtonItem:sender animated:YES];
 }
 
+- (CGRect)frameOfSelectFaceInView:(UIView *)view {
+    UICollectionViewCell * cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
+    return [self.collectionView convertRect:cell.frame toView:view];
+}
+
+#pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return [CPFacesController defaultController].selectedFaces.count;
 }

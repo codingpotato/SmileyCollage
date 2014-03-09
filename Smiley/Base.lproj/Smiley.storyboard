@@ -15,10 +15,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
+                        <outlet property="delegate" destination="Pm8-t2-MRk" id="TNF-S0-qgi"/>
                         <segue destination="d7R-VU-fY1" kind="relationship" relationship="rootViewController" id="kIl-2x-MGF"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mn4-NX-cLH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <customObject id="Pm8-t2-MRk" customClass="CPTransitionManager"/>
             </objects>
             <point key="canvasLocation" x="180" y="-228"/>
         </scene>
