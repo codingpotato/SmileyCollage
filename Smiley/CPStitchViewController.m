@@ -78,11 +78,9 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
-        case 0: {
-            UIImage *image = [CPFacesController defaultController].imageByStitchSelectedFaces;
-            [[CPFacesController defaultController] saveImage:image];
+        case 0:
+            [[CPFacesController defaultController] saveStitchedImage];
             break;
-        }
         default:
             break;
     }

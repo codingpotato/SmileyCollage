@@ -18,6 +18,8 @@
 
 @implementation CPFacesController
 
+static NSString *g_albumNameOfSmileyImage = @"Smiley Images";
+
 static CPFacesController *g_facesController = nil;
 
 + (CPFacesController *)defaultController {
@@ -32,30 +34,44 @@ static CPFacesController *g_facesController = nil;
         CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
         NSDictionary *options = @{CIDetectorSmile: @(YES), CIDetectorEyeBlink: @(YES)};
         
-        [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                if (result) {
-                    CGImageRef image = result.defaultRepresentation.fullScreenImage;
-                    CGFloat height = CGImageGetHeight(image);
-                    NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
-                    for (CIFeature *feature in features) {
-                        CPFace *face = [[CPFace alloc] init];
-                        face.asset = result;
-                        
-                        // reverse rectangle in y, because coordinate system of core image is different
-                        CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
-                        face.bounds = CGRectInset(bounds, -bounds.size.width / 3, -bounds.size.height / 3);
-                        [self.faces addObject:face];
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            refreshBlock();
-                        });
-                    }
+        // collect asset URLs in Smiley Images album, and ignore them when searching smiley faces
+        NSMutableArray *smileyImages = [NSMutableArray array];
+        [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+            if (group) {
+                if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyImage]) {
+                    [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                        if (result) {
+                            [smileyImages addObject:[result valueForProperty:ALAssetPropertyURLs]];
+                        }
+                    }];
                 }
-            }];
-        } failureBlock:^(NSError *error) {
-            NSLog(@"Error loading photos: %@", error);
-        }];
+            } else {
+                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                    if (group) {
+                        [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                            if (result && ![smileyImages containsObject:[result valueForProperty:ALAssetPropertyURLs]]) {
+                                CGImageRef image = result.defaultRepresentation.fullScreenImage;
+                                CGFloat height = CGImageGetHeight(image);
+                                NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
+                                for (CIFeature *feature in features) {
+                                    CPFace *face = [[CPFace alloc] init];
+                                    face.asset = result;
+                                    
+                                    // reverse rectangle in y, because coordinate system of core image is different
+                                    CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
+                                    face.bounds = CGRectInset(bounds, -bounds.size.width / 3, -bounds.size.height / 3);
+                                    [self.faces addObject:face];
+                                    
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        refreshBlock();
+                                    });
+                                }
+                            }
+                        }];
+                    }
+                } failureBlock:nil];
+            }
+        } failureBlock:nil];
         self.isFinished = YES;
     });
 }
@@ -70,6 +86,29 @@ static CPFacesController *g_facesController = nil;
             [self.selectedFaces removeObject:face];
         }
     }
+}
+
+- (void)saveStitchedImage {
+    [self.assetsLibrary writeImageToSavedPhotosAlbum:self.imageByStitchSelectedFaces.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
+        if (!error) {
+            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
+                __block BOOL foundGroup = NO;
+                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                    if (group) {
+                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyImage]) {                            [group addAsset:asset];
+                            foundGroup = YES;
+                        }
+                    } else {
+                        if (!foundGroup) {
+                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyImage resultBlock:^(ALAssetsGroup *group) {
+                                [group addAsset:asset];
+                            } failureBlock:nil];
+                        }
+                    }
+                } failureBlock:nil];
+            } failureBlock:nil];
+        }
+    }];
 }
 
 - (UIImage *)imageByStitchSelectedFaces {
@@ -96,11 +135,6 @@ static CPFacesController *g_facesController = nil;
     UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return result;
-}
-
-- (void)saveImage:(UIImage *)image {
-    [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
-    }];
 }
 
 #pragma mark - lazy init
