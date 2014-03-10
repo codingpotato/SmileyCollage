@@ -8,6 +8,6 @@
 
 @interface CPStitchViewController : UICollectionViewController <UIActionSheetDelegate, UICollectionViewDelegateFlowLayout>
 
-- (CGRect)frameOfSelectFaceInView:(UIView *)view;
+- (CGRect)frameOfSelectedCell;
 
 @end

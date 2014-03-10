@@ -24,6 +24,12 @@
 
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
     if ([fromVC isMemberOfClass:[CPStitchViewController class]] && [toVC isMemberOfClass:[CPEditViewController class]]) {
+        CPStitchViewController *stitchViewController = (CPStitchViewController *)fromVC;
+        self.stitchEditTransition.fromStitchToEdit = YES;
+        self.stitchEditTransition.stitchCellFrame = stitchViewController.frameOfSelectedCell;
+        return self.stitchEditTransition;
+    } else if ([fromVC isMemberOfClass:[CPEditViewController class]] && [toVC isMemberOfClass:[CPStitchViewController class]]) {
+        self.stitchEditTransition.fromStitchToEdit = NO;
         return self.stitchEditTransition;
     } else {
         return nil;

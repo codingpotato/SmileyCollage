@@ -51,6 +51,7 @@ static CPFacesController *g_facesController = nil;
                         [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                             if (result && ![smileyImages containsObject:[result valueForProperty:ALAssetPropertyURLs]]) {
                                 CGImageRef image = result.defaultRepresentation.fullScreenImage;
+                                CGFloat width = CGImageGetWidth(image);
                                 CGFloat height = CGImageGetHeight(image);
                                 NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
                                 for (CIFeature *feature in features) {
@@ -59,7 +60,12 @@ static CPFacesController *g_facesController = nil;
                                     
                                     // reverse rectangle in y, because coordinate system of core image is different
                                     CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
-                                    face.bounds = CGRectInset(bounds, -bounds.size.width / 3, -bounds.size.height / 3);
+                                    CGFloat changedSize = bounds.size.width / 3;
+                                    changedSize = MIN(changedSize, bounds.origin.x);
+                                    changedSize = MIN(changedSize, bounds.origin.y);
+                                    changedSize = MIN(changedSize, width - bounds.origin.x - bounds.size.width);
+                                    changedSize = MIN(changedSize, height - bounds.origin.y - bounds.size.height);
+                                    face.bounds = CGRectInset(bounds, -changedSize, -changedSize);
                                     [self.faces addObject:face];
                                     
                                     dispatch_async(dispatch_get_main_queue(), ^{

@@ -8,4 +8,8 @@
 
 @interface CPStitchEditTransition : NSObject <UIViewControllerAnimatedTransitioning>
 
+@property (nonatomic) BOOL fromStitchToEdit;
+
+@property (nonatomic) CGRect stitchCellFrame;
+
 @end

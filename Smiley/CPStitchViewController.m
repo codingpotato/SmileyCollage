@@ -41,9 +41,9 @@
     [actionSheet showFromBarButtonItem:sender animated:YES];
 }
 
-- (CGRect)frameOfSelectFaceInView:(UIView *)view {
-    UICollectionViewCell * cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
-    return [self.collectionView convertRect:cell.frame toView:view];
+- (CGRect)frameOfSelectedCell {
+    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
+    return [self.view convertRect:cell.frame fromView:self.collectionView];
 }
 
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
