@@ -170,14 +170,19 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </imageView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MBA-x5-NeI">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MBA-x5-NeI" userLabel="Face Indicator">
                                 <rect key="frame" x="100" y="100" width="160" height="284"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="160" id="PLw-aW-7qp"/>
                                     <constraint firstAttribute="height" constant="284" id="Qpl-rd-5MA"/>
                                 </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="4tI-KM-L7w" appends="YES" id="XS5-EW-sha"/>
+                                    <outletCollection property="gestureRecognizers" destination="flv-O0-2Hb" appends="YES" id="JDN-5y-jPx"/>
+                                </connections>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -202,6 +207,16 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4M1-mf-Wti" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="4tI-KM-L7w">
+                    <connections>
+                        <action selector="handlePanGesture:" destination="8HI-ey-MKV" id="b4f-gn-wfL"/>
+                    </connections>
+                </panGestureRecognizer>
+                <pinchGestureRecognizer id="flv-O0-2Hb">
+                    <connections>
+                        <action selector="handlePinchGesture:" destination="8HI-ey-MKV" id="YEz-OY-h0x"/>
+                    </connections>
+                </pinchGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1629" y="-228"/>
         </scene>
