@@ -181,7 +181,6 @@
                                 </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="4tI-KM-L7w" appends="YES" id="XS5-EW-sha"/>
-                                    <outletCollection property="gestureRecognizers" destination="flv-O0-2Hb" appends="YES" id="JDN-5y-jPx"/>
                                 </connections>
                             </view>
                         </subviews>
@@ -194,6 +193,9 @@
                             <constraint firstItem="o6b-QN-LVF" firstAttribute="top" secondItem="aJk-gt-Snk" secondAttribute="top" id="bny-cD-dh4"/>
                             <constraint firstAttribute="trailing" secondItem="o6b-QN-LVF" secondAttribute="trailing" id="eP9-db-bhn"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="flv-O0-2Hb" appends="YES" id="cm7-KA-E6L"/>
+                        </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" title="Edit Smile" id="9k4-Qf-iWA"/>

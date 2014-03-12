@@ -12,6 +12,8 @@
 
 @property (nonatomic) CGRect bounds;
 
+@property (nonatomic) CGRect userBounds;
+
 @property (nonatomic) BOOL isSelected;
 
 @end

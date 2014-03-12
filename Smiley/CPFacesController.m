@@ -62,6 +62,7 @@ static CPFacesController *g_facesController = nil;
                                             CPFace *face = [[CPFace alloc] init];
                                             face.asset = result;
                                             face.bounds = boundsValue.CGRectValue;
+                                            face.userBounds = CGRectZero;
                                             [self.faces addObject:face];
                                             
                                             dispatch_async(dispatch_get_main_queue(), ^{
@@ -84,6 +85,7 @@ static CPFacesController *g_facesController = nil;
                                             changedSize = MIN(changedSize, width - bounds.origin.x - bounds.size.width);
                                             changedSize = MIN(changedSize, height - bounds.origin.y - bounds.size.height);
                                             face.bounds = CGRectInset(bounds, -changedSize, -changedSize);
+                                            face.userBounds = CGRectZero;
                                             [self.faces addObject:face];
                                             
                                             dispatch_async(dispatch_get_main_queue(), ^{

@@ -50,10 +50,11 @@
         self.imageFrame = CGRectMake((imageViewSize.width - imageSize.width * self.ratio) / 2, 0.0, imageSize.width * self.ratio, imageViewSize.height);
     }
 
-    self.faceIndicatorLeadingConstraint.constant = self.imageFrame.origin.x + self.face.bounds.origin.x * self.ratio;
-    self.faceIndicatorTopConstraint.constant = self.imageFrame.origin.y + self.face.bounds.origin.y * self.ratio;
-    self.faceIndicatorWidthConstraint.constant = self.face.bounds.size.width * self.ratio;
-    self.faceIndicatorHeightConstraint.constant = self.face.bounds.size.height * self.ratio;
+    CGRect bounds = CGRectEqualToRect(self.face.userBounds, CGRectZero) ? self.face.bounds : self.face.userBounds;
+    self.faceIndicatorLeadingConstraint.constant = self.imageFrame.origin.x + bounds.origin.x * self.ratio;
+    self.faceIndicatorTopConstraint.constant = self.imageFrame.origin.y + bounds.origin.y * self.ratio;
+    self.faceIndicatorWidthConstraint.constant = bounds.size.width * self.ratio;
+    self.faceIndicatorHeightConstraint.constant = bounds.size.height * self.ratio;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -62,7 +63,8 @@
     bounds.origin.y = (self.faceIndicatorTopConstraint.constant - self.imageFrame.origin.y) / self.ratio;
     bounds.size.width = self.faceIndicatorWidthConstraint.constant / self.ratio;
     bounds.size.height = self.faceIndicatorHeightConstraint.constant / self.ratio;
-    self.face.bounds = bounds;
+    self.face.userBounds = bounds;
+    
     [super viewDidDisappear:animated];
 }
 
@@ -95,14 +97,10 @@
     if (pinchGesture.state == UIGestureRecognizerStateChanged || pinchGesture.state == UIGestureRecognizerStateEnded) {
         self.faceIndicatorWidthConstraint.constant *= pinchGesture.scale;
         self.faceIndicatorHeightConstraint.constant *= pinchGesture.scale;
-        /*if (self.faceIndicatorLeadingConstraint.constant + self.faceIndicatorWidthConstraint.constant > self.imageFrame.origin.x + self.imageFrame.size.width) {
+        if (self.faceIndicatorWidthConstraint.constant < 10.0 || self.faceIndicatorHeightConstraint.constant < 10.0 || self.faceIndicatorLeadingConstraint.constant + self.faceIndicatorWidthConstraint.constant > self.imageFrame.origin.x + self.imageFrame.size.width || self.faceIndicatorTopConstraint.constant + self.faceIndicatorHeightConstraint.constant > self.imageFrame.origin.y + self.imageFrame.size.height) {
             self.faceIndicatorWidthConstraint.constant /= pinchGesture.scale;
             self.faceIndicatorHeightConstraint.constant /= pinchGesture.scale;
         }
-        if (self.faceIndicatorTopConstraint.constant + self.faceIndicatorHeightConstraint.constant > self.imageFrame.origin.y + self.imageFrame.size.height) {
-            self.faceIndicatorWidthConstraint.constant /= pinchGesture.scale;
-            self.faceIndicatorHeightConstraint.constant /= pinchGesture.scale;
-        }*/
     }
     pinchGesture.scale = 1.0;
 }

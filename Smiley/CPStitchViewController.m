@@ -15,7 +15,7 @@
 
 @interface CPStitchViewController ()
 
-@property (nonatomic) NSUInteger selectedIndex;
+@property (nonatomic) NSInteger selectedIndex;
 
 @end
 
@@ -23,6 +23,18 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    for (CPFace *face in [CPFacesController defaultController].selectedFaces) {
+        face.userBounds = CGRectZero;
+    }
+    self.selectedIndex = -1;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    if (self.selectedIndex != -1) {
+        [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.selectedIndex inSection:0]]];
+        self.selectedIndex = -1;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -55,8 +67,9 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
     CPFace *face = [[CPFacesController defaultController].selectedFaces objectAtIndex:indexPath.row];
-    CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, face.bounds);
-    cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
+    CGRect bounds = CGRectEqualToRect(face.userBounds, CGRectZero) ? face.bounds : face.userBounds;
+    CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, bounds);
+    cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
     CGImageRelease(faceImage);
     
     return cell;
