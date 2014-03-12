@@ -30,7 +30,10 @@ static CPFacesController *g_facesController = nil;
 }
 
 - (void)detectFacesWithRefreshBlock:(void (^)(void))refreshBlock {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [self.faces removeAllObjects];
+        NSMutableDictionary *facesCache = self.facesCache;
+        
         CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
         NSDictionary *options = @{CIDetectorSmile: @(YES), CIDetectorEyeBlink: @(YES)};
         
@@ -41,44 +44,62 @@ static CPFacesController *g_facesController = nil;
                 if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyImage]) {
                     [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                         if (result) {
-                            [smileyImages addObject:[result valueForProperty:ALAssetPropertyURLs]];
+                            [smileyImages addObject:[result valueForProperty:ALAssetPropertyAssetURL]];
                         }
                     }];
                 }
             } else {
+                // finish first round enumeration, start real enumeration for faces
                 [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
                     if (group) {
                         [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                            if (result && ![smileyImages containsObject:[result valueForProperty:ALAssetPropertyURLs]]) {
-                                CGImageRef image = result.defaultRepresentation.fullScreenImage;
-                                CGFloat width = CGImageGetWidth(image);
-                                CGFloat height = CGImageGetHeight(image);
-                                NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
-                                for (CIFeature *feature in features) {
-                                    CPFace *face = [[CPFace alloc] init];
-                                    face.asset = result;
-                                    
-                                    // reverse rectangle in y, because coordinate system of core image is different
-                                    CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
-                                    CGFloat changedSize = bounds.size.width / 3;
-                                    changedSize = MIN(changedSize, bounds.origin.x);
-                                    changedSize = MIN(changedSize, bounds.origin.y);
-                                    changedSize = MIN(changedSize, width - bounds.origin.x - bounds.size.width);
-                                    changedSize = MIN(changedSize, height - bounds.origin.y - bounds.size.height);
-                                    face.bounds = CGRectInset(bounds, -changedSize, -changedSize);
-                                    [self.faces addObject:face];
-                                    
-                                    dispatch_async(dispatch_get_main_queue(), ^{
-                                        refreshBlock();
-                                    });
+                            if (result) {
+                                NSString *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
+                                if (![smileyImages containsObject:assetURL]) {
+                                    NSMutableArray *faceBounds = [facesCache objectForKey:assetURL];
+                                    if (faceBounds) {
+                                        for (NSValue *boundsValue in faceBounds) {
+                                            CPFace *face = [[CPFace alloc] init];
+                                            face.asset = result;
+                                            face.bounds = boundsValue.CGRectValue;
+                                            [self.faces addObject:face];
+                                            
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                refreshBlock();
+                                            });
+                                        }
+                                    } else {
+                                        CGImageRef image = result.defaultRepresentation.fullScreenImage;
+                                        CGFloat width = CGImageGetWidth(image);
+                                        CGFloat height = CGImageGetHeight(image);
+                                        NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
+                                        for (CIFeature *feature in features) {
+                                            CPFace *face = [[CPFace alloc] init];
+                                            face.asset = result;
+                                            // reverse rectangle in y, because coordinate system of core image is different
+                                            CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
+                                            CGFloat changedSize = bounds.size.width / 3;
+                                            changedSize = MIN(changedSize, bounds.origin.x);
+                                            changedSize = MIN(changedSize, bounds.origin.y);
+                                            changedSize = MIN(changedSize, width - bounds.origin.x - bounds.size.width);
+                                            changedSize = MIN(changedSize, height - bounds.origin.y - bounds.size.height);
+                                            face.bounds = CGRectInset(bounds, -changedSize, -changedSize);
+                                            [self.faces addObject:face];
+                                            
+                                            dispatch_async(dispatch_get_main_queue(), ^{
+                                                refreshBlock();
+                                            });
+                                        }
+                                    }
                                 }
                             }
                         }];
+                    } else {
+                        [self writeFacesCache];
                     }
                 } failureBlock:nil];
             }
         } failureBlock:nil];
-        self.isFinished = YES;
     });
 }
 
@@ -141,6 +162,36 @@ static CPFacesController *g_facesController = nil;
     UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return result;
+}
+
+- (NSMutableDictionary *)facesCache {
+    if ([[NSFileManager defaultManager] fileExistsAtPath:self.facesCachePath]) {
+        return [NSKeyedUnarchiver unarchiveObjectWithFile:self.facesCachePath];
+    } else {
+        return [[NSMutableDictionary alloc] init];
+    }
+}
+
+- (void)writeFacesCache {
+    NSMutableDictionary *facesCache = [[NSMutableDictionary alloc] initWithCapacity:self.faces.count];
+    for (CPFace *face in self.faces) {
+        NSString *assetURL = [face.asset valueForProperty:ALAssetPropertyAssetURL];
+        NSMutableArray *faceBounds = [facesCache objectForKey:assetURL];
+        if (faceBounds) {
+            [faceBounds addObject:[NSValue valueWithCGRect:face.bounds]];
+        } else {
+            faceBounds = [[NSMutableArray alloc] init];
+            [faceBounds addObject:[NSValue valueWithCGRect:face.bounds]];
+            [facesCache setObject:faceBounds forKey:assetURL];
+        }
+    }
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:facesCache];
+    [data writeToFile:self.facesCachePath atomically:YES];
+}
+
+- (NSString *)facesCachePath {
+    NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    return [documentsPath stringByAppendingPathComponent:@"facesCache.bin"];
 }
 
 #pragma mark - lazy init

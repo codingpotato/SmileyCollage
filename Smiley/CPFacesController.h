@@ -12,8 +12,6 @@
 
 @property (strong, nonatomic) NSMutableArray *selectedFaces;
 
-@property (nonatomic) BOOL isFinished;
-
 + (CPFacesController *)defaultController;
 
 - (void)detectFacesWithRefreshBlock:(void (^)(void))refreshBlock;
