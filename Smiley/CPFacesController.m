@@ -157,8 +157,9 @@ static CPFacesController *g_facesController = nil;
     int x = 0.0;
     int y = 0.0;
     for (CPFace *face in self.selectedFaces) {
-        CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, face.bounds);
-        UIImage *image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / widthOfEachFace orientation:UIImageOrientationUp];
+        CGRect faceBounds = CGRectEqualToRect(face.userBounds, CGRectZero) ? face.bounds : face.userBounds;
+        CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, faceBounds);
+        UIImage *image = [UIImage imageWithCGImage:faceImage scale:faceBounds.size.width / widthOfEachFace orientation:UIImageOrientationUp];
         CGImageRelease(faceImage);
         [image drawAtPoint:CGPointMake(x * widthOfEachFace, y * widthOfEachFace)];
         x++;
