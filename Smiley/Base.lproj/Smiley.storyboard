@@ -101,6 +101,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="lAK-1J-FPB">
                             <size key="itemSize" width="100" height="100"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -136,6 +137,7 @@
                         <connections>
                             <outlet property="dataSource" destination="R4b-4T-tfo" id="EKK-Ok-QHN"/>
                             <outlet property="delegate" destination="R4b-4T-tfo" id="AeK-zE-Vzj"/>
+                            <outletCollection property="gestureRecognizers" destination="xpG-Hg-Rhk" appends="YES" id="O5g-hx-QxL"/>
                         </connections>
                     </collectionView>
                     <navigationItem key="navigationItem" title="Stitch Smiles" id="i1x-iK-f0z">
@@ -150,6 +152,11 @@
                     </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iLb-Tn-faX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="xpG-Hg-Rhk">
+                    <connections>
+                        <action selector="handlePanGesture:" destination="R4b-4T-tfo" id="ifN-Fy-wts"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1164" y="-228"/>
         </scene>

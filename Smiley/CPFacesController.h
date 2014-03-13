@@ -18,6 +18,8 @@
 
 - (void)selectFaceByIndex:(NSUInteger)index;
 
+- (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2;
+
 - (void)saveStitchedImage;
 
 @end

@@ -17,6 +17,11 @@
 
 @property (nonatomic) NSInteger selectedIndex;
 
+@property (strong, nonatomic) UICollectionViewCell *draggedCell;
+@property (strong, nonatomic) UIView *snapshotOfDraggedCell;
+
+- (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
+
 @end
 
 @implementation CPStitchViewController
@@ -56,6 +61,50 @@
 - (CGRect)frameOfSelectedCell {
     UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
     return [self.view convertRect:cell.frame fromView:self.collectionView];
+}
+
+- (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
+    if (panGesture.state == UIGestureRecognizerStateBegan) {
+        if (!self.draggedCell) {
+            CGPoint location = [panGesture locationInView:self.collectionView];
+            NSIndexPath *indexPathOfDraggedCell = [self.collectionView indexPathForItemAtPoint:location];
+            if (indexPathOfDraggedCell) {
+                self.draggedCell = [self.collectionView cellForItemAtIndexPath:indexPathOfDraggedCell];
+                self.snapshotOfDraggedCell = [self.draggedCell snapshotViewAfterScreenUpdates:YES];
+                self.snapshotOfDraggedCell.frame = self.draggedCell.frame;
+                self.snapshotOfDraggedCell.layer.shadowColor = [UIColor blackColor].CGColor;
+                self.snapshotOfDraggedCell.layer.shadowOffset = CGSizeMake(5.0, 5.0);
+                self.snapshotOfDraggedCell.layer.shadowOpacity = 0.8;
+                [self.collectionView addSubview:self.snapshotOfDraggedCell];
+                self.draggedCell.hidden = YES;
+            }
+        }
+    } else if (panGesture.state == UIGestureRecognizerStateChanged) {
+        if (self.draggedCell) {
+            CGPoint translation = [panGesture translationInView:self.collectionView];
+            CGPoint center = self.snapshotOfDraggedCell.center;
+            center.x += translation.x;
+            center.y += translation.y;
+            self.snapshotOfDraggedCell.center = center;
+            [panGesture setTranslation:CGPointZero inView:self.collectionView];
+        }
+    } else if (panGesture.state == UIGestureRecognizerStateEnded || panGesture.state == UIGestureRecognizerStateCancelled || panGesture.state == UIGestureRecognizerStateFailed) {
+        NSIndexPath *indexPathOfDroppedCell = [self.collectionView indexPathForItemAtPoint:self.snapshotOfDraggedCell.center];
+        UICollectionViewCell *droppedCell = [self.collectionView cellForItemAtIndexPath:indexPathOfDroppedCell];
+        if (droppedCell) {
+            NSIndexPath *indexPath1 = [self.collectionView indexPathForCell:self.draggedCell];
+            NSIndexPath *indexPath2 = [self.collectionView indexPathForCell:droppedCell];
+            if (indexPath1 && indexPath2) {
+                [[CPFacesController defaultController] exchangeSelectedFacesByIndex1:indexPath1.row withIndex2:indexPath2.row];
+                [self.collectionView reloadItemsAtIndexPaths:@[indexPath1, indexPath2]];
+            }
+        }
+        
+        [self.snapshotOfDraggedCell removeFromSuperview];
+        self.snapshotOfDraggedCell = nil;
+        self.draggedCell.hidden = NO;
+        self.draggedCell = nil;        
+    }
 }
 
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement

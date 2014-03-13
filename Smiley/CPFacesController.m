@@ -117,6 +117,13 @@ static CPFacesController *g_facesController = nil;
     }
 }
 
+- (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2 {
+    NSObject *object1 = [self.selectedFaces objectAtIndex:index1];
+    NSObject *object2 = [self.selectedFaces objectAtIndex:index2];
+    [self.selectedFaces setObject:object1 atIndexedSubscript:index2];
+    [self.selectedFaces setObject:object2 atIndexedSubscript:index1];
+}
+
 - (void)saveStitchedImage {
     [self.assetsLibrary writeImageToSavedPhotosAlbum:self.imageByStitchSelectedFaces.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
         if (!error) {
