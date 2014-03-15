@@ -33,7 +33,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    CGImageRef fullScreenImage = self.face.asset.defaultRepresentation.fullScreenImage;
+    /*CGImageRef fullScreenImage = self.face.asset.defaultRepresentation.fullScreenImage;
     self.imageView.image = [UIImage imageWithCGImage:fullScreenImage];
     self.faceIndicator.layer.borderColor = [UIColor redColor].CGColor;
     self.faceIndicator.layer.borderWidth = 1.0;
@@ -54,16 +54,16 @@
     self.faceIndicatorLeadingConstraint.constant = self.imageFrame.origin.x + bounds.origin.x * self.ratio;
     self.faceIndicatorTopConstraint.constant = self.imageFrame.origin.y + bounds.origin.y * self.ratio;
     self.faceIndicatorWidthConstraint.constant = bounds.size.width * self.ratio;
-    self.faceIndicatorHeightConstraint.constant = bounds.size.height * self.ratio;
+    self.faceIndicatorHeightConstraint.constant = bounds.size.height * self.ratio;*/
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
-    CGRect bounds = self.face.bounds;
+    /*CGRect bounds = self.face.bounds;
     bounds.origin.x = (self.faceIndicatorLeadingConstraint.constant - self.imageFrame.origin.x) / self.ratio;
     bounds.origin.y = (self.faceIndicatorTopConstraint.constant - self.imageFrame.origin.y) / self.ratio;
     bounds.size.width = self.faceIndicatorWidthConstraint.constant / self.ratio;
     bounds.size.height = self.faceIndicatorHeightConstraint.constant / self.ratio;
-    self.face.userBounds = bounds;
+    self.face.userBounds = bounds;*/
     
     [super viewDidDisappear:animated];
 }

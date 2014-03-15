@@ -9,7 +9,7 @@
 #import "CPPhotosViewController.h"
 
 #import "CPFace.h"
-#import "CPFacesController.h"
+#import "CPFacesManager.h"
 #import "CPPhotoCell.h"
 
 @implementation CPPhotosViewController
@@ -17,11 +17,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    CPFacesManager *facesManager = [CPFacesManager defaultManager];
+    facesManager.facesController.delegate = self;
+    [facesManager detectFaces];
     self.navigationItem.title = @"Smiles Searching: 0";
-    [[CPFacesController defaultController] detectFacesWithRefreshBlock:^{
-        self.navigationItem.title = [NSString stringWithFormat:@"Faces Searching: %d", [CPFacesController defaultController].faces.count];
-        [self.collectionView reloadData];
-    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,19 +28,19 @@
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [CPFacesController defaultController].faces.count;
+    return [CPFacesManager defaultManager].facesController.fetchedObjects.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
-    CPFace *face = [[CPFacesController defaultController].faces objectAtIndex:indexPath.row];
+    /*CPFace *face = [[CPFacesController defaultController].faces objectAtIndex:indexPath.row];
     CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, face.bounds);
     // TODO: scale the image to 100.0
     cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / 100.0 orientation:UIImageOrientationUp];
     CGImageRelease(faceImage);
     
     cell.selectedIndicator.hidden = face.isSelected ? NO : YES;
-    cell.selectedIndicator.layer.cornerRadius = 5.0;
+    cell.selectedIndicator.layer.cornerRadius = 5.0;*/
     
     return cell;
 }
@@ -54,8 +53,14 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    [[CPFacesController defaultController] selectFaceByIndex:indexPath.row];
+    [[CPFacesManager defaultManager] selectFaceByIndex:indexPath.row];
     [collectionView reloadItemsAtIndexPaths:@[indexPath]];
+}
+
+#pragma mark - NSFetchedResultsControllerDelegate implement
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", controller.fetchedObjects.count];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement

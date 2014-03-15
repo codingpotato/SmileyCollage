@@ -2,18 +2,19 @@
 //  CPFace.h
 //  Smiley
 //
-//  Created by wangyw on 3/2/14.
+//  Created by wangyw on 3/15/14.
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@interface CPFace : NSObject
+@interface CPFace : NSManagedObject
 
-@property (strong, nonatomic) ALAsset *asset;
+@property (nonatomic, retain) NSNumber *index;
+@property (nonatomic, retain) NSNumber *x;
+@property (nonatomic, retain) NSNumber *y;
+@property (nonatomic, retain) NSNumber *width;
+@property (nonatomic, retain) NSNumber *height;
+@property (nonatomic, retain) NSManagedObject *photo;
 
-@property (nonatomic) CGRect bounds;
-
-@property (nonatomic) CGRect userBounds;
-
-@property (nonatomic) BOOL isSelected;
++ (CPFace *)createFaceInManagedObjectContext:(NSManagedObjectContext *)context;
 
 @end

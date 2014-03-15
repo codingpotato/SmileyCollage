@@ -10,7 +10,7 @@
 
 #import "CPEditViewController.h"
 #import "CPFace.h"
-#import "CPFacesController.h"
+#import "CPFacesManager.h"
 #import "CPStitchCell.h"
 
 @interface CPStitchViewController ()
@@ -28,9 +28,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    for (CPFace *face in [CPFacesController defaultController].selectedFaces) {
+    /*for (CPFace *face in [CPFacesController defaultController].selectedFaces) {
         face.userBounds = CGRectZero;
-    }
+    }*/
     self.selectedIndex = -1;
 }
 
@@ -48,8 +48,8 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
-        CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
-        editViewController.face = [[CPFacesController defaultController].selectedFaces objectAtIndex:self.selectedIndex];
+        //CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
+        //editViewController.face = [[CPFacesManager defaultController].selectedFaces objectAtIndex:self.selectedIndex];
     }
 }
 
@@ -95,7 +95,7 @@
             NSIndexPath *indexPath1 = [self.collectionView indexPathForCell:self.draggedCell];
             NSIndexPath *indexPath2 = [self.collectionView indexPathForCell:droppedCell];
             if (indexPath1 && indexPath2) {
-                [[CPFacesController defaultController] exchangeSelectedFacesByIndex1:indexPath1.row withIndex2:indexPath2.row];
+                [[CPFacesManager defaultManager] exchangeSelectedFacesByIndex1:indexPath1.row withIndex2:indexPath2.row];
                 [self.collectionView reloadItemsAtIndexPaths:@[indexPath1, indexPath2]];
             }
         }
@@ -110,16 +110,17 @@
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [CPFacesController defaultController].selectedFaces.count;
+    //return [CPFacesManager defaultController].selectedFaces.count;
+    return 0;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
-    CPFace *face = [[CPFacesController defaultController].selectedFaces objectAtIndex:indexPath.row];
+    /*CPFace *face = [[CPFacesController defaultController].selectedFaces objectAtIndex:indexPath.row];
     CGRect bounds = CGRectEqualToRect(face.userBounds, CGRectZero) ? face.bounds : face.userBounds;
     CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, bounds);
     cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
-    CGImageRelease(faceImage);
+    CGImageRelease(faceImage);*/
     
     return cell;
 }
@@ -139,8 +140,9 @@
 }
 
 - (NSUInteger)rowsOfStitchCell {
-    float rows = sqrtf([CPFacesController defaultController].selectedFaces.count);
-    return (NSUInteger)rows == rows ? rows : rows + 1;
+    //float rows = sqrtf([CPFacesManager defaultController].selectedFaces.count);
+    //return (NSUInteger)rows == rows ? rows : rows + 1;
+    return 0;
 }
 
 #pragma mark - UIActionSheetDelegate implement
@@ -148,7 +150,7 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
         case 0:
-            [[CPFacesController defaultController] saveStitchedImage];
+            [[CPFacesManager defaultManager] saveStitchedImage];
             break;
         default:
             break;

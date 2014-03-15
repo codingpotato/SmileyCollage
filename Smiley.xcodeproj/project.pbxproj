@@ -25,8 +25,12 @@
 		FC80EC6418C9F5D2008E83B6 /* CPStitchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPStitchViewController.m */; };
 		FC80EC6718C9F797008E83B6 /* CPStitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6618C9F797008E83B6 /* CPStitchCell.m */; };
 		FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */; };
-		FC93443918C363F500657BBC /* CPFacesController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesController.m */; };
-		FC93443C18C371C800657BBC /* CPFace.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443B18C371C800657BBC /* CPFace.m */; };
+		FC899EC518D48B02006A14BC /* CPConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = FC899EC418D48B02006A14BC /* CPConfig.m */; };
+		FC8BCA1018D424F000748335 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC8BCA0F18D424F000748335 /* CoreData.framework */; };
+		FC8BCA1318D4256900748335 /* Smiley.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1118D4256900748335 /* Smiley.xcdatamodeld */; };
+		FC8BCA1618D42E4100748335 /* CPFace.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1518D42E4100748335 /* CPFace.m */; };
+		FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1818D42E4100748335 /* CPPhoto.m */; };
+		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
 		FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD844C318C761C3003BA834 /* CoreImage.framework */; };
 		FCF8FE9618C2D016007FA358 /* CPPhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */; };
 		FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */; };
@@ -71,10 +75,16 @@
 		FC80EC6618C9F797008E83B6 /* CPStitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPStitchCell.m; sourceTree = "<group>"; };
 		FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEditViewController.h; sourceTree = "<group>"; };
 		FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEditViewController.m; sourceTree = "<group>"; };
-		FC93443718C363F500657BBC /* CPFacesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesController.h; sourceTree = "<group>"; };
-		FC93443818C363F500657BBC /* CPFacesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesController.m; sourceTree = "<group>"; };
-		FC93443A18C371C800657BBC /* CPFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFace.h; sourceTree = "<group>"; };
-		FC93443B18C371C800657BBC /* CPFace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFace.m; sourceTree = "<group>"; };
+		FC899EC318D48B02006A14BC /* CPConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConfig.h; sourceTree = "<group>"; };
+		FC899EC418D48B02006A14BC /* CPConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConfig.m; sourceTree = "<group>"; };
+		FC8BCA0F18D424F000748335 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		FC8BCA1218D4256900748335 /* Smiley.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Smiley.xcdatamodel; sourceTree = "<group>"; };
+		FC8BCA1418D42E4100748335 /* CPFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFace.h; sourceTree = "<group>"; };
+		FC8BCA1518D42E4100748335 /* CPFace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFace.m; sourceTree = "<group>"; };
+		FC8BCA1718D42E4100748335 /* CPPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPhoto.h; sourceTree = "<group>"; };
+		FC8BCA1818D42E4100748335 /* CPPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhoto.m; sourceTree = "<group>"; };
+		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
+		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
 		FCD844C318C761C3003BA834 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		FCF8FE9418C2D016007FA358 /* CPPhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPhotosViewController.h; sourceTree = "<group>"; };
 		FCF8FE9518C2D016007FA358 /* CPPhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhotosViewController.m; sourceTree = "<group>"; };
@@ -88,6 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC8BCA1018D424F000748335 /* CoreData.framework in Frameworks */,
 				FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */,
 				FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */,
 				FC46714218C2CAF600E472BF /* CoreGraphics.framework in Frameworks */,
@@ -143,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */,
+				FC8BCA0F18D424F000748335 /* CoreData.framework */,
 				FC46714118C2CAF600E472BF /* CoreGraphics.framework */,
 				FCD844C318C761C3003BA834 /* CoreImage.framework */,
 				FC46713F18C2CAF600E472BF /* Foundation.framework */,
@@ -159,10 +171,8 @@
 				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
 				FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */,
 				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
-				FC93443A18C371C800657BBC /* CPFace.h */,
-				FC93443B18C371C800657BBC /* CPFace.m */,
-				FC93443718C363F500657BBC /* CPFacesController.h */,
-				FC93443818C363F500657BBC /* CPFacesController.m */,
+				FC93443718C363F500657BBC /* CPFacesManager.h */,
+				FC93443818C363F500657BBC /* CPFacesManager.m */,
 				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
 				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 				FCF8FE9418C2D016007FA358 /* CPPhotosViewController.h */,
@@ -172,9 +182,11 @@
 				FC80EC6218C9F5D2008E83B6 /* CPStitchViewController.h */,
 				FC80EC6318C9F5D2008E83B6 /* CPStitchViewController.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
-				FC2B287218CC69F50050AD08 /* Transitions */,
+				FC8BCA1A18D42E7100748335 /* Managed Objects */,
 				FC46715118C2CAF600E472BF /* Smiley.storyboard */,
+				FC8BCA1118D4256900748335 /* Smiley.xcdatamodeld */,
 				FC46714618C2CAF600E472BF /* Supporting Files */,
+				FC2B287218CC69F50050AD08 /* Transitions */,
 			);
 			path = Smiley;
 			sourceTree = "<group>";
@@ -206,6 +218,19 @@
 				FC46716A18C2CAF600E472BF /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FC8BCA1A18D42E7100748335 /* Managed Objects */ = {
+			isa = PBXGroup;
+			children = (
+				FC899EC318D48B02006A14BC /* CPConfig.h */,
+				FC899EC418D48B02006A14BC /* CPConfig.m */,
+				FC8BCA1718D42E4100748335 /* CPPhoto.h */,
+				FC8BCA1818D42E4100748335 /* CPPhoto.m */,
+				FC8BCA1418D42E4100748335 /* CPFace.h */,
+				FC8BCA1518D42E4100748335 /* CPFace.m */,
+			);
+			name = "Managed Objects";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -253,7 +278,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = CP;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = codingpotato;
 				TargetAttributes = {
 					FC46715F18C2CAF600E472BF = {
@@ -306,17 +331,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */,
 				FC46714C18C2CAF600E472BF /* main.m in Sources */,
 				FC80EC6418C9F5D2008E83B6 /* CPStitchViewController.m in Sources */,
+				FC8BCA1318D4256900748335 /* Smiley.xcdatamodeld in Sources */,
 				FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */,
 				FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */,
 				FC80EC6718C9F797008E83B6 /* CPStitchCell.m in Sources */,
 				FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */,
 				FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */,
 				FC2B287818CC6C300050AD08 /* CPStitchEditTransition.m in Sources */,
-				FC93443C18C371C800657BBC /* CPFace.m in Sources */,
+				FC899EC518D48B02006A14BC /* CPConfig.m in Sources */,
+				FC8BCA1618D42E4100748335 /* CPFace.m in Sources */,
 				FCF8FE9618C2D016007FA358 /* CPPhotosViewController.m in Sources */,
-				FC93443918C363F500657BBC /* CPFacesController.m in Sources */,
+				FC93443918C363F500657BBC /* CPFacesManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,7 +398,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -410,7 +437,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -469,7 +495,6 @@
 		FC46717518C2CAF600E472BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Smiley.app/Smiley";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -492,7 +517,6 @@
 		FC46717618C2CAF600E472BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Smiley.app/Smiley";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -539,6 +563,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		FC8BCA1118D4256900748335 /* Smiley.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FC8BCA1218D4256900748335 /* Smiley.xcdatamodel */,
+			);
+			currentVersion = FC8BCA1218D4256900748335 /* Smiley.xcdatamodel */;
+			path = Smiley.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = FC46713418C2CAF600E472BF /* Project object */;
 }
