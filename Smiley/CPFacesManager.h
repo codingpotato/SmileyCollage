@@ -14,6 +14,8 @@
 
 - (void)detectFaces;
 
+- (UIImage *)thumbnailByIndex:(NSUInteger)index;
+
 - (void)selectFaceByIndex:(NSUInteger)index;
 
 - (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2;

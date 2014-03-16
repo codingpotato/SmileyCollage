@@ -10,11 +10,11 @@
 
 @implementation CPFace
 
-@dynamic index;
 @dynamic x;
 @dynamic y;
 @dynamic width;
 @dynamic height;
+@dynamic thumbnail;
 @dynamic photo;
 
 + (CPFace *)createFaceInManagedObjectContext:(NSManagedObjectContext *)context {

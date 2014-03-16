@@ -25,6 +25,7 @@
 @implementation CPFacesManager
 
 static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
+static NSString *g_thumbnailDirectory = @"thumbnail";
 
 static CPFacesManager *g_facesController = nil;
 static dispatch_queue_t g_queue;
@@ -36,6 +37,20 @@ static dispatch_queue_t g_queue;
     return g_facesController;
 }
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        g_queue = dispatch_queue_create("codingpotato.SmileyQueue", NULL);
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSString *thumbnailPath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory];
+        if (![fileManager fileExistsAtPath:thumbnailPath]) {
+            [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+    }
+    return self;
+}
+
 - (void)detectFaces {
     NSMutableArray *smileyPhotos = [[NSMutableArray alloc] init];
     [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
@@ -43,53 +58,71 @@ static dispatch_queue_t g_queue;
             if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
                 [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                     if (result) {
-                        [smileyPhotos addObject:[result valueForProperty:ALAssetPropertyAssetURL]];
+                        NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
+                        [smileyPhotos addObject:assetURL.absoluteString];
                     } else {
                         *stop = YES;
                     }
                 }];
             }
         } else {
-            __block NSMutableArray *assets = [[NSMutableArray alloc] init];
+            CPConfig *config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
+            config.sequenceNumber = [NSNumber numberWithInteger:config.sequenceNumber.integerValue + 1];
+            
             [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos | ALAssetsGroupLibrary usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
                 if (group) {
                     [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                         if (result) {
-                            NSString *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
-                            if (![smileyPhotos containsObject:assetURL]) {
-                                [assets addObject:result];
+                            NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
+                            if (![smileyPhotos containsObject:assetURL.absoluteString]) {
+                                [self detectFacesFromAsset:result sequenceNumber:config.sequenceNumber];
                             }
                         }
                     }];
                 } else {
-                    [self detectFacesFromAssets:assets];
+                    dispatch_async(g_queue, ^{
+                        @autoreleasepool {
+                            NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CPPhoto" inManagedObjectContext:self.managedObjectContext];
+                            NSFetchRequest *request = [[NSFetchRequest alloc] init];
+                            [request setEntity:entityDescription];
+                            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sequenceNumber != %@", config.sequenceNumber];
+                            [request setPredicate:predicate];
+                            
+                            NSArray *photoArray = [self.managedObjectContext executeFetchRequest:request error:nil];
+                            for (CPPhoto *photo in photoArray) {
+                                for (CPFace *face in photo.faces) {
+                                    NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+                                    [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+                                }
+                                [self.managedObjectContext deleteObject:photo];
+                            }
+                            [self saveContext];
+                        }
+                    });
                 }
             } failureBlock:nil];
         }
     } failureBlock:nil];
 }
 
-- (void)detectFacesFromAssets:(NSMutableArray *)assets {
-    g_queue = dispatch_queue_create("codingpotato.SmileyQueue", NULL);
-    
-    CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
-    NSDictionary *options = @{CIDetectorSmile: @(YES), CIDetectorEyeBlink: @(YES)};
-    
-    CPConfig *config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
-    config.sequenceNumber = [NSNumber numberWithInteger:config.sequenceNumber.integerValue + 1];
-    for (ALAsset *asset in assets) {
-        dispatch_async(g_queue, ^{
-            CPPhoto *photo = [CPPhoto photoOfURL:[asset valueForProperty:ALAssetPropertyAssetURL] inManagedObjectContext:self.managedObjectContext];
+- (void)detectFacesFromAsset:(ALAsset *)asset sequenceNumber:(NSNumber *)sequenceNumber {
+    dispatch_async(g_queue, ^{
+        @autoreleasepool {
+            CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
+            NSDictionary *options = @{CIDetectorSmile: @(YES), CIDetectorEyeBlink: @(YES)};
+            
+            NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
+            CPPhoto *photo = [CPPhoto photoOfURL:assetURL.absoluteString inManagedObjectContext:self.managedObjectContext];
             if (photo) {
-                photo.sequenceNumber = config.sequenceNumber;
+                photo.sequenceNumber = sequenceNumber;
             } else {
                 photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
-                photo.sequenceNumber = config.sequenceNumber;
+                photo.url = assetURL.absoluteString;
+                photo.sequenceNumber = sequenceNumber;
                 CGImageRef image = asset.defaultRepresentation.fullScreenImage;
                 CGFloat width = CGImageGetWidth(image);
                 CGFloat height = CGImageGetHeight(image);
                 NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
-                NSUInteger index = 0;
                 for (CIFeature *feature in features) {
                     CPFace *face = [CPFace createFaceInManagedObjectContext:self.managedObjectContext];
                     // reverse rectangle in y, because coordinate system of core image is different
@@ -104,14 +137,35 @@ static dispatch_queue_t g_queue;
                     face.y = [NSNumber numberWithFloat:bounds.origin.y];
                     face.width = [NSNumber numberWithFloat:bounds.size.width];
                     face.height = [NSNumber numberWithFloat:bounds.size.height];
-                    face.index = [NSNumber numberWithInteger:index++];
                     face.photo = photo;
                     [photo addFacesObject:face];
+                    
+                    CFUUIDRef uuid = CFUUIDCreate(NULL);
+                    CFStringRef uuidStr = CFUUIDCreateString(NULL, uuid);
+                    face.thumbnail = [NSString stringWithFormat:@"%@.jpg", uuidStr];
+                    CFRelease(uuidStr);
+                    CFRelease(uuid);
+                    NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+                    [self writeThumbnailToPath:filePath fromImage:image bounds:bounds];
                 }
             }
-        });
-    }
-    //[CPPhoto clearPhotosNotEqualSequenceNumber:config.sequenceNumber fromManagedObjectContext:self.managedObjectContext];
+        }
+    });
+}
+
+- (UIImage *)thumbnailByIndex:(NSUInteger)index {
+    CPFace *face = [self.facesController.fetchedObjects objectAtIndex:index];
+    NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+    return [UIImage imageWithContentsOfFile:filePath];
+}
+
+- (void)writeThumbnailToPath:(NSString *)filePath fromImage:(CGImageRef)image bounds:(CGRect)bounds {
+    CGImageRef faceImage = CGImageCreateWithImageInRect(image, bounds);
+    // TODO: scale the image to 100.0
+    UIImage *thumbnail = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / 100.0 orientation:UIImageOrientationUp];
+    CGImageRelease(faceImage);
+    NSData *imageData = UIImageJPEGRepresentation(thumbnail, 0.5);
+    [imageData writeToFile:filePath atomically:YES];
 }
 
 - (void)selectFaceByIndex:(NSUInteger)index {
@@ -185,38 +239,8 @@ static dispatch_queue_t g_queue;
     return  nil;
 }
 
-- (NSMutableDictionary *)facesCache {
-    if ([[NSFileManager defaultManager] fileExistsAtPath:self.facesCachePath]) {
-        return [NSKeyedUnarchiver unarchiveObjectWithFile:self.facesCachePath];
-    } else {
-        return [[NSMutableDictionary alloc] init];
-    }
-}
-
-- (void)writeFacesCache {
-    /*NSMutableDictionary *facesCache = [[NSMutableDictionary alloc] initWithCapacity:self.faces.count];
-    for (CPFace *face in self.faces) {
-        NSString *assetURL = [face.asset valueForProperty:ALAssetPropertyAssetURL];
-        NSMutableArray *faceBounds = [facesCache objectForKey:assetURL];
-        if (faceBounds) {
-            [faceBounds addObject:[NSValue valueWithCGRect:face.bounds]];
-        } else {
-            faceBounds = [[NSMutableArray alloc] init];
-            [faceBounds addObject:[NSValue valueWithCGRect:face.bounds]];
-            [facesCache setObject:faceBounds forKey:assetURL];
-        }
-    }
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:facesCache];
-    [data writeToFile:self.facesCachePath atomically:YES];*/
-}
-
-- (NSString *)facesCachePath {
-    NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    return [documentsPath stringByAppendingPathComponent:@"facesCache.bin"];
-}
-
-- (NSURL *)applicationDocumentsDirectory {
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+- (NSString *)applicationDocumentsDirectory {
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 }
 
 - (void)saveContext {
@@ -276,10 +300,9 @@ static dispatch_queue_t g_queue;
 
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
     if (!_persistentStoreCoordinator) {
-        NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"Smiley.sqlite"];
-        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
-                                 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+        NSURL *applicationDocumentsDirectoryURL = [NSURL fileURLWithPath:self.applicationDocumentsDirectory];
+        NSURL *storeURL = [applicationDocumentsDirectoryURL URLByAppendingPathComponent:@"Smiley.sqlite"];
+        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
         NSError *error = nil;
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
         if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {

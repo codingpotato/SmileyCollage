@@ -8,11 +8,11 @@
 
 @interface CPFace : NSManagedObject
 
-@property (nonatomic, retain) NSNumber *index;
 @property (nonatomic, retain) NSNumber *x;
 @property (nonatomic, retain) NSNumber *y;
 @property (nonatomic, retain) NSNumber *width;
 @property (nonatomic, retain) NSNumber *height;
+@property (nonatomic, retain) NSString *thumbnail;
 @property (nonatomic, retain) NSManagedObject *photo;
 
 + (CPFace *)createFaceInManagedObjectContext:(NSManagedObjectContext *)context;

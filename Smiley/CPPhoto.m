@@ -19,11 +19,11 @@
     return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
 }
 
-+ (CPPhoto *)photoOfURL:(NSURL *)url inManagedObjectContext:(NSManagedObjectContext *)context {
++ (CPPhoto *)photoOfURL:(NSString *)url inManagedObjectContext:(NSManagedObjectContext *)context {
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:entityDescription];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"url == %@", url.absoluteString];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"url == %@", url];
     [request setPredicate:predicate];
     
     NSArray *array = [context executeFetchRequest:request error:nil];
@@ -35,16 +35,6 @@
 }
 
 + (void)clearPhotosNotEqualSequenceNumber:(NSNumber *)sequenceNumber fromManagedObjectContext:(NSManagedObjectContext *)context {
-    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:entityDescription];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sequenceNumber != %@", sequenceNumber];
-    [request setPredicate:predicate];
-    
-    NSArray *photoArray = [context executeFetchRequest:request error:nil];
-    for (CPPhoto *photo in photoArray) {
-        [context deleteObject:photo];
-    }
 }
 
 @end

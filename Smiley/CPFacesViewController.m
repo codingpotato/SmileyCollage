@@ -1,18 +1,24 @@
 //
-//  CPPhotosViewController.m
+//  CPFacesViewController.m
 //  Smiley
 //
 //  Created by wangyw on 3/2/14.
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import "CPPhotosViewController.h"
+#import "CPFacesViewController.h"
 
 #import "CPFace.h"
 #import "CPFacesManager.h"
 #import "CPPhotoCell.h"
 
-@implementation CPPhotosViewController
+@interface CPFacesViewController ()
+
+@property (nonatomic) NSUInteger currentCount;
+
+@end
+
+@implementation CPFacesViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -33,14 +39,10 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
-    /*CPFace *face = [[CPFacesController defaultController].faces objectAtIndex:indexPath.row];
-    CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, face.bounds);
-    // TODO: scale the image to 100.0
-    cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:face.bounds.size.width / 100.0 orientation:UIImageOrientationUp];
-    CGImageRelease(faceImage);
+    cell.imageView.image = [[CPFacesManager defaultManager] thumbnailByIndex:indexPath.row];
     
-    cell.selectedIndicator.hidden = face.isSelected ? NO : YES;
-    cell.selectedIndicator.layer.cornerRadius = 5.0;*/
+    cell.selectedIndicator.hidden = YES;
+    cell.selectedIndicator.layer.cornerRadius = 5.0;
     
     return cell;
 }
@@ -61,6 +63,17 @@
 
 - (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
     self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", controller.fetchedObjects.count];
+}
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+    switch (type) {
+        case NSFetchedResultsChangeInsert:
+            [self.collectionView reloadData];
+            //[self.collectionView insertItemsAtIndexPaths:@[newIndexPath]];
+            break;
+        default:
+            break;
+    }
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
