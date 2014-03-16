@@ -8,8 +8,13 @@
 
 @interface CPConfig : NSManagedObject
 
-@property (nonatomic, retain) NSNumber *sequenceNumber;
+@property (strong, nonatomic) NSNumber *nextFaceId;
+@property (strong, nonatomic) NSNumber *sequenceNumber;
 
 + (CPConfig *)configInManagedObjectContext:(NSManagedObjectContext *)context;
+
+- (void)increaseNextFaceId;
+
+- (void)increaseSequenceNumber;
 
 @end

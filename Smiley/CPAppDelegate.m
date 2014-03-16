@@ -13,7 +13,6 @@
 @implementation CPAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    [[CPFacesManager defaultManager] detectFaces];
     return YES;
 }
 							

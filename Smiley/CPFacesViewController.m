@@ -23,8 +23,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [CPFacesManager defaultManager].facesController.delegate = self;
-    self.navigationItem.title = @"Smiles Searching: 0";
+    CPFacesManager *faceManager = [CPFacesManager defaultManager];
+    faceManager.facesController.delegate = self;
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", faceManager.facesController.fetchedObjects.count];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -38,8 +39,7 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
     cell.imageView.image = [[CPFacesManager defaultManager] thumbnailByIndex:indexPath.row];
-    
-    cell.selectedIndicator.hidden = YES;
+    cell.selectedIndicator.hidden = ![[CPFacesManager defaultManager] isFaceSlectedByIndex:indexPath.row];
     cell.selectedIndicator.layer.cornerRadius = 5.0;
     
     return cell;
@@ -59,19 +59,9 @@
 
 #pragma mark - NSFetchedResultsControllerDelegate implement
 
-- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", controller.fetchedObjects.count];
-}
-
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
-    switch (type) {
-        case NSFetchedResultsChangeInsert:
-            [self.collectionView reloadData];
-            //[self.collectionView insertItemsAtIndexPaths:@[newIndexPath]];
-            break;
-        default:
-            break;
-    }
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", controller.fetchedObjects.count];
+    [self.collectionView reloadData];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement

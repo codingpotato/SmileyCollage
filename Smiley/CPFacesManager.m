@@ -18,7 +18,7 @@
 
 @property (strong, nonatomic) ALAssetsLibrary *assetsLibrary;
 
-@property (strong, nonatomic) NSNumber *sequenceNumber;
+@property (strong, nonatomic) CPConfig *config;
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -48,6 +48,8 @@ static CPFacesManager *g_facesController = nil;
         if (![fileManager fileExistsAtPath:thumbnailPath]) {
             [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
+        
+        [self.config increaseSequenceNumber];
     }
     return self;
 }
@@ -107,17 +109,20 @@ static CPFacesManager *g_facesController = nil;
             NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
             CPPhoto *photo = [CPPhoto photoOfURL:assetURL.absoluteString inManagedObjectContext:self.managedObjectContext];
             if (photo) {
-                photo.sequenceNumber = self.sequenceNumber;
+                photo.sequenceNumber = self.config.sequenceNumber;
             } else {
                 photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
                 photo.url = assetURL.absoluteString;
-                photo.sequenceNumber = self.sequenceNumber;
+                photo.sequenceNumber = self.config.sequenceNumber;
                 CGImageRef image = asset.defaultRepresentation.fullScreenImage;
                 CGFloat width = CGImageGetWidth(image);
                 CGFloat height = CGImageGetHeight(image);
                 NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
                 for (CIFeature *feature in features) {
                     CPFace *face = [CPFace createFaceInManagedObjectContext:self.managedObjectContext];
+                    face.id = self.config.nextFaceId;
+                    [self.config increaseNextFaceId];
+
                     // reverse rectangle in y, because coordinate system of core image is different
                     CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
                     CGFloat enlargeSize = bounds.size.width / 3;
@@ -147,7 +152,7 @@ static CPFacesManager *g_facesController = nil;
 }
 
 - (void)removeExpiredPhotos {
-    NSArray *expiredPhotos = [CPPhoto expiredPhotosWithSequenceNumber:self.sequenceNumber fromManagedObjectContext:self.managedObjectContext];
+    NSArray *expiredPhotos = [CPPhoto expiredPhotosWithSequenceNumber:self.config.sequenceNumber fromManagedObjectContext:self.managedObjectContext];
     for (CPPhoto *photo in expiredPhotos) {
         for (CPFace *face in photo.faces) {
             NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
@@ -174,15 +179,19 @@ static CPFacesManager *g_facesController = nil;
 }
 
 - (void)selectFaceByIndex:(NSUInteger)index {
-    /*if (index < self.faces.count) {
-        CPFace * face = [self.faces objectAtIndex:index];
-        face.isSelected = !face.isSelected;
-        if (face.isSelected) {
-            [self.selectedFaces addObject:face];
-        } else {
+    if (index < self.facesController.fetchedObjects.count) {
+        CPFace * face = [self.facesController.fetchedObjects objectAtIndex:index];
+        if ([self.selectedFaces containsObject:face]) {
             [self.selectedFaces removeObject:face];
+        } else {
+            [self.selectedFaces addObject:face];
         }
-    }*/
+    }
+}
+
+- (BOOL)isFaceSlectedByIndex:(NSUInteger)index {
+    CPFace * face = [self.facesController.fetchedObjects objectAtIndex:index];
+    return [self.selectedFaces containsObject:face];
 }
 
 - (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2 {
@@ -270,11 +279,18 @@ static CPFacesManager *g_facesController = nil;
     if (!_facesController) {
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         request.entity = [NSEntityDescription entityForName:NSStringFromClass([CPFace class]) inManagedObjectContext:self.managedObjectContext];
-        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"photo.url" ascending:YES], nil];
+        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"id" ascending:YES], nil];
         _facesController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPFaceCache"];
         [_facesController performFetch:nil];
     }
     return _facesController;
+}
+
+- (NSMutableArray *)selectedFaces {
+    if (!_selectedFaces) {
+        _selectedFaces = [[NSMutableArray alloc] init];
+    }
+    return _selectedFaces;
 }
 
 - (NSOperationQueue *)queue {
@@ -292,13 +308,11 @@ static CPFacesManager *g_facesController = nil;
     return _assetsLibrary;
 }
 
-- (NSNumber *)sequenceNumber {
-    if (!_sequenceNumber) {
-        CPConfig *config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
-        config.sequenceNumber = [NSNumber numberWithInteger:config.sequenceNumber.integerValue + 1];
-        _sequenceNumber = config.sequenceNumber;
+- (CPConfig *)config {
+    if (!_config) {
+        _config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
     }
-    return _sequenceNumber;
+    return _config;
 }
 
 - (NSManagedObjectContext *)managedObjectContext {

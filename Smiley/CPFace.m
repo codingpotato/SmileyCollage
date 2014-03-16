@@ -10,6 +10,7 @@
 
 @implementation CPFace
 
+@dynamic id;
 @dynamic x;
 @dynamic y;
 @dynamic width;

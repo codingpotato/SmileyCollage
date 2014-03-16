@@ -10,6 +10,7 @@
 
 @implementation CPConfig
 
+@dynamic nextFaceId;
 @dynamic sequenceNumber;
 
 + (CPConfig *)configInManagedObjectContext:(NSManagedObjectContext *)context {
@@ -22,6 +23,7 @@
     CPConfig *config = nil;
     if (array.count == 0) {
         config = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
+        config.nextFaceId = 0;
         config.sequenceNumber = 0;
     } else if (array.count == 1) {
         config = [array objectAtIndex:0];
@@ -29,6 +31,14 @@
         NSAssert(NO, @"");
     }
     return config;
+}
+
+- (void)increaseNextFaceId {
+    self.nextFaceId = [NSNumber numberWithInteger:self.nextFaceId.integerValue + 1];
+}
+
+- (void)increaseSequenceNumber {
+    self.sequenceNumber = [NSNumber numberWithInteger:self.sequenceNumber.integerValue + 1];
 }
 
 @end

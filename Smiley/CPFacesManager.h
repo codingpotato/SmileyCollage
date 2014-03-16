@@ -10,6 +10,8 @@
 
 @property (strong, nonatomic) NSFetchedResultsController *facesController;
 
+@property (strong, nonatomic) NSMutableArray *selectedFaces;
+
 + (CPFacesManager *)defaultManager;
 
 - (void)cleanup;
@@ -19,6 +21,8 @@
 - (UIImage *)thumbnailByIndex:(NSUInteger)index;
 
 - (void)selectFaceByIndex:(NSUInteger)index;
+
+- (BOOL)isFaceSlectedByIndex:(NSUInteger)index;
 
 - (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2;
 
