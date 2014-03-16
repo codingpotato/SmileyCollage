@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
+@class CPFace;
+
 @interface CPFacesManager : NSObject
 
 @property (strong, nonatomic) NSFetchedResultsController *facesController;
@@ -23,6 +25,8 @@
 - (void)selectFaceByIndex:(NSUInteger)index;
 
 - (BOOL)isFaceSlectedByIndex:(NSUInteger)index;
+
+- (void)assertOfSelectedFaceByIndex:(NSUInteger)index resultBlock:(void (^)(ALAsset *asset))resultBlock;
 
 - (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2;
 

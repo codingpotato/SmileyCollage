@@ -10,19 +10,19 @@
 
 @interface CPPhoto : NSManagedObject
 
-@property (nonatomic, retain) NSNumber *sequenceNumber;
-@property (nonatomic, retain) NSString *url;
-@property (nonatomic, retain) NSSet *faces;
-
-@end
-
-@interface CPPhoto (CoreDataGeneratedAccessors)
+@property (strong, nonatomic) NSNumber *sequenceNumber;
+@property (strong, nonatomic) NSString *url;
+@property (strong, nonatomic) NSSet *faces;
 
 + (CPPhoto *)createPhotoInManagedObjectContext:(NSManagedObjectContext *)context;
 
 + (CPPhoto *)photoOfURL:(NSString *)url inManagedObjectContext:(NSManagedObjectContext *)context;
 
 + (NSArray *)expiredPhotosWithSequenceNumber:(NSNumber *)sequenceNumber fromManagedObjectContext:(NSManagedObjectContext *)context;
+
+@end
+
+@interface CPPhoto (CoreDataGeneratedAccessors)
 
 - (void)addFacesObject:(CPFace *)value;
 - (void)removeFacesObject:(CPFace *)value;

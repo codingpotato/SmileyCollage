@@ -12,4 +12,6 @@
 
 @property (weak, nonatomic) CPFace *face;
 
+@property (weak, nonatomic) NSValue *userBound;
+
 @end

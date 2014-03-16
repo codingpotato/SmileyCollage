@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
+@class CPPhoto;
+
 @interface CPFace : NSManagedObject
 
 @property (strong, nonatomic) NSNumber *id;
@@ -14,7 +16,7 @@
 @property (strong, nonatomic) NSNumber *width;
 @property (strong, nonatomic) NSNumber *height;
 @property (strong, nonatomic) NSString *thumbnail;
-@property (strong, nonatomic) NSManagedObject *photo;
+@property (strong, nonatomic) CPPhoto *photo;
 
 + (CPFace *)createFaceInManagedObjectContext:(NSManagedObjectContext *)context;
 

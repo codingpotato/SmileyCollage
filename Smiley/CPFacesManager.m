@@ -194,6 +194,12 @@ static CPFacesManager *g_facesController = nil;
     return [self.selectedFaces containsObject:face];
 }
 
+- (void)assertOfSelectedFaceByIndex:(NSUInteger)index resultBlock:(void (^)(ALAsset *))resultBlock {
+    CPFace *face = [self.selectedFaces objectAtIndex:index];
+    NSURL *assetURL = [NSURL URLWithString:face.photo.url];
+    [self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
+}
+
 - (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2 {
     /*NSObject *object1 = [self.selectedFaces objectAtIndex:index1];
     NSObject *object2 = [self.selectedFaces objectAtIndex:index2];

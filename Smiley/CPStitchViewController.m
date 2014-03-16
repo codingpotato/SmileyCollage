@@ -11,11 +11,14 @@
 #import "CPEditViewController.h"
 #import "CPFace.h"
 #import "CPFacesManager.h"
+#import "CPPhoto.h"
 #import "CPStitchCell.h"
 
 @interface CPStitchViewController ()
 
 @property (nonatomic) NSInteger selectedIndex;
+
+@property (strong, nonatomic) NSMutableArray *userBounds;
 
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
@@ -28,14 +31,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    /*for (CPFace *face in [CPFacesController defaultController].selectedFaces) {
-        face.userBounds = CGRectZero;
-    }*/
     self.selectedIndex = -1;
+    
+    [self.userBounds removeAllObjects];
+    for (CPFace *face in [CPFacesManager defaultManager].selectedFaces) {
+        [self.userBounds addObject:[NSValue valueWithCGRect:CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue)]];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    
     if (self.selectedIndex != -1) {
         [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.selectedIndex inSection:0]]];
         self.selectedIndex = -1;
@@ -48,8 +54,11 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
-        //CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
-        //editViewController.face = [[CPFacesManager defaultController].selectedFaces objectAtIndex:self.selectedIndex];
+        NSAssert(self.selectedIndex >= 0 && self.selectedIndex < [CPFacesManager defaultManager].selectedFaces.count, @"");
+        
+        CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
+        editViewController.face = [[CPFacesManager defaultManager].selectedFaces objectAtIndex:self.selectedIndex];
+        editViewController.userBound = [self.userBounds objectAtIndex:self.selectedIndex];
     }
 }
 
@@ -110,18 +119,18 @@
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    //return [CPFacesManager defaultController].selectedFaces.count;
-    return 0;
+    return [CPFacesManager defaultManager].selectedFaces.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
-    /*CPFace *face = [[CPFacesController defaultController].selectedFaces objectAtIndex:indexPath.row];
-    CGRect bounds = CGRectEqualToRect(face.userBounds, CGRectZero) ? face.bounds : face.userBounds;
-    CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, bounds);
-    cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
-    CGImageRelease(faceImage);*/
     
+    [[CPFacesManager defaultManager] assertOfSelectedFaceByIndex:indexPath.row resultBlock:^(ALAsset *asset) {
+        CGRect bounds = ((NSValue *)[self.userBounds objectAtIndex:indexPath.row]).CGRectValue;
+        CGImageRef faceImage = CGImageCreateWithImageInRect(asset.defaultRepresentation.fullScreenImage, bounds);
+        cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
+        CGImageRelease(faceImage);
+    }];
     return cell;
 }
 
@@ -140,8 +149,8 @@
 }
 
 - (NSUInteger)rowsOfStitchCell {
-    //float rows = sqrtf([CPFacesManager defaultController].selectedFaces.count);
-    //return (NSUInteger)rows == rows ? rows : rows + 1;
+    float rows = sqrtf([CPFacesManager defaultManager].selectedFaces.count);
+    return (NSUInteger)rows == rows ? rows : rows + 1;
     return 0;
 }
 
@@ -169,6 +178,15 @@
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
     return 0.0;
+}
+
+#pragma mark - lazy init
+
+- (NSMutableArray *)userBounds {
+    if (!_userBounds) {
+        _userBounds = [[NSMutableArray alloc] init];
+    }
+    return _userBounds;
 }
 
 @end
