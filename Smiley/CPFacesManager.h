@@ -12,6 +12,8 @@
 
 + (CPFacesManager *)defaultManager;
 
+- (void)cleanup;
+
 - (void)detectFaces;
 
 - (UIImage *)thumbnailByIndex:(NSUInteger)index;

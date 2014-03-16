@@ -34,7 +34,13 @@
     }
 }
 
-+ (void)clearPhotosNotEqualSequenceNumber:(NSNumber *)sequenceNumber fromManagedObjectContext:(NSManagedObjectContext *)context {
++ (NSArray *)expiredPhotosWithSequenceNumber:(NSNumber *)sequenceNumber fromManagedObjectContext:(NSManagedObjectContext *)context {
+    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CPPhoto" inManagedObjectContext:context];
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:entityDescription];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sequenceNumber != %@", sequenceNumber];
+    [request setPredicate:predicate];
+    return [context executeFetchRequest:request error:nil];
 }
 
 @end

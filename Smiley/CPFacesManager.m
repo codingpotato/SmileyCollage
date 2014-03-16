@@ -14,7 +14,11 @@
 
 @interface CPFacesManager ()
 
+@property (strong, nonatomic) NSOperationQueue *queue;
+
 @property (strong, nonatomic) ALAssetsLibrary *assetsLibrary;
+
+@property (strong, nonatomic) NSNumber *sequenceNumber;
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
@@ -28,7 +32,6 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 static NSString *g_thumbnailDirectory = @"thumbnail";
 
 static CPFacesManager *g_facesController = nil;
-static dispatch_queue_t g_queue;
 
 + (CPFacesManager *)defaultManager {
     if (!g_facesController) {
@@ -40,8 +43,6 @@ static dispatch_queue_t g_queue;
 - (id)init {
     self = [super init];
     if (self) {
-        g_queue = dispatch_queue_create("codingpotato.SmileyQueue", NULL);
-        
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSString *thumbnailPath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory];
         if (![fileManager fileExistsAtPath:thumbnailPath]) {
@@ -49,6 +50,14 @@ static dispatch_queue_t g_queue;
         }
     }
     return self;
+}
+
+- (void)cleanup {
+    [self.queue cancelAllOperations];
+    [self.queue waitUntilAllOperationsAreFinished];
+
+    [self removeExpiredPhotos];
+    [self saveContext];
 }
 
 - (void)detectFaces {
@@ -66,47 +75,31 @@ static dispatch_queue_t g_queue;
                 }];
             }
         } else {
-            CPConfig *config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
-            config.sequenceNumber = [NSNumber numberWithInteger:config.sequenceNumber.integerValue + 1];
-            
             [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos | ALAssetsGroupLibrary usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
                 if (group) {
                     [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                         if (result) {
                             NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
                             if (![smileyPhotos containsObject:assetURL.absoluteString]) {
-                                [self detectFacesFromAsset:result sequenceNumber:config.sequenceNumber];
+                                [self detectFacesFromAsset:result];
                             }
                         }
                     }];
                 } else {
-                    dispatch_async(g_queue, ^{
+                    [self.queue addOperationWithBlock:^{
                         @autoreleasepool {
-                            NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CPPhoto" inManagedObjectContext:self.managedObjectContext];
-                            NSFetchRequest *request = [[NSFetchRequest alloc] init];
-                            [request setEntity:entityDescription];
-                            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sequenceNumber != %@", config.sequenceNumber];
-                            [request setPredicate:predicate];
-                            
-                            NSArray *photoArray = [self.managedObjectContext executeFetchRequest:request error:nil];
-                            for (CPPhoto *photo in photoArray) {
-                                for (CPFace *face in photo.faces) {
-                                    NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
-                                    [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-                                }
-                                [self.managedObjectContext deleteObject:photo];
-                            }
+                            [self removeExpiredPhotos];
                             [self saveContext];
                         }
-                    });
+                    }];
                 }
             } failureBlock:nil];
         }
     } failureBlock:nil];
 }
 
-- (void)detectFacesFromAsset:(ALAsset *)asset sequenceNumber:(NSNumber *)sequenceNumber {
-    dispatch_async(g_queue, ^{
+- (void)detectFacesFromAsset:(ALAsset *)asset {
+    [self.queue addOperationWithBlock:^{
         @autoreleasepool {
             CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
             NSDictionary *options = @{CIDetectorSmile: @(YES), CIDetectorEyeBlink: @(YES)};
@@ -114,11 +107,11 @@ static dispatch_queue_t g_queue;
             NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
             CPPhoto *photo = [CPPhoto photoOfURL:assetURL.absoluteString inManagedObjectContext:self.managedObjectContext];
             if (photo) {
-                photo.sequenceNumber = sequenceNumber;
+                photo.sequenceNumber = self.sequenceNumber;
             } else {
                 photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
                 photo.url = assetURL.absoluteString;
-                photo.sequenceNumber = sequenceNumber;
+                photo.sequenceNumber = self.sequenceNumber;
                 CGImageRef image = asset.defaultRepresentation.fullScreenImage;
                 CGFloat width = CGImageGetWidth(image);
                 CGFloat height = CGImageGetHeight(image);
@@ -150,7 +143,18 @@ static dispatch_queue_t g_queue;
                 }
             }
         }
-    });
+    }];
+}
+
+- (void)removeExpiredPhotos {
+    NSArray *expiredPhotos = [CPPhoto expiredPhotosWithSequenceNumber:self.sequenceNumber fromManagedObjectContext:self.managedObjectContext];
+    for (CPPhoto *photo in expiredPhotos) {
+        for (CPFace *face in photo.faces) {
+            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+            [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+        }
+        [self.managedObjectContext deleteObject:photo];
+    }
 }
 
 - (UIImage *)thumbnailByIndex:(NSUInteger)index {
@@ -162,7 +166,8 @@ static dispatch_queue_t g_queue;
 - (void)writeThumbnailToPath:(NSString *)filePath fromImage:(CGImageRef)image bounds:(CGRect)bounds {
     CGImageRef faceImage = CGImageCreateWithImageInRect(image, bounds);
     // TODO: scale the image to 100.0
-    UIImage *thumbnail = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / 100.0 orientation:UIImageOrientationUp];
+    CGFloat width = MIN(bounds.size.width, 100.0);
+    UIImage *thumbnail = [UIImage imageWithCGImage:faceImage scale:width orientation:UIImageOrientationUp];
     CGImageRelease(faceImage);
     NSData *imageData = UIImageJPEGRepresentation(thumbnail, 0.5);
     [imageData writeToFile:filePath atomically:YES];
@@ -265,11 +270,19 @@ static dispatch_queue_t g_queue;
     if (!_facesController) {
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         request.entity = [NSEntityDescription entityForName:NSStringFromClass([CPFace class]) inManagedObjectContext:self.managedObjectContext];
-        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"x" ascending:YES], nil];
+        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"photo.url" ascending:YES], nil];
         _facesController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPFaceCache"];
         [_facesController performFetch:nil];
     }
     return _facesController;
+}
+
+- (NSOperationQueue *)queue {
+    if (!_queue) {
+        _queue = [[NSOperationQueue alloc] init];
+        _queue.maxConcurrentOperationCount = 1;
+    }
+    return _queue;
 }
 
 - (ALAssetsLibrary *)assetsLibrary {
@@ -277,6 +290,15 @@ static dispatch_queue_t g_queue;
         _assetsLibrary = [[ALAssetsLibrary alloc] init];
     }
     return _assetsLibrary;
+}
+
+- (NSNumber *)sequenceNumber {
+    if (!_sequenceNumber) {
+        CPConfig *config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
+        config.sequenceNumber = [NSNumber numberWithInteger:config.sequenceNumber.integerValue + 1];
+        _sequenceNumber = config.sequenceNumber;
+    }
+    return _sequenceNumber;
 }
 
 - (NSManagedObjectContext *)managedObjectContext {

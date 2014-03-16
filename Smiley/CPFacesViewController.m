@@ -23,9 +23,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    CPFacesManager *facesManager = [CPFacesManager defaultManager];
-    facesManager.facesController.delegate = self;
-    [facesManager detectFaces];
+    [CPFacesManager defaultManager].facesController.delegate = self;
     self.navigationItem.title = @"Smiles Searching: 0";
 }
 

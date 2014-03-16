@@ -22,7 +22,7 @@
 
 + (CPPhoto *)photoOfURL:(NSString *)url inManagedObjectContext:(NSManagedObjectContext *)context;
 
-+ (void)clearPhotosNotEqualSequenceNumber:(NSNumber *)sequenceNumber fromManagedObjectContext:(NSManagedObjectContext *)context;
++ (NSArray *)expiredPhotosWithSequenceNumber:(NSNumber *)sequenceNumber fromManagedObjectContext:(NSManagedObjectContext *)context;
 
 - (void)addFacesObject:(CPFace *)value;
 - (void)removeFacesObject:(CPFace *)value;
