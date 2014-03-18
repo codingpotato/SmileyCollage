@@ -32,6 +32,7 @@
 		FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1818D42E4100748335 /* CPPhoto.m */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
 		FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD844C318C761C3003BA834 /* CoreImage.framework */; };
+		FCEF793E18D880A2007DBC86 /* CPAssetsLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = FCEF793D18D880A2007DBC86 /* CPAssetsLibrary.m */; };
 		FCF8FE9618C2D016007FA358 /* CPFacesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9518C2D016007FA358 /* CPFacesViewController.m */; };
 		FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */; };
 		FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */; };
@@ -86,6 +87,9 @@
 		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
 		FCD844C318C761C3003BA834 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		FCEF793C18D880A2007DBC86 /* CPAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAssetsLibrary.h; sourceTree = "<group>"; };
+		FCEF793D18D880A2007DBC86 /* CPAssetsLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPAssetsLibrary.m; sourceTree = "<group>"; };
+		FCEF793F18D8925F007DBC86 /* CPAssetsLibraryProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPAssetsLibraryProtocol.h; sourceTree = "<group>"; };
 		FCF8FE9418C2D016007FA358 /* CPFacesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesViewController.h; sourceTree = "<group>"; };
 		FCF8FE9518C2D016007FA358 /* CPFacesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesViewController.m; sourceTree = "<group>"; };
 		FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -169,14 +173,17 @@
 			children = (
 				FC46714E18C2CAF600E472BF /* CPAppDelegate.h */,
 				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
+				FCEF793C18D880A2007DBC86 /* CPAssetsLibrary.h */,
+				FCEF793D18D880A2007DBC86 /* CPAssetsLibrary.m */,
+				FCEF793F18D8925F007DBC86 /* CPAssetsLibraryProtocol.h */,
 				FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */,
 				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
 				FC93443718C363F500657BBC /* CPFacesManager.h */,
 				FC93443818C363F500657BBC /* CPFacesManager.m */,
-				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
-				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 				FCF8FE9418C2D016007FA358 /* CPFacesViewController.h */,
 				FCF8FE9518C2D016007FA358 /* CPFacesViewController.m */,
+				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
+				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 				FC80EC6518C9F797008E83B6 /* CPStitchCell.h */,
 				FC80EC6618C9F797008E83B6 /* CPStitchCell.m */,
 				FC80EC6218C9F5D2008E83B6 /* CPStitchViewController.h */,
@@ -331,6 +338,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCEF793E18D880A2007DBC86 /* CPAssetsLibrary.m in Sources */,
 				FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */,
 				FC46714C18C2CAF600E472BF /* main.m in Sources */,
 				FC80EC6418C9F5D2008E83B6 /* CPStitchViewController.m in Sources */,

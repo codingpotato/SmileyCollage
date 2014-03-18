@@ -12,9 +12,11 @@
 #import "CPFacesManager.h"
 #import "CPPhotoCell.h"
 
+#import "CPAssetsLibrary.h"
+
 @interface CPFacesViewController ()
 
-@property (nonatomic) NSUInteger currentCount;
+@property (strong, nonatomic) CPAssetsLibrary *assetsLibrary;
 
 @end
 
@@ -23,9 +25,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    CPFacesManager *faceManager = [CPFacesManager defaultManager];
+    /*CPFacesManager *faceManager = [CPFacesManager defaultManager];
     faceManager.facesController.delegate = self;
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", faceManager.facesController.fetchedObjects.count];
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", faceManager.facesController.fetchedObjects.count];*/
+    [self.assetsLibrary detectFacesBySkipAssetBlock:^BOOL(NSString *assetURL) {
+        return NO;
+    } resultBlock:^(NSString *assetURL, NSMutableArray *boundsOfFaces) {
+        NSLog(@"[%@] - %@", assetURL, boundsOfFaces);
+    } completionBlock:^{
+        NSLog(@"Finished!");
+    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,6 +85,15 @@
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
     return 1.0;
+}
+
+#pragma mark - lazy init
+
+- (CPAssetsLibrary *)assetsLibrary {
+    if (!_assetsLibrary) {
+        _assetsLibrary = [[CPAssetsLibrary alloc] init];
+    }
+    return _assetsLibrary;
 }
 
 @end

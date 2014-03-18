@@ -8,27 +8,36 @@
 
 #import <XCTest/XCTest.h>
 
+#import "CPAssetsLibrary.h"
+
 @interface SmileyTests : XCTestCase
 
 @end
 
 @implementation SmileyTests
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
 }
 
-- (void)tearDown
-{
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
+- (void)tearDown {
     [super tearDown];
 }
 
-- (void)testExample
-{
-    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
+- (void)testExample {
+    __block BOOL completion = NO;
+    CPAssetsLibrary *assetsLibrary = [[CPAssetsLibrary alloc] init];
+    [assetsLibrary detectFacesBySkipAssetBlock:^BOOL(NSString *assetURL) {
+        return NO;
+    } resultBlock:^(NSString *assetURL, NSMutableArray *boundsOfFaces) {
+        NSLog(@"[%@] - %@", assetURL, boundsOfFaces);
+    } completionBlock:^{
+        NSLog(@"Finished!");
+        completion = YES;
+    }];
+    
+    while (!completion) {
+    }
 }
 
 @end
