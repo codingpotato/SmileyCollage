@@ -34,9 +34,9 @@
     self.selectedIndex = -1;
     
     [self.userBounds removeAllObjects];
-    for (CPFace *face in [CPFacesManager defaultManager].selectedFaces) {
+    /*for (CPFace *face in [CPFacesManager defaultManager].selectedFaces) {
         [self.userBounds addObject:[NSValue valueWithCGRect:CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue)]];
-    }
+    }*/
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -54,10 +54,10 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
-        NSAssert(self.selectedIndex >= 0 && self.selectedIndex < [CPFacesManager defaultManager].selectedFaces.count, @"");
+        // NSAssert(self.selectedIndex >= 0 && self.selectedIndex < [CPFacesManager defaultManager].selectedFaces.count, @"");
         
         CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
-        editViewController.face = [[CPFacesManager defaultManager].selectedFaces objectAtIndex:self.selectedIndex];
+        // editViewController.face = [[CPFacesManager defaultManager].selectedFaces objectAtIndex:self.selectedIndex];
         editViewController.userBound = [self.userBounds objectAtIndex:self.selectedIndex];
     }
 }
@@ -104,7 +104,7 @@
             NSIndexPath *indexPath1 = [self.collectionView indexPathForCell:self.draggedCell];
             NSIndexPath *indexPath2 = [self.collectionView indexPathForCell:droppedCell];
             if (indexPath1 && indexPath2) {
-                [[CPFacesManager defaultManager] exchangeSelectedFacesByIndex1:indexPath1.row withIndex2:indexPath2.row];
+                // [[CPFacesManager defaultManager] exchangeSelectedFacesByIndex1:indexPath1.row withIndex2:indexPath2.row];
                 [self.collectionView reloadItemsAtIndexPaths:@[indexPath1, indexPath2]];
             }
         }
@@ -119,18 +119,19 @@
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [CPFacesManager defaultManager].selectedFaces.count;
+    // return [CPFacesManager defaultManager].selectedFaces.count;
+    return 0;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
     
-    [[CPFacesManager defaultManager] assertOfSelectedFaceByIndex:indexPath.row resultBlock:^(ALAsset *asset) {
+    /*[[CPFacesManager defaultManager] assertOfSelectedFaceByIndex:indexPath.row resultBlock:^(ALAsset *asset) {
         CGRect bounds = ((NSValue *)[self.userBounds objectAtIndex:indexPath.row]).CGRectValue;
         CGImageRef faceImage = CGImageCreateWithImageInRect(asset.defaultRepresentation.fullScreenImage, bounds);
         cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
         CGImageRelease(faceImage);
-    }];
+    }];*/
     return cell;
 }
 
@@ -149,8 +150,8 @@
 }
 
 - (NSUInteger)rowsOfStitchCell {
-    float rows = sqrtf([CPFacesManager defaultManager].selectedFaces.count);
-    return (NSUInteger)rows == rows ? rows : rows + 1;
+    // float rows = sqrtf([CPFacesManager defaultManager].selectedFaces.count);
+    // return (NSUInteger)rows == rows ? rows : rows + 1;
     return 0;
 }
 
@@ -159,7 +160,7 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
         case 0:
-            [[CPFacesManager defaultManager] saveStitchedImage];
+            // [[CPFacesManager defaultManager] saveStitchedImage];
             break;
         default:
             break;

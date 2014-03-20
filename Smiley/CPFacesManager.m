@@ -8,15 +8,15 @@
 
 #import "CPFacesManager.h"
 
+#import "CPAssetsLibraryProtocol.h"
+
 #import "CPConfig.h"
 #import "CPFace.h"
 #import "CPPhoto.h"
 
 @interface CPFacesManager ()
 
-@property (strong, nonatomic) NSOperationQueue *queue;
-
-@property (strong, nonatomic) ALAssetsLibrary *assetsLibrary;
+@property (strong, nonatomic) id<CPAssetsLibraryProtocol> assetsLibrary;
 
 @property (strong, nonatomic) CPConfig *config;
 
@@ -28,126 +28,62 @@
 
 @implementation CPFacesManager
 
-static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 static NSString *g_thumbnailDirectory = @"thumbnail";
 
-static CPFacesManager *g_facesController = nil;
-
-+ (CPFacesManager *)defaultManager {
-    if (!g_facesController) {
-        g_facesController = [[CPFacesManager alloc] init];
-    }
-    return g_facesController;
-}
-
-- (id)init {
+- (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary {
     self = [super init];
     if (self) {
+        self.assetsLibrary = assetsLibrary;
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSString *thumbnailPath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory];
         if (![fileManager fileExistsAtPath:thumbnailPath]) {
             [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
-        
-        [self.config increaseSequenceNumber];
     }
     return self;
 }
 
-- (void)cleanup {
-    [self.queue cancelAllOperations];
-    [self.queue waitUntilAllOperationsAreFinished];
-
-    [self removeExpiredPhotos];
-    [self saveContext];
-}
-
-- (void)detectFaces {
-    NSMutableArray *smileyPhotos = [[NSMutableArray alloc] init];
-    [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-        if (group) {
-            if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
-                [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                    if (result) {
-                        NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
-                        [smileyPhotos addObject:assetURL.absoluteString];
-                    } else {
-                        *stop = YES;
-                    }
-                }];
-            }
+- (void)scanFaces {
+    [self.config increaseSequenceNumber];
+    [self.assetsLibrary scanFacesBySkipAssetBlock:^BOOL(NSString *assetURL) {
+        CPPhoto *photo = [CPPhoto photoOfURL:assetURL inManagedObjectContext:self.managedObjectContext];
+        if (photo) {
+            photo.sequenceNumber = self.config.sequenceNumber;
+            return YES;
         } else {
-            [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos | ALAssetsGroupLibrary usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-                if (group) {
-                    [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                        if (result) {
-                            NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
-                            if (![smileyPhotos containsObject:assetURL.absoluteString]) {
-                                [self detectFacesFromAsset:result];
-                            }
-                        }
-                    }];
-                } else {
-                    [self.queue addOperationWithBlock:^{
-                        @autoreleasepool {
-                            [self removeExpiredPhotos];
-                            [self saveContext];
-                        }
-                    }];
-                }
-            } failureBlock:nil];
+            return NO;
         }
-    } failureBlock:nil];
-}
+    } resultBlock:^(NSString *assetURL, NSMutableArray *boundsOfFaces, NSMutableArray *thumbnails) {
+        NSAssert(boundsOfFaces.count == thumbnails.count, @"");
+        
+        CPPhoto *photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
+        photo.url = assetURL;
+        photo.sequenceNumber = self.config.sequenceNumber;
+        
+        for (NSUInteger index = 0; index < boundsOfFaces.count; ++index) {
+            CPFace *face = [CPFace createFaceInManagedObjectContext:self.managedObjectContext];
+            face.id = self.config.nextFaceId;
+            [self.config increaseNextFaceId];
+            CGRect bounds = ((NSValue *)[boundsOfFaces objectAtIndex:index]).CGRectValue;
+            face.x = [NSNumber numberWithFloat:bounds.origin.x];
+            face.y = [NSNumber numberWithFloat:bounds.origin.y];
+            face.width = [NSNumber numberWithFloat:bounds.size.width];
+            face.height = [NSNumber numberWithFloat:bounds.size.height];
+            face.photo = photo;
+            [photo addFacesObject:face];
 
-- (void)detectFacesFromAsset:(ALAsset *)asset {
-    [self.queue addOperationWithBlock:^{
-        @autoreleasepool {
-            CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
-            NSDictionary *options = @{CIDetectorSmile: @(YES), CIDetectorEyeBlink: @(YES)};
-            
-            NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
-            CPPhoto *photo = [CPPhoto photoOfURL:assetURL.absoluteString inManagedObjectContext:self.managedObjectContext];
-            if (photo) {
-                photo.sequenceNumber = self.config.sequenceNumber;
-            } else {
-                photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
-                photo.url = assetURL.absoluteString;
-                photo.sequenceNumber = self.config.sequenceNumber;
-                CGImageRef image = asset.defaultRepresentation.fullScreenImage;
-                CGFloat width = CGImageGetWidth(image);
-                CGFloat height = CGImageGetHeight(image);
-                NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
-                for (CIFeature *feature in features) {
-                    CPFace *face = [CPFace createFaceInManagedObjectContext:self.managedObjectContext];
-                    face.id = self.config.nextFaceId;
-                    [self.config increaseNextFaceId];
-
-                    // reverse rectangle in y, because coordinate system of core image is different
-                    CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
-                    CGFloat enlargeSize = bounds.size.width / 3;
-                    enlargeSize = MIN(enlargeSize, bounds.origin.x);
-                    enlargeSize = MIN(enlargeSize, bounds.origin.y);
-                    enlargeSize = MIN(enlargeSize, width - bounds.origin.x - bounds.size.width);
-                    enlargeSize = MIN(enlargeSize, height - bounds.origin.y - bounds.size.height);
-                    bounds = CGRectInset(bounds, -enlargeSize, -enlargeSize);
-                    face.x = [NSNumber numberWithFloat:bounds.origin.x];
-                    face.y = [NSNumber numberWithFloat:bounds.origin.y];
-                    face.width = [NSNumber numberWithFloat:bounds.size.width];
-                    face.height = [NSNumber numberWithFloat:bounds.size.height];
-                    face.photo = photo;
-                    [photo addFacesObject:face];
-                    
-                    CFUUIDRef uuid = CFUUIDCreate(NULL);
-                    CFStringRef uuidStr = CFUUIDCreateString(NULL, uuid);
-                    face.thumbnail = [NSString stringWithFormat:@"%@.jpg", uuidStr];
-                    CFRelease(uuidStr);
-                    CFRelease(uuid);
-                    NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
-                    [self writeThumbnailToPath:filePath fromImage:image bounds:bounds];
-                }
-            }
+            CFUUIDRef uuid = CFUUIDCreate(NULL);
+            CFStringRef uuidStr = CFUUIDCreateString(NULL, uuid);
+            face.thumbnail = [NSString stringWithFormat:@"%@.jpg", uuidStr];
+            CFRelease(uuidStr);
+            CFRelease(uuid);
+            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+            UIImage *image = [thumbnails objectAtIndex:index];
+            [UIImageJPEGRepresentation(image, 0.5) writeToFile:filePath atomically:YES];
         }
+    } completionBlock:^{
+        [self removeExpiredPhotos];
+        [self saveContext];
     }];
 }
 
@@ -166,16 +102,6 @@ static CPFacesManager *g_facesController = nil;
     CPFace *face = [self.facesController.fetchedObjects objectAtIndex:index];
     NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
     return [UIImage imageWithContentsOfFile:filePath];
-}
-
-- (void)writeThumbnailToPath:(NSString *)filePath fromImage:(CGImageRef)image bounds:(CGRect)bounds {
-    CGImageRef faceImage = CGImageCreateWithImageInRect(image, bounds);
-    // TODO: scale the image to 100.0
-    CGFloat width = MIN(bounds.size.width, 100.0);
-    UIImage *thumbnail = [UIImage imageWithCGImage:faceImage scale:width orientation:UIImageOrientationUp];
-    CGImageRelease(faceImage);
-    NSData *imageData = UIImageJPEGRepresentation(thumbnail, 0.5);
-    [imageData writeToFile:filePath atomically:YES];
 }
 
 - (void)selectFaceByIndex:(NSUInteger)index {
@@ -197,7 +123,7 @@ static CPFacesManager *g_facesController = nil;
 - (void)assertOfSelectedFaceByIndex:(NSUInteger)index resultBlock:(void (^)(ALAsset *))resultBlock {
     CPFace *face = [self.selectedFaces objectAtIndex:index];
     NSURL *assetURL = [NSURL URLWithString:face.photo.url];
-    [self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
+    //[self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
 }
 
 - (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2 {
@@ -297,21 +223,6 @@ static CPFacesManager *g_facesController = nil;
         _selectedFaces = [[NSMutableArray alloc] init];
     }
     return _selectedFaces;
-}
-
-- (NSOperationQueue *)queue {
-    if (!_queue) {
-        _queue = [[NSOperationQueue alloc] init];
-        _queue.maxConcurrentOperationCount = 1;
-    }
-    return _queue;
-}
-
-- (ALAssetsLibrary *)assetsLibrary {
-    if (!_assetsLibrary) {
-        _assetsLibrary = [[ALAssetsLibrary alloc] init];
-    }
-    return _assetsLibrary;
 }
 
 - (CPConfig *)config {

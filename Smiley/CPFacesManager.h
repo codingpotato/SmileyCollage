@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
+@protocol CPAssetsLibraryProtocol;
+
 @class CPFace;
 
 @interface CPFacesManager : NSObject
@@ -14,11 +16,9 @@
 
 @property (strong, nonatomic) NSMutableArray *selectedFaces;
 
-+ (CPFacesManager *)defaultManager;
+- (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary;
 
-- (void)cleanup;
-
-- (void)detectFaces;
+- (void)scanFaces;
 
 - (UIImage *)thumbnailByIndex:(NSUInteger)index;
 

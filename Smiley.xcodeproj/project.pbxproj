@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC1A3A3618DB2875004E4C38 /* CPFacesManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3518DB2875004E4C38 /* CPFacesManagerTests.m */; };
+		FC1A3A3918DB28F3004E4C38 /* CPMockupAssetsLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3818DB28F3004E4C38 /* CPMockupAssetsLibrary.m */; };
 		FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287418CC6A960050AD08 /* CPTransitionManager.m */; };
 		FC2B287818CC6C300050AD08 /* CPStitchEditTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287718CC6C300050AD08 /* CPStitchEditTransition.m */; };
 		FC46714018C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
@@ -21,7 +23,6 @@
 		FC46716318C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
 		FC46716418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
 		FC46716C18C2CAF600E472BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC46716A18C2CAF600E472BF /* InfoPlist.strings */; };
-		FC46716E18C2CAF600E472BF /* SmileyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC46716D18C2CAF600E472BF /* SmileyTests.m */; };
 		FC80EC6418C9F5D2008E83B6 /* CPStitchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPStitchViewController.m */; };
 		FC80EC6718C9F797008E83B6 /* CPStitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6618C9F797008E83B6 /* CPStitchCell.m */; };
 		FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */; };
@@ -49,6 +50,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FC1A3A3518DB2875004E4C38 /* CPFacesManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManagerTests.m; sourceTree = "<group>"; };
+		FC1A3A3718DB28F3004E4C38 /* CPMockupAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPMockupAssetsLibrary.h; sourceTree = "<group>"; };
+		FC1A3A3818DB28F3004E4C38 /* CPMockupAssetsLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPMockupAssetsLibrary.m; sourceTree = "<group>"; };
 		FC2B287318CC6A960050AD08 /* CPTransitionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTransitionManager.h; sourceTree = "<group>"; };
 		FC2B287418CC6A960050AD08 /* CPTransitionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTransitionManager.m; sourceTree = "<group>"; };
 		FC2B287618CC6C300050AD08 /* CPStitchEditTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchEditTransition.h; sourceTree = "<group>"; };
@@ -69,7 +73,6 @@
 		FC46716118C2CAF600E472BF /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		FC46716918C2CAF600E472BF /* SmileyTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmileyTests-Info.plist"; sourceTree = "<group>"; };
 		FC46716B18C2CAF600E472BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		FC46716D18C2CAF600E472BF /* SmileyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SmileyTests.m; sourceTree = "<group>"; };
 		FC80EC6218C9F5D2008E83B6 /* CPStitchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchViewController.h; sourceTree = "<group>"; };
 		FC80EC6318C9F5D2008E83B6 /* CPStitchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPStitchViewController.m; sourceTree = "<group>"; };
 		FC80EC6518C9F797008E83B6 /* CPStitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchCell.h; sourceTree = "<group>"; };
@@ -212,7 +215,9 @@
 		FC46716718C2CAF600E472BF /* SmileyTests */ = {
 			isa = PBXGroup;
 			children = (
-				FC46716D18C2CAF600E472BF /* SmileyTests.m */,
+				FC1A3A3518DB2875004E4C38 /* CPFacesManagerTests.m */,
+				FC1A3A3718DB28F3004E4C38 /* CPMockupAssetsLibrary.h */,
+				FC1A3A3818DB28F3004E4C38 /* CPMockupAssetsLibrary.m */,
 				FC46716818C2CAF600E472BF /* Supporting Files */,
 			);
 			path = SmileyTests;
@@ -360,7 +365,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC46716E18C2CAF600E472BF /* SmileyTests.m in Sources */,
+				FC1A3A3918DB28F3004E4C38 /* CPMockupAssetsLibrary.m in Sources */,
+				FC1A3A3618DB2875004E4C38 /* CPFacesManagerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

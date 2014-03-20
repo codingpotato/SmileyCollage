@@ -28,13 +28,6 @@
     /*CPFacesManager *faceManager = [CPFacesManager defaultManager];
     faceManager.facesController.delegate = self;
     self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", faceManager.facesController.fetchedObjects.count];*/
-    [self.assetsLibrary detectFacesBySkipAssetBlock:^BOOL(NSString *assetURL) {
-        return NO;
-    } resultBlock:^(NSString *assetURL, NSMutableArray *boundsOfFaces) {
-        NSLog(@"[%@] - %@", assetURL, boundsOfFaces);
-    } completionBlock:^{
-        NSLog(@"Finished!");
-    }];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -42,13 +35,14 @@
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [CPFacesManager defaultManager].facesController.fetchedObjects.count;
+//    return [CPFacesManager defaultManager].facesController.fetchedObjects.count;
+    return 0;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
-    cell.imageView.image = [[CPFacesManager defaultManager] thumbnailByIndex:indexPath.row];
-    cell.selectedIndicator.hidden = ![[CPFacesManager defaultManager] isFaceSlectedByIndex:indexPath.row];
+    //cell.imageView.image = [[CPFacesManager defaultManager] thumbnailByIndex:indexPath.row];
+    //cell.selectedIndicator.hidden = ![[CPFacesManager defaultManager] isFaceSlectedByIndex:indexPath.row];
     cell.selectedIndicator.layer.cornerRadius = 5.0;
     
     return cell;
@@ -62,7 +56,7 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    [[CPFacesManager defaultManager] selectFaceByIndex:indexPath.row];
+    //[[CPFacesManager defaultManager] selectFaceByIndex:indexPath.row];
     [collectionView reloadItemsAtIndexPaths:@[indexPath]];
 }
 

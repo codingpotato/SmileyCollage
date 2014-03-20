@@ -20,7 +20,7 @@
 
 static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 
-- (void)detectFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
     [self enumerateSmileyPhotosBySkipAssetBlock:skipAssetBlock resultBlock:resultBlock completionBlock:completionBlock];
 }
 
@@ -79,6 +79,7 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
             CGFloat height = CGImageGetHeight(image);
             NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image] options:options];
             NSMutableArray *boundsOfFaces = [[NSMutableArray alloc] initWithCapacity:features.count];
+            NSMutableArray *thumbnails = [[NSMutableArray alloc] initWithCapacity:features.count];
             for (CIFeature *feature in features) {
                 // reverse rectangle in y, because coordinate system of core image is different
                 CGRect bounds = CGRectMake(feature.bounds.origin.x, height - feature.bounds.origin.y - feature.bounds.size.height, feature.bounds.size.width, feature.bounds.size.height);
@@ -90,9 +91,16 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
                 enlargeSize = MIN(enlargeSize, height - bounds.origin.y - bounds.size.height);
                 bounds = CGRectInset(bounds, -enlargeSize, -enlargeSize);
                 [boundsOfFaces addObject:[NSValue valueWithCGRect:bounds]];
+
+                CGImageRef faceImage = CGImageCreateWithImageInRect(image, bounds);
+                // TODO: scale the image to 100.0
+                CGFloat width = MIN(bounds.size.width, 100.0);
+                UIImage *thumbnail = [UIImage imageWithCGImage:faceImage scale:width orientation:UIImageOrientationUp];
+                CGImageRelease(faceImage);
+                [thumbnails addObject:thumbnail];
             }
             NSURL *assetURL = [asset valueForProperty:ALAssetPropertyAssetURL];
-            resultBlock(assetURL.absoluteString, boundsOfFaces);
+            resultBlock(assetURL.absoluteString, boundsOfFaces, thumbnails);
         }
     }];
 }
