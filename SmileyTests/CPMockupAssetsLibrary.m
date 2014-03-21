@@ -8,24 +8,7 @@
 
 #import "CPMockupAssetsLibrary.h"
 
-@implementation CPMockupEmptyAssetsLibrary
-
-- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
-    for (NSUInteger i = 0; i < self.count; ++i) {
-        NSString *assetURL = [self assetURLOfIndex:i];
-        if (skipAssetBlock(assetURL)) {
-            NSMutableArray *boundsOfFaces = [self boundsOfFacesOfIndex:i];
-            NSMutableArray *thumbnails = [self thumbnailsOfIndex:i];
-            
-            NSAssert(boundsOfFaces.count == thumbnails.count, @"");
-            
-            for (NSUInteger j = 0; j < boundsOfFaces.count; ++j) {
-                resultBlock(assetURL, [boundsOfFaces objectAtIndex:j], [thumbnails objectAtIndex:j]);
-            }
-        }
-    }
-    completionBlock();
-}
+@implementation CPEmptyAssetsProvider
 
 - (NSUInteger)count {
     return 0;
@@ -39,36 +22,39 @@
     return nil;
 }
 
-- (NSString *)thumbnailsOfIndex:(NSUInteger)index {
+- (NSMutableArray *)thumbnailsOfIndex:(NSUInteger)index {
     return nil;
 }
 
 @end
 
-@interface CPMockupAssetsLibrary ()
+@interface CPAssetsProvider ()
 
-@property (nonatomic) NSUInteger numberOfAssets;
+@property (nonatomic) NSArray *assetURLs;
+
 @property (strong, nonatomic) NSArray *numbersOfFaces;
 
 @end
 
-@implementation CPMockupAssetsLibrary
+@implementation CPAssetsProvider
 
-- (id)initWithNumberOfAssets:(NSUInteger)numberOfAssets numbersOfFaces:(NSArray *)numbersOfFaces {
+- (id)initWithAssetURLs:(NSArray *)assetURLs numbersOfFaces:(NSArray *)numbersOfFaces {
     self = [super init];
     if (self) {
-        self.numberOfAssets = numberOfAssets;
+        NSAssert(numbersOfFaces.count == assetURLs.count, @"count of assetURLs and numbersOfFaces should be the same");
+        
+        self.assetURLs = assetURLs;
         self.numbersOfFaces = numbersOfFaces;
     }
     return self;
 }
 
 - (NSUInteger)count {
-    return self.numberOfAssets;
+    return self.assetURLs.count;
 }
 
 - (NSString *)assetURLOfIndex:(NSUInteger)index {
-    return [[NSString alloc] initWithFormat:@"TestAsset%d", index];
+    return [self.assetURLs objectAtIndex:index];
 }
 
 - (NSMutableArray *)boundsOfFacesOfIndex:(NSUInteger)index {
@@ -84,9 +70,29 @@
     NSUInteger numberOfFaces = ((NSNumber *)[self.numbersOfFaces objectAtIndex:index]).intValue;
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:numberOfFaces];
     for (NSUInteger i = 0; i < numberOfFaces; ++i) {
-        [result addObject:[[UIImage alloc] init]];
+        CGSize size = CGSizeMake(100.0, 100.0);
+        UIGraphicsBeginImageContextWithOptions(size, YES, 0);
+        [[UIColor whiteColor] setFill];
+        UIRectFill(CGRectMake(0, 0, size.width, size.height));
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        [result addObject:image];
     }
     return result;
+}
+
+@end
+
+@implementation CPMockupAssetsLibrary
+
+- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+    for (NSUInteger i = 0; i < [self.assetsProvider count]; ++i) {
+        NSString *assetURL = [self.assetsProvider assetURLOfIndex:i];
+        if (!skipAssetBlock(assetURL)) {
+            resultBlock(assetURL, [self.assetsProvider boundsOfFacesOfIndex:i], [self.assetsProvider thumbnailsOfIndex:i]);
+        }
+    }
+    completionBlock();
 }
 
 @end

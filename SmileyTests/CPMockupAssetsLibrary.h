@@ -8,7 +8,7 @@
 
 #import "CPAssetsLibraryProtocol.h"
 
-@interface CPMockupEmptyAssetsLibrary : NSObject <CPAssetsLibraryProtocol>
+@protocol CPAssetsProviderProtocol <NSObject>
 
 - (NSUInteger)count;
 
@@ -20,8 +20,18 @@
 
 @end
 
-@interface CPMockupAssetsLibrary : CPMockupEmptyAssetsLibrary
+@interface CPEmptyAssetsProvider : NSObject <CPAssetsProviderProtocol>
 
-- (id)initWithNumberOfAssets:(NSUInteger)numberOfAssets numbersOfFaces:(NSArray *)numbersOfFaces;
+@end
+
+@interface CPAssetsProvider : NSObject <CPAssetsProviderProtocol>
+
+- (id)initWithAssetURLs:(NSArray *)assetURLs numbersOfFaces:(NSArray *)numbersOfFaces;
+
+@end
+
+@interface CPMockupAssetsLibrary : NSObject <CPAssetsLibraryProtocol>
+
+@property (strong, nonatomic) id<CPAssetsProviderProtocol> assetsProvider;
 
 @end

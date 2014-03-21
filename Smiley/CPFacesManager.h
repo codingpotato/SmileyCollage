@@ -10,7 +10,10 @@
 
 @class CPFace;
 
+
 @interface CPFacesManager : NSObject
+
+@property (strong, nonatomic) NSFetchedResultsController *photosController;
 
 @property (strong, nonatomic) NSFetchedResultsController *facesController;
 

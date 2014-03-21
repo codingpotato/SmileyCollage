@@ -72,12 +72,8 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
             face.photo = photo;
             [photo addFacesObject:face];
 
-            CFUUIDRef uuid = CFUUIDCreate(NULL);
-            CFStringRef uuidStr = CFUUIDCreateString(NULL, uuid);
-            face.thumbnail = [NSString stringWithFormat:@"%@.jpg", uuidStr];
-            CFRelease(uuidStr);
-            CFRelease(uuid);
-            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+            NSString *fileName = [NSString stringWithFormat:@"face_%d.jpg", face.id.integerValue];
+            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:fileName];
             UIImage *image = [thumbnails objectAtIndex:index];
             [UIImageJPEGRepresentation(image, 0.5) writeToFile:filePath atomically:YES];
         }
@@ -206,6 +202,17 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
 }
 
 #pragma mark - lazy init
+
+- (NSFetchedResultsController *)photosController {
+    if (!_photosController) {
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        request.entity = [NSEntityDescription entityForName:NSStringFromClass([CPPhoto class]) inManagedObjectContext:self.managedObjectContext];
+        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"url" ascending:YES], nil];
+        _photosController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPPhotoCache"];
+        [_photosController performFetch:nil];
+    }
+    return _photosController;
+}
 
 - (NSFetchedResultsController *)facesController {
     if (!_facesController) {

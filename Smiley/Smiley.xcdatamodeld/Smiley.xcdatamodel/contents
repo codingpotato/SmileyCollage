@@ -15,12 +15,12 @@
     </entity>
     <entity name="CPPhoto" representedClassName="CPPhoto" syncable="YES">
         <attribute name="sequenceNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="url" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="url" attributeType="String" syncable="YES"/>
         <relationship name="faces" toMany="YES" deletionRule="Cascade" destinationEntity="CPFace" inverseName="photo" inverseEntity="CPFace" syncable="YES"/>
     </entity>
     <elements>
         <element name="CPConfig" positionX="9" positionY="54" width="128" height="73"/>
         <element name="CPFace" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="CPPhoto" positionX="0" positionY="0" width="128" height="88"/>
+        <element name="CPPhoto" positionX="0" positionY="0" width="128" height="90"/>
     </elements>
 </model>
