@@ -6,16 +6,10 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@class CPFace;
-@class CPFacesManager;
-
+@class CPFaceEditInformation;
 
 @interface CPEditViewController : UIViewController
 
-@property (weak, nonatomic) CPFacesManager *facesManager;
-
-@property (weak, nonatomic) CPFace *face;
-
-@property (weak, nonatomic) NSValue *userBounds;
+@property (strong, nonatomic) CPFaceEditInformation *faceEditInformation;
 
 @end

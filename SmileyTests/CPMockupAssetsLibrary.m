@@ -87,7 +87,7 @@
 
 @implementation CPMockupAssetsLibrary
 
-- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(scanCompletionBlock)completionBlock {
     for (NSUInteger i = 0; i < [self.assetsProvider count]; ++i) {
         NSString *assetURL = [self.assetsProvider assetURLOfIndex:i];
         if (!skipAssetBlock(assetURL)) {
@@ -100,7 +100,10 @@
 - (void)stopScan {
 }
 
-- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
+- (void)assetForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
+}
+
+- (void)saveStitchedImage:(UIImage *)image {    
 }
 
 @end

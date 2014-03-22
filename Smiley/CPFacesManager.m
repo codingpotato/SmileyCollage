@@ -12,6 +12,7 @@
 
 #import "CPConfig.h"
 #import "CPFace.h"
+#import "CPFaceEditInformation.h"
 #import "CPPhoto.h"
 
 @interface CPFacesManager ()
@@ -107,21 +108,23 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
 }
 
 - (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
-    [self.assetsLibrary assertForURL:url resultBlock:resultBlock];
+    [self.assetsLibrary assetForURL:url resultBlock:resultBlock];
 }
 
-/*- (UIImage *)imageByStitchSelectedFaces {
-    CGFloat rowsFloat = sqrtf([CPFacesController defaultController].selectedFaces.count);
+- (void)saveImageByStitchedFaces:(NSMutableArray *)stitchedFaces {
+    CGFloat rowsFloat = sqrtf(stitchedFaces.count);
+    // TODO: layout algorithm
     NSUInteger rows = (NSUInteger)rowsFloat == rowsFloat ? rowsFloat : rowsFloat + 1;
+    // TODO: width of each face
     CGFloat widthOfEachFace = 512.0;
     CGFloat width = widthOfEachFace * rows;
     UIGraphicsBeginImageContext(CGSizeMake(width, width));
     
     int x = 0.0;
     int y = 0.0;
-    for (CPFace *face in self.selectedFaces) {
-        CGRect faceBounds = CGRectEqualToRect(face.userBounds, CGRectZero) ? face.bounds : face.userBounds;
-        CGImageRef faceImage = CGImageCreateWithImageInRect(face.asset.defaultRepresentation.fullScreenImage, faceBounds);
+    for (CPFaceEditInformation *faceEditInformation in stitchedFaces) {
+        CGRect faceBounds = faceEditInformation.userBounds;
+        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceBounds);
         UIImage *image = [UIImage imageWithCGImage:faceImage scale:faceBounds.size.width / widthOfEachFace orientation:UIImageOrientationUp];
         CGImageRelease(faceImage);
         [image drawAtPoint:CGPointMake(x * widthOfEachFace, y * widthOfEachFace)];
@@ -132,34 +135,9 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
         }
     }
     
-    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+    [self.assetsLibrary saveStitchedImage:UIGraphicsGetImageFromCurrentImageContext()];
     UIGraphicsEndImageContext();
-    return result;
 }
-
-- (void)saveStitchedImage {
-    [self.assetsLibrary writeImageToSavedPhotosAlbum:self.imageByStitchSelectedFaces.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
-        if (!error) {
-            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
-                __block BOOL foundGroup = NO;
-                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-                    if (group) {
-                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyImage]) {
-                            [group addAsset:asset];
-                            foundGroup = YES;
-                        }
-                    } else {
-                        if (!foundGroup) {
-                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyImage resultBlock:^(ALAssetsGroup *group) {
-                                [group addAsset:asset];
-                            } failureBlock:nil];
-                        }
-                    }
-                } failureBlock:nil];
-            } failureBlock:nil];
-        }
-    }];
-}*/
 
 - (void)removeExpiredPhotos {
     NSArray *expiredPhotos = [CPPhoto expiredPhotosWithScanId:self.config.currentScanId fromManagedObjectContext:self.managedObjectContext];

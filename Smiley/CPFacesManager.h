@@ -34,6 +34,6 @@
 
 - (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock;
 
-- (void)saveStitchedImage;
+- (void)saveImageByStitchedFaces:(NSMutableArray *)stitchedFaces;
 
 @end

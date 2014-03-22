@@ -11,16 +11,15 @@
 #import "CPEditViewController.h"
 #import "CPStitchCell.h"
 
-#import "CPAssetsLibrary.h"
+#import "CPFaceEditInformation.h"
 #import "CPFacesManager.h"
 #import "CPFace.h"
 #import "CPPhoto.h"
 
+
 @interface CPStitchViewController ()
 
 @property (nonatomic) NSInteger selectedIndex;
-
-@property (strong, nonatomic) NSMutableArray *userBounds;
 
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
@@ -34,11 +33,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.selectedIndex = -1;
-    
-    [self.userBounds removeAllObjects];
-    for (CPFace *face in self.selectedFaces) {
-        [self.userBounds addObject:[NSValue valueWithCGRect:CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue)]];
-    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -56,12 +50,10 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
-        NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.selectedFaces.count, @"");
+        NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.stitchedFaces.count, @"");
         
         CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
-        editViewController.facesManager = self.facesManager;
-        editViewController.face = [self.selectedFaces objectAtIndex:self.selectedIndex];
-        editViewController.userBounds = [self.userBounds objectAtIndex:self.selectedIndex];
+        editViewController.faceEditInformation = [self.stitchedFaces objectAtIndex:self.selectedIndex];
     }
 }
 
@@ -107,10 +99,10 @@
             NSIndexPath *indexPath1 = [self.collectionView indexPathForCell:self.draggedCell];
             NSIndexPath *indexPath2 = [self.collectionView indexPathForCell:droppedCell];
             if (indexPath1 && indexPath2) {
-                CPFace *face1 = [self.selectedFaces objectAtIndex:indexPath1.row];
-                CPFace *face2 = [self.selectedFaces objectAtIndex:indexPath2.row];
-                [self.selectedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
-                [self.selectedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
+                NSObject *face1 = [self.stitchedFaces objectAtIndex:indexPath1.row];
+                NSObject *face2 = [self.stitchedFaces objectAtIndex:indexPath2.row];
+                [self.stitchedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
+                [self.stitchedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
                 
                 [self.collectionView performBatchUpdates:^{
                     [self.collectionView moveItemAtIndexPath:indexPath1 toIndexPath:indexPath2];
@@ -130,21 +122,17 @@
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.selectedFaces.count;
+    return self.stitchedFaces.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
-    CPFace *face = [self.selectedFaces objectAtIndex:indexPath.row];
-    NSAssert(face, @"");
+    CPFaceEditInformation *faceEditInformation = [self.stitchedFaces objectAtIndex:indexPath.row];
+    NSAssert(faceEditInformation, @"");
     
-    NSURL *url = [[NSURL alloc] initWithString:face.photo.url];
-    [self.facesManager assertForURL:url resultBlock:^(ALAsset *result) {
-        CGRect bounds = ((NSValue *)[self.userBounds objectAtIndex:indexPath.row]).CGRectValue;
-        CGImageRef faceImage = CGImageCreateWithImageInRect(result.defaultRepresentation.fullScreenImage, bounds);
-        cell.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
-        CGImageRelease(faceImage);
-    }];
+    CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.userBounds);
+    cell.image = [UIImage imageWithCGImage:faceImage scale:faceEditInformation.userBounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
+    CGImageRelease(faceImage);
     return cell;
 }
 
@@ -164,7 +152,7 @@
 
 - (NSUInteger)rowsOfStitchCell {
     // TODO: layout algorithm
-    float rows = sqrtf(self.selectedFaces.count);
+    float rows = sqrtf(self.stitchedFaces.count);
     return ((NSUInteger)rows) == rows ? rows : rows + 1;
 }
 
@@ -173,7 +161,9 @@
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
         case 0:
-            // [[CPFacesManager defaultManager] saveStitchedImage];
+            NSAssert(self.facesManager, @"");
+            NSAssert(self.stitchedFaces, @"");
+            [self.facesManager saveImageByStitchedFaces:self.stitchedFaces];
             break;
         default:
             break;
@@ -192,15 +182,6 @@
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
     return 0.0;
-}
-
-#pragma mark - lazy init
-
-- (NSMutableArray *)userBounds {
-    if (!_userBounds) {
-        _userBounds = [[NSMutableArray alloc] init];
-    }
-    return _userBounds;
 }
 
 @end

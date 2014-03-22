@@ -20,7 +20,7 @@
 
 static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 
-- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(scanCompletionBlock)completionBlock {
     [self enumerateSmileyPhotosBySkipAssetBlock:skipAssetBlock resultBlock:resultBlock completionBlock:completionBlock];
 }
 
@@ -29,11 +29,35 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     [self.queue waitUntilAllOperationsAreFinished];
 }
 
-- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
+- (void)assetForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
     [self.assetsLibrary assetForURL:url resultBlock:resultBlock failureBlock:nil];
 }
 
-- (void)enumerateSmileyPhotosBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)saveStitchedImage:(UIImage *)image {
+    [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
+        if (!error) {
+            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
+                __block BOOL foundGroup = NO;
+                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                    if (group) {
+                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
+                            [group addAsset:asset];
+                            foundGroup = YES;
+                        }
+                    } else {
+                        if (!foundGroup) {
+                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyPhotos resultBlock:^(ALAssetsGroup *group) {
+                                [group addAsset:asset];
+                            } failureBlock:nil];
+                        }
+                    }
+                } failureBlock:nil];
+            } failureBlock:nil];
+        }
+    }];
+}
+
+- (void)enumerateSmileyPhotosBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(scanCompletionBlock)completionBlock {
     NSMutableArray *smileyPhotos = [[NSMutableArray alloc] init];
     [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         if (group) {
@@ -55,7 +79,7 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     } failureBlock:nil];
 }
 
-- (void)enumerateAllPhotosExceptSmileyPhotos:(NSMutableArray *)smileyPhotos skipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)enumerateAllPhotosExceptSmileyPhotos:(NSMutableArray *)smileyPhotos skipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(scanCompletionBlock)completionBlock {
     [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos | ALAssetsGroupLibrary usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         if (group) {
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {

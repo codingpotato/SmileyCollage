@@ -8,11 +8,14 @@
 
 #import "CPFacesViewController.h"
 
-#import "CPAssetsLibrary.h"
-#import "CPFace.h"
-#import "CPFacesManager.h"
 #import "CPPhotoCell.h"
 #import "CPStitchViewController.h"
+
+#import "CPAssetsLibrary.h"
+#import "CPFace.h"
+#import "CPFaceEditInformation.h"
+#import "CPFacesManager.h"
+#import "CPPhoto.h"
 
 @interface CPFacesViewController ()
 
@@ -45,7 +48,18 @@
     if ([segue.identifier isEqualToString:@"CPStitchViewControllerSegue"]) {
         CPStitchViewController *stitchViewController = (CPStitchViewController *)segue.destinationViewController;
         stitchViewController.facesManager = self.faceManager;
-        stitchViewController.selectedFaces = self.selectedFaces;
+        
+        stitchViewController.stitchedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
+        for (CPFace *face in self.selectedFaces) {
+            CPFaceEditInformation *stitchedFace = [[CPFaceEditInformation alloc] init];
+            stitchedFace.face = face;
+            stitchedFace.userBounds = CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue);
+            NSURL *url = [[NSURL alloc] initWithString:face.photo.url];
+            [self.faceManager assertForURL:url resultBlock:^(ALAsset *result) {
+                stitchedFace.asset = result;
+            }];
+            [stitchViewController.stitchedFaces addObject:stitchedFace];
+        }
     }
 }
 

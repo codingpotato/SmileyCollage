@@ -8,16 +8,20 @@
 
 typedef BOOL (^skipAssetBlock)(NSString *assetURL);
 typedef void (^scanResultBlock)(NSString *assetURL, NSMutableArray *boundsOfFaces, NSMutableArray *thumbnails);
-typedef void (^completionBlock)();
+typedef void (^scanCompletionBlock)();
 
-typedef void (^assetResultBlock)(ALAsset *result);
+typedef void (^assetResultBlock)(ALAsset *asset);
+
+typedef void (^writeCompletionBlock)(NSURL *assetURL, NSError *error);
 
 @protocol CPAssetsLibraryProtocol <NSObject>
 
-- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock;
+- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(scanCompletionBlock)completionBlock;
 
 - (void)stopScan;
 
-- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock;
+- (void)assetForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock;
+
+- (void)saveStitchedImage:(UIImage *)image;
 
 @end

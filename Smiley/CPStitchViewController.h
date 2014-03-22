@@ -8,12 +8,11 @@
 
 @class CPFacesManager;
 
-
 @interface CPStitchViewController : UICollectionViewController <UIActionSheetDelegate, UICollectionViewDelegateFlowLayout>
 
 @property (weak, nonatomic) CPFacesManager *facesManager;
 
-@property (weak, nonatomic) NSMutableArray *selectedFaces;
+@property (strong, nonatomic) NSMutableArray *stitchedFaces;
 
 - (CGRect)frameOfSelectedCell;
 
