@@ -106,56 +106,12 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
     return [UIImage imageWithContentsOfFile:filePath];
 }
 
-- (void)removeExpiredPhotos {
-    NSArray *expiredPhotos = [CPPhoto expiredPhotosWithScanId:self.config.currentScanId fromManagedObjectContext:self.managedObjectContext];
-    for (CPPhoto *photo in expiredPhotos) {
-        for (CPFace *face in photo.faces) {
-            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
-            [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-        }
-        [self.managedObjectContext deleteObject:photo];
-    }
+- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
+    [self.assetsLibrary assertForURL:url resultBlock:resultBlock];
 }
 
-/*- (void)assertOfSelectedFaceByIndex:(NSUInteger)index resultBlock:(void (^)(ALAsset *))resultBlock {
-    CPFace *face = [self.selectedFaces objectAtIndex:index];
-    NSURL *assetURL = [NSURL URLWithString:face.photo.url];
-    //[self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
-}*/
-
-- (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2 {
-    /*NSObject *object1 = [self.selectedFaces objectAtIndex:index1];
-    NSObject *object2 = [self.selectedFaces objectAtIndex:index2];
-    [self.selectedFaces setObject:object1 atIndexedSubscript:index2];
-    [self.selectedFaces setObject:object2 atIndexedSubscript:index1];*/
-}
-
-- (void)saveStitchedImage {
-    /*[self.assetsLibrary writeImageToSavedPhotosAlbum:self.imageByStitchSelectedFaces.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
-        if (!error) {
-            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
-                __block BOOL foundGroup = NO;
-                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-                    if (group) {
-                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyImage]) {
-                            [group addAsset:asset];
-                            foundGroup = YES;
-                        }
-                    } else {
-                        if (!foundGroup) {
-                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyImage resultBlock:^(ALAssetsGroup *group) {
-                                [group addAsset:asset];
-                            } failureBlock:nil];
-                        }
-                    }
-                } failureBlock:nil];
-            } failureBlock:nil];
-        }
-    }];*/
-}
-
-- (UIImage *)imageByStitchSelectedFaces {
-    /*CGFloat rowsFloat = sqrtf([CPFacesController defaultController].selectedFaces.count);
+/*- (UIImage *)imageByStitchSelectedFaces {
+    CGFloat rowsFloat = sqrtf([CPFacesController defaultController].selectedFaces.count);
     NSUInteger rows = (NSUInteger)rowsFloat == rowsFloat ? rowsFloat : rowsFloat + 1;
     CGFloat widthOfEachFace = 512.0;
     CGFloat width = widthOfEachFace * rows;
@@ -178,8 +134,42 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
     
     UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    return result;*/
-    return  nil;
+    return result;
+}
+
+- (void)saveStitchedImage {
+    [self.assetsLibrary writeImageToSavedPhotosAlbum:self.imageByStitchSelectedFaces.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
+        if (!error) {
+            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
+                __block BOOL foundGroup = NO;
+                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                    if (group) {
+                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyImage]) {
+                            [group addAsset:asset];
+                            foundGroup = YES;
+                        }
+                    } else {
+                        if (!foundGroup) {
+                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyImage resultBlock:^(ALAssetsGroup *group) {
+                                [group addAsset:asset];
+                            } failureBlock:nil];
+                        }
+                    }
+                } failureBlock:nil];
+            } failureBlock:nil];
+        }
+    }];
+}*/
+
+- (void)removeExpiredPhotos {
+    NSArray *expiredPhotos = [CPPhoto expiredPhotosWithScanId:self.config.currentScanId fromManagedObjectContext:self.managedObjectContext];
+    for (CPPhoto *photo in expiredPhotos) {
+        for (CPFace *face in photo.faces) {
+            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
+            [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+        }
+        [self.managedObjectContext deleteObject:photo];
+    }
 }
 
 - (NSString *)applicationDocumentsDirectory {

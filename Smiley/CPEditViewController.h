@@ -7,11 +7,15 @@
 //
 
 @class CPFace;
+@class CPFacesManager;
+
 
 @interface CPEditViewController : UIViewController
 
+@property (weak, nonatomic) CPFacesManager *facesManager;
+
 @property (weak, nonatomic) CPFace *face;
 
-@property (weak, nonatomic) NSValue *userBound;
+@property (weak, nonatomic) NSValue *userBounds;
 
 @end

@@ -6,12 +6,12 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@protocol CPAssetsLibraryProtocol;
+@class CPFacesManager;
 
 
 @interface CPStitchViewController : UICollectionViewController <UIActionSheetDelegate, UICollectionViewDelegateFlowLayout>
 
-@property (weak, nonatomic) id<CPAssetsLibraryProtocol> assetsLibrary;
+@property (weak, nonatomic) CPFacesManager *facesManager;
 
 @property (weak, nonatomic) NSMutableArray *selectedFaces;
 

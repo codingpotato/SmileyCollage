@@ -16,8 +16,6 @@
 
 @interface CPFacesViewController ()
 
-@property (strong, nonatomic) id<CPAssetsLibraryProtocol> assertLibrary;
-
 @property (strong, nonatomic) CPFacesManager *faceManager;
 
 @property (strong, nonatomic) NSMutableArray *selectedFaces;
@@ -46,7 +44,7 @@
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPStitchViewControllerSegue"]) {
         CPStitchViewController *stitchViewController = (CPStitchViewController *)segue.destinationViewController;
-        stitchViewController.assetsLibrary = self.assertLibrary;
+        stitchViewController.facesManager = self.faceManager;
         stitchViewController.selectedFaces = self.selectedFaces;
     }
 }
@@ -115,16 +113,9 @@
 
 #pragma mark - lazy init
 
-- (id<CPAssetsLibraryProtocol>)assertLibrary {
-    if (!_assertLibrary) {
-        _assertLibrary = [[CPAssetsLibrary alloc] init];
-    }
-    return _assertLibrary;
-}
-
 - (CPFacesManager *)faceManager {
     if (!_faceManager) {
-        _faceManager = [[CPFacesManager alloc] initWithAssetsLibrary:self.assertLibrary];
+        _faceManager = [[CPFacesManager alloc] initWithAssetsLibrary:[[CPAssetsLibrary alloc] init]];
     }
     return _faceManager;
 }

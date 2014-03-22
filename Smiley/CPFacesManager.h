@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@protocol CPAssetsLibraryProtocol;
+#import "CPAssetsLibraryProtocol.h"
 
 @class CPConfig;
 @class CPFace;
@@ -32,9 +32,7 @@
 
 - (UIImage *)thumbnailOfFace:(CPFace *)face;
 
-- (void)assertOfSelectedFaceByIndex:(NSUInteger)index resultBlock:(void (^)(ALAsset *asset))resultBlock;
-
-- (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2;
+- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock;
 
 - (void)saveStitchedImage;
 

@@ -56,11 +56,12 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
-        // NSAssert(self.selectedIndex >= 0 && self.selectedIndex < [CPFacesManager defaultManager].selectedFaces.count, @"");
+        NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.selectedFaces.count, @"");
         
         CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
-        // editViewController.face = [[CPFacesManager defaultManager].selectedFaces objectAtIndex:self.selectedIndex];
-        editViewController.userBound = [self.userBounds objectAtIndex:self.selectedIndex];
+        editViewController.facesManager = self.facesManager;
+        editViewController.face = [self.selectedFaces objectAtIndex:self.selectedIndex];
+        editViewController.userBounds = [self.userBounds objectAtIndex:self.selectedIndex];
     }
 }
 
@@ -106,8 +107,16 @@
             NSIndexPath *indexPath1 = [self.collectionView indexPathForCell:self.draggedCell];
             NSIndexPath *indexPath2 = [self.collectionView indexPathForCell:droppedCell];
             if (indexPath1 && indexPath2) {
-                // [[CPFacesManager defaultManager] exchangeSelectedFacesByIndex1:indexPath1.row withIndex2:indexPath2.row];
-                [self.collectionView reloadItemsAtIndexPaths:@[indexPath1, indexPath2]];
+                CPFace *face1 = [self.selectedFaces objectAtIndex:indexPath1.row];
+                CPFace *face2 = [self.selectedFaces objectAtIndex:indexPath2.row];
+                [self.selectedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
+                [self.selectedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
+                
+                [self.collectionView performBatchUpdates:^{
+                    [self.collectionView moveItemAtIndexPath:indexPath1 toIndexPath:indexPath2];
+                    [self.collectionView moveItemAtIndexPath:indexPath2 toIndexPath:indexPath1];
+                } completion:^(BOOL finished) {
+                }];
             }
         }
         
@@ -130,7 +139,7 @@
     NSAssert(face, @"");
     
     NSURL *url = [[NSURL alloc] initWithString:face.photo.url];
-    [self.assetsLibrary assertForURL:url resultBlock:^(ALAsset *result) {
+    [self.facesManager assertForURL:url resultBlock:^(ALAsset *result) {
         CGRect bounds = ((NSValue *)[self.userBounds objectAtIndex:indexPath.row]).CGRectValue;
         CGImageRef faceImage = CGImageCreateWithImageInRect(result.defaultRepresentation.fullScreenImage, bounds);
         cell.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
