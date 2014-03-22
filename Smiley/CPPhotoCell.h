@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@interface CPPhotoCell : UICollectionViewCell
+#import "CPCell.h"
 
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@interface CPPhotoCell : CPCell
 
-@property (weak, nonatomic) IBOutlet UIView *selectedIndicator;
+@property (nonatomic) BOOL isSelected;
 
 @end

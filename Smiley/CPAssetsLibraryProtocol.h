@@ -7,11 +7,17 @@
 //
 
 typedef BOOL (^skipAssetBlock)(NSString *assetURL);
-typedef void (^resultBlock)(NSString *assetURL, NSMutableArray *boundsOfFaces, NSMutableArray *thumbnails);
+typedef void (^scanResultBlock)(NSString *assetURL, NSMutableArray *boundsOfFaces, NSMutableArray *thumbnails);
 typedef void (^completionBlock)();
+
+typedef void (^assetResultBlock)(ALAsset *result);
 
 @protocol CPAssetsLibraryProtocol <NSObject>
 
-- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock;
+- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock;
+
+- (void)stopScan;
+
+- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock;
 
 @end

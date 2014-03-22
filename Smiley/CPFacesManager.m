@@ -26,7 +26,7 @@
 
 @implementation CPFacesManager
 
-static NSString *g_thumbnailDirectory = @"thumbnail";
+static NSString *g_thumbnailDirectoryName = @"thumbnail";
 
 - (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary {
     self = [super init];
@@ -34,7 +34,7 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
         self.isScanning = NO;
         self.assetsLibrary = assetsLibrary;
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *thumbnailPath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory];
+        NSString *thumbnailPath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName];
         if (![fileManager fileExistsAtPath:thumbnailPath]) {
             [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
@@ -75,7 +75,7 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
                 [photo addFacesObject:face];
                 
                 face.thumbnail = [NSString stringWithFormat:@"face_%d.jpg", face.id.integerValue];
-                NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+                NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
                 UIImage *image = [thumbnails objectAtIndex:index];
                 [UIImageJPEGRepresentation(image, 0.5) writeToFile:filePath atomically:YES];
             }
@@ -87,6 +87,12 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
     }
 }
 
+- (void)stopScan {
+    [self.assetsLibrary stopScan];
+    [self removeExpiredPhotos];
+    [self saveContext];
+}
+
 - (NSArray *)photos {
     return [CPPhoto photosInManagedObjectContext:self.managedObjectContext];
 }
@@ -95,44 +101,27 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
     return [CPFace facesInManagedObjectContext:self.managedObjectContext];
 }
 
+- (UIImage *)thumbnailOfFace:(CPFace *)face {
+    NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
+    return [UIImage imageWithContentsOfFile:filePath];
+}
+
 - (void)removeExpiredPhotos {
     NSArray *expiredPhotos = [CPPhoto expiredPhotosWithScanId:self.config.currentScanId fromManagedObjectContext:self.managedObjectContext];
     for (CPPhoto *photo in expiredPhotos) {
         for (CPFace *face in photo.faces) {
-            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
             [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
         }
         [self.managedObjectContext deleteObject:photo];
     }
 }
 
-- (UIImage *)thumbnailByIndex:(NSUInteger)index {
-    CPFace *face = [self.facesController.fetchedObjects objectAtIndex:index];
-    NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
-    return [UIImage imageWithContentsOfFile:filePath];
-}
-
-- (void)selectFaceByIndex:(NSUInteger)index {
-    if (index < self.facesController.fetchedObjects.count) {
-        CPFace * face = [self.facesController.fetchedObjects objectAtIndex:index];
-        if ([self.selectedFaces containsObject:face]) {
-            [self.selectedFaces removeObject:face];
-        } else {
-            [self.selectedFaces addObject:face];
-        }
-    }
-}
-
-- (BOOL)isFaceSlectedByIndex:(NSUInteger)index {
-    CPFace * face = [self.facesController.fetchedObjects objectAtIndex:index];
-    return [self.selectedFaces containsObject:face];
-}
-
-- (void)assertOfSelectedFaceByIndex:(NSUInteger)index resultBlock:(void (^)(ALAsset *))resultBlock {
+/*- (void)assertOfSelectedFaceByIndex:(NSUInteger)index resultBlock:(void (^)(ALAsset *))resultBlock {
     CPFace *face = [self.selectedFaces objectAtIndex:index];
     NSURL *assetURL = [NSURL URLWithString:face.photo.url];
     //[self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
-}
+}*/
 
 - (void)exchangeSelectedFacesByIndex1:(NSUInteger)index1 withIndex2:(NSUInteger)index2 {
     /*NSObject *object1 = [self.selectedFaces objectAtIndex:index1];
@@ -231,13 +220,6 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
         [_facesController performFetch:nil];
     }
     return _facesController;
-}
-
-- (NSMutableArray *)selectedFaces {
-    if (!_selectedFaces) {
-        _selectedFaces = [[NSMutableArray alloc] init];
-    }
-    return _selectedFaces;
 }
 
 - (NSManagedObjectContext *)managedObjectContext {

@@ -20,15 +20,18 @@
 
 @end
 
+
 @interface CPEmptyAssetsProvider : NSObject <CPAssetsProviderProtocol>
 
 @end
+
 
 @interface CPAssetsProvider : NSObject <CPAssetsProviderProtocol>
 
 - (id)initWithAssetURLs:(NSArray *)assetURLs numbersOfFaces:(NSArray *)numbersOfFaces;
 
 @end
+
 
 @interface CPMockupAssetsLibrary : NSObject <CPAssetsLibraryProtocol>
 

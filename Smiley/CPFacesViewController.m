@@ -8,15 +8,19 @@
 
 #import "CPFacesViewController.h"
 
+#import "CPAssetsLibrary.h"
 #import "CPFace.h"
 #import "CPFacesManager.h"
 #import "CPPhotoCell.h"
-
-#import "CPAssetsLibrary.h"
+#import "CPStitchViewController.h"
 
 @interface CPFacesViewController ()
 
-@property (strong, nonatomic) CPAssetsLibrary *assetsLibrary;
+@property (strong, nonatomic) id<CPAssetsLibraryProtocol> assertLibrary;
+
+@property (strong, nonatomic) CPFacesManager *faceManager;
+
+@property (strong, nonatomic) NSMutableArray *selectedFaces;
 
 @end
 
@@ -25,25 +29,47 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    /*CPFacesManager *faceManager = [CPFacesManager defaultManager];
-    faceManager.facesController.delegate = self;
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", faceManager.facesController.fetchedObjects.count];*/
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackgroundNotification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidBecomeActiveNotification:) name:UIApplicationDidBecomeActiveNotification object:nil];
+    
+    self.faceManager.facesController.delegate = self;
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", self.faceManager.facesController.fetchedObjects.count];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+    
+    [self.faceManager stopScan];
 }
 
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"CPStitchViewControllerSegue"]) {
+        CPStitchViewController *stitchViewController = (CPStitchViewController *)segue.destinationViewController;
+        stitchViewController.assetsLibrary = self.assertLibrary;
+        stitchViewController.selectedFaces = self.selectedFaces;
+    }
+}
+
+- (void)handleApplicationDidBecomeActiveNotification:(NSNotification *)notification {
+    [self.faceManager scanFaces];
+}
+
+- (void)handleApplicationDidEnterBackgroundNotification:(NSNotification *)notification {
+    [self.faceManager stopScan];
+}
+
+#pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-//    return [CPFacesManager defaultManager].facesController.fetchedObjects.count;
-    return 0;
+    return self.faceManager.facesController.fetchedObjects.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
-    //cell.imageView.image = [[CPFacesManager defaultManager] thumbnailByIndex:indexPath.row];
-    //cell.selectedIndicator.hidden = ![[CPFacesManager defaultManager] isFaceSlectedByIndex:indexPath.row];
-    cell.selectedIndicator.layer.cornerRadius = 5.0;
+    CPFace *face = [self.faceManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
+    cell.image = [self.faceManager thumbnailOfFace:face];
+    cell.isSelected = [self.selectedFaces containsObject:face];
     
     return cell;
 }
@@ -56,7 +82,13 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    //[[CPFacesManager defaultManager] selectFaceByIndex:indexPath.row];
+    CPFace *face = [self.faceManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
+    NSAssert(face, @"");
+    if ([self.selectedFaces containsObject:face]) {
+        [self.selectedFaces removeObject:face];
+    } else {
+        [self.selectedFaces addObject:face];
+    }
     [collectionView reloadItemsAtIndexPaths:@[indexPath]];
 }
 
@@ -83,11 +115,25 @@
 
 #pragma mark - lazy init
 
-- (CPAssetsLibrary *)assetsLibrary {
-    if (!_assetsLibrary) {
-        _assetsLibrary = [[CPAssetsLibrary alloc] init];
+- (id<CPAssetsLibraryProtocol>)assertLibrary {
+    if (!_assertLibrary) {
+        _assertLibrary = [[CPAssetsLibrary alloc] init];
     }
-    return _assetsLibrary;
+    return _assertLibrary;
+}
+
+- (CPFacesManager *)faceManager {
+    if (!_faceManager) {
+        _faceManager = [[CPFacesManager alloc] initWithAssetsLibrary:self.assertLibrary];
+    }
+    return _faceManager;
+}
+
+- (NSMutableArray *)selectedFaces {
+    if (!_selectedFaces) {
+        _selectedFaces = [[NSMutableArray alloc] init];
+    }
+    return _selectedFaces;
 }
 
 @end

@@ -28,6 +28,7 @@
 
 @end
 
+
 @interface CPAssetsProvider ()
 
 @property (nonatomic) NSArray *assetURLs;
@@ -83,9 +84,10 @@
 
 @end
 
+
 @implementation CPMockupAssetsLibrary
 
-- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
     for (NSUInteger i = 0; i < [self.assetsProvider count]; ++i) {
         NSString *assetURL = [self.assetsProvider assetURLOfIndex:i];
         if (!skipAssetBlock(assetURL)) {
@@ -93,6 +95,12 @@
         }
     }
     completionBlock();
+}
+
+- (void)stopScan {
+}
+
+- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
 }
 
 @end

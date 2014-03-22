@@ -20,21 +20,17 @@
 
 @property (strong, nonatomic) NSFetchedResultsController *facesController;
 
-@property (strong, nonatomic) NSMutableArray *selectedFaces;
-
 - (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary;
 
 - (void)scanFaces;
+
+- (void)stopScan;
 
 - (NSArray *)photos;
 
 - (NSArray *)faces;
 
-- (UIImage *)thumbnailByIndex:(NSUInteger)index;
-
-- (void)selectFaceByIndex:(NSUInteger)index;
-
-- (BOOL)isFaceSlectedByIndex:(NSUInteger)index;
+- (UIImage *)thumbnailOfFace:(CPFace *)face;
 
 - (void)assertOfSelectedFaceByIndex:(NSUInteger)index resultBlock:(void (^)(ALAsset *asset))resultBlock;
 

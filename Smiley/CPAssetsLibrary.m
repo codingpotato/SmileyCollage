@@ -20,11 +20,20 @@
 
 static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 
-- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
     [self enumerateSmileyPhotosBySkipAssetBlock:skipAssetBlock resultBlock:resultBlock completionBlock:completionBlock];
 }
 
-- (void)enumerateSmileyPhotosBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)stopScan {
+    [self.queue cancelAllOperations];
+    [self.queue waitUntilAllOperationsAreFinished];
+}
+
+- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
+    [self.assetsLibrary assetForURL:url resultBlock:resultBlock failureBlock:nil];
+}
+
+- (void)enumerateSmileyPhotosBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
     NSMutableArray *smileyPhotos = [[NSMutableArray alloc] init];
     [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         if (group) {
@@ -46,7 +55,7 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     } failureBlock:nil];
 }
 
-- (void)enumerateAllPhotosExceptSmileyPhotos:(NSMutableArray *)smileyPhotos skipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(resultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
+- (void)enumerateAllPhotosExceptSmileyPhotos:(NSMutableArray *)smileyPhotos skipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(completionBlock)completionBlock {
     [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos | ALAssetsGroupLibrary usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         if (group) {
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
@@ -68,7 +77,7 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     } failureBlock:nil];
 }
 
-- (void)detectFacesFromAsset:(ALAsset *)asset resultBlock:(resultBlock)resultBlock {
+- (void)detectFacesFromAsset:(ALAsset *)asset resultBlock:(scanResultBlock)resultBlock {
     [self.queue addOperationWithBlock:^{
         @autoreleasepool {
             CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];

@@ -9,10 +9,12 @@
 #import "CPStitchViewController.h"
 
 #import "CPEditViewController.h"
-#import "CPFace.h"
-#import "CPFacesManager.h"
-#import "CPPhoto.h"
 #import "CPStitchCell.h"
+
+#import "CPAssetsLibrary.h"
+#import "CPFacesManager.h"
+#import "CPFace.h"
+#import "CPPhoto.h"
 
 @interface CPStitchViewController ()
 
@@ -34,9 +36,9 @@
     self.selectedIndex = -1;
     
     [self.userBounds removeAllObjects];
-    /*for (CPFace *face in [CPFacesManager defaultManager].selectedFaces) {
+    for (CPFace *face in self.selectedFaces) {
         [self.userBounds addObject:[NSValue valueWithCGRect:CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue)]];
-    }*/
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -119,19 +121,21 @@
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    // return [CPFacesManager defaultManager].selectedFaces.count;
-    return 0;
+    return self.selectedFaces.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
+    CPFace *face = [self.selectedFaces objectAtIndex:indexPath.row];
+    NSAssert(face, @"");
     
-    /*[[CPFacesManager defaultManager] assertOfSelectedFaceByIndex:indexPath.row resultBlock:^(ALAsset *asset) {
+    NSURL *url = [[NSURL alloc] initWithString:face.photo.url];
+    [self.assetsLibrary assertForURL:url resultBlock:^(ALAsset *result) {
         CGRect bounds = ((NSValue *)[self.userBounds objectAtIndex:indexPath.row]).CGRectValue;
-        CGImageRef faceImage = CGImageCreateWithImageInRect(asset.defaultRepresentation.fullScreenImage, bounds);
-        cell.imageView.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
+        CGImageRef faceImage = CGImageCreateWithImageInRect(result.defaultRepresentation.fullScreenImage, bounds);
+        cell.image = [UIImage imageWithCGImage:faceImage scale:bounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
         CGImageRelease(faceImage);
-    }];*/
+    }];
     return cell;
 }
 
@@ -150,9 +154,9 @@
 }
 
 - (NSUInteger)rowsOfStitchCell {
-    // float rows = sqrtf([CPFacesManager defaultManager].selectedFaces.count);
-    // return (NSUInteger)rows == rows ? rows : rows + 1;
-    return 0;
+    // TODO: layout algorithm
+    float rows = sqrtf(self.selectedFaces.count);
+    return ((NSUInteger)rows) == rows ? rows : rows + 1;
 }
 
 #pragma mark - UIActionSheetDelegate implement
