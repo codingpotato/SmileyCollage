@@ -8,12 +8,15 @@
 
 @protocol CPAssetsLibraryProtocol;
 
+@class CPConfig;
 @class CPFace;
 
 
 @interface CPFacesManager : NSObject
 
-@property (strong, nonatomic) NSFetchedResultsController *photosController;
+@property (nonatomic) BOOL isScanning;
+
+@property (strong, nonatomic) CPConfig *config;
 
 @property (strong, nonatomic) NSFetchedResultsController *facesController;
 
@@ -22,6 +25,10 @@
 - (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary;
 
 - (void)scanFaces;
+
+- (NSArray *)photos;
+
+- (NSArray *)faces;
 
 - (UIImage *)thumbnailByIndex:(NSUInteger)index;
 

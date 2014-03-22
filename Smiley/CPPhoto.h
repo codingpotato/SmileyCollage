@@ -10,15 +10,17 @@
 
 @interface CPPhoto : NSManagedObject
 
-@property (strong, nonatomic) NSNumber *sequenceNumber;
+@property (strong, nonatomic) NSNumber *scanId;
 @property (strong, nonatomic) NSString *url;
 @property (strong, nonatomic) NSSet *faces;
 
 + (CPPhoto *)createPhotoInManagedObjectContext:(NSManagedObjectContext *)context;
 
++ (NSArray *)photosInManagedObjectContext:(NSManagedObjectContext *)context;
+
 + (CPPhoto *)photoOfURL:(NSString *)url inManagedObjectContext:(NSManagedObjectContext *)context;
 
-+ (NSArray *)expiredPhotosWithSequenceNumber:(NSNumber *)sequenceNumber fromManagedObjectContext:(NSManagedObjectContext *)context;
++ (NSArray *)expiredPhotosWithScanId:(NSNumber *)scanId fromManagedObjectContext:(NSManagedObjectContext *)context;
 
 @end
 

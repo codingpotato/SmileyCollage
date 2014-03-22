@@ -18,8 +18,6 @@
 
 @property (strong, nonatomic) id<CPAssetsLibraryProtocol> assetsLibrary;
 
-@property (strong, nonatomic) CPConfig *config;
-
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
@@ -33,6 +31,7 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
 - (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary {
     self = [super init];
     if (self) {
+        self.isScanning = NO;
         self.assetsLibrary = assetsLibrary;
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSString *thumbnailPath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory];
@@ -44,47 +43,60 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
 }
 
 - (void)scanFaces {
-    [self.config increaseSequenceNumber];
-    [self.assetsLibrary scanFacesBySkipAssetBlock:^BOOL(NSString *assetURL) {
-        CPPhoto *photo = [CPPhoto photoOfURL:assetURL inManagedObjectContext:self.managedObjectContext];
-        if (photo) {
-            photo.sequenceNumber = self.config.sequenceNumber;
-            return YES;
-        } else {
-            return NO;
-        }
-    } resultBlock:^(NSString *assetURL, NSMutableArray *boundsOfFaces, NSMutableArray *thumbnails) {
-        NSAssert(boundsOfFaces.count == thumbnails.count, @"");
+    if (!self.isScanning) {
+        self.isScanning = YES;
+        [self.config increaseCurrentScanId];
         
-        CPPhoto *photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
-        photo.url = assetURL;
-        photo.sequenceNumber = self.config.sequenceNumber;
-        
-        for (NSUInteger index = 0; index < boundsOfFaces.count; ++index) {
-            CPFace *face = [CPFace createFaceInManagedObjectContext:self.managedObjectContext];
-            face.id = self.config.nextFaceId;
-            [self.config increaseNextFaceId];
-            CGRect bounds = ((NSValue *)[boundsOfFaces objectAtIndex:index]).CGRectValue;
-            face.x = [NSNumber numberWithFloat:bounds.origin.x];
-            face.y = [NSNumber numberWithFloat:bounds.origin.y];
-            face.width = [NSNumber numberWithFloat:bounds.size.width];
-            face.height = [NSNumber numberWithFloat:bounds.size.height];
-            face.photo = photo;
-            [photo addFacesObject:face];
+        [self.assetsLibrary scanFacesBySkipAssetBlock:^BOOL(NSString *assetURL) {
+            CPPhoto *photo = [CPPhoto photoOfURL:assetURL inManagedObjectContext:self.managedObjectContext];
+            if (photo) {
+                photo.scanId = self.config.currentScanId;
+                return YES;
+            } else {
+                return NO;
+            }
+        } resultBlock:^(NSString *assetURL, NSMutableArray *boundsOfFaces, NSMutableArray *thumbnails) {
+            NSAssert(boundsOfFaces.count == thumbnails.count, @"");
+            
+            CPPhoto *photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
+            photo.url = assetURL;
+            photo.scanId = self.config.currentScanId;
+            
+            for (NSUInteger index = 0; index < boundsOfFaces.count; ++index) {
+                CPFace *face = [CPFace createFaceInManagedObjectContext:self.managedObjectContext];
+                face.id = self.config.nextFaceId;
+                [self.config increaseNextFaceId];
+                CGRect bounds = ((NSValue *)[boundsOfFaces objectAtIndex:index]).CGRectValue;
+                face.x = [NSNumber numberWithFloat:bounds.origin.x];
+                face.y = [NSNumber numberWithFloat:bounds.origin.y];
+                face.width = [NSNumber numberWithFloat:bounds.size.width];
+                face.height = [NSNumber numberWithFloat:bounds.size.height];
+                face.photo = photo;
+                [photo addFacesObject:face];
+                
+                face.thumbnail = [NSString stringWithFormat:@"face_%d.jpg", face.id.integerValue];
+                NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
+                UIImage *image = [thumbnails objectAtIndex:index];
+                [UIImageJPEGRepresentation(image, 0.5) writeToFile:filePath atomically:YES];
+            }
+        } completionBlock:^{
+            [self removeExpiredPhotos];
+            [self saveContext];
+            self.isScanning = NO;
+        }];
+    }
+}
 
-            NSString *fileName = [NSString stringWithFormat:@"face_%d.jpg", face.id.integerValue];
-            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:fileName];
-            UIImage *image = [thumbnails objectAtIndex:index];
-            [UIImageJPEGRepresentation(image, 0.5) writeToFile:filePath atomically:YES];
-        }
-    } completionBlock:^{
-        [self removeExpiredPhotos];
-        [self saveContext];
-    }];
+- (NSArray *)photos {
+    return [CPPhoto photosInManagedObjectContext:self.managedObjectContext];
+}
+
+- (NSArray *)faces {
+    return [CPFace facesInManagedObjectContext:self.managedObjectContext];
 }
 
 - (void)removeExpiredPhotos {
-    NSArray *expiredPhotos = [CPPhoto expiredPhotosWithSequenceNumber:self.config.sequenceNumber fromManagedObjectContext:self.managedObjectContext];
+    NSArray *expiredPhotos = [CPPhoto expiredPhotosWithScanId:self.config.currentScanId fromManagedObjectContext:self.managedObjectContext];
     for (CPPhoto *photo in expiredPhotos) {
         for (CPFace *face in photo.faces) {
             NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectory] stringByAppendingPathComponent:face.thumbnail];
@@ -203,15 +215,11 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
 
 #pragma mark - lazy init
 
-- (NSFetchedResultsController *)photosController {
-    if (!_photosController) {
-        NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        request.entity = [NSEntityDescription entityForName:NSStringFromClass([CPPhoto class]) inManagedObjectContext:self.managedObjectContext];
-        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"url" ascending:YES], nil];
-        _photosController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPPhotoCache"];
-        [_photosController performFetch:nil];
+- (CPConfig *)config {
+    if (!_config) {
+        _config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
     }
-    return _photosController;
+    return _config;
 }
 
 - (NSFetchedResultsController *)facesController {
@@ -230,13 +238,6 @@ static NSString *g_thumbnailDirectory = @"thumbnail";
         _selectedFaces = [[NSMutableArray alloc] init];
     }
     return _selectedFaces;
-}
-
-- (CPConfig *)config {
-    if (!_config) {
-        _config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
-    }
-    return _config;
 }
 
 - (NSManagedObjectContext *)managedObjectContext {

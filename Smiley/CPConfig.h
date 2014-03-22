@@ -9,12 +9,12 @@
 @interface CPConfig : NSManagedObject
 
 @property (strong, nonatomic) NSNumber *nextFaceId;
-@property (strong, nonatomic) NSNumber *sequenceNumber;
+@property (strong, nonatomic) NSNumber *currentScanId;
 
 + (CPConfig *)configInManagedObjectContext:(NSManagedObjectContext *)context;
 
 - (void)increaseNextFaceId;
 
-- (void)increaseSequenceNumber;
+- (void)increaseCurrentScanId;
 
 @end

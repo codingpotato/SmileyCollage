@@ -20,4 +20,6 @@
 
 + (CPFace *)createFaceInManagedObjectContext:(NSManagedObjectContext *)context;
 
++ (NSArray *)facesInManagedObjectContext:(NSManagedObjectContext *)context;
+
 @end

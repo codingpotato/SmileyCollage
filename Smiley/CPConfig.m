@@ -11,7 +11,7 @@
 @implementation CPConfig
 
 @dynamic nextFaceId;
-@dynamic sequenceNumber;
+@dynamic currentScanId;
 
 + (CPConfig *)configInManagedObjectContext:(NSManagedObjectContext *)context {
     NSString *entityName = NSStringFromClass(self.class);
@@ -23,8 +23,8 @@
     CPConfig *config = nil;
     if (array.count == 0) {
         config = [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:context];
-        config.nextFaceId = 0;
-        config.sequenceNumber = 0;
+        config.nextFaceId = [NSNumber numberWithInteger:0];
+        config.currentScanId = [NSNumber numberWithInteger:-1];
     } else if (array.count == 1) {
         config = [array objectAtIndex:0];
     } else {
@@ -37,8 +37,8 @@
     self.nextFaceId = [NSNumber numberWithInteger:self.nextFaceId.integerValue + 1];
 }
 
-- (void)increaseSequenceNumber {
-    self.sequenceNumber = [NSNumber numberWithInteger:self.sequenceNumber.integerValue + 1];
+- (void)increaseCurrentScanId {
+    self.currentScanId = [NSNumber numberWithInteger:self.currentScanId.integerValue + 1];
 }
 
 @end

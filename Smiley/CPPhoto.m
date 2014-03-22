@@ -11,7 +11,7 @@
 
 @implementation CPPhoto
 
-@dynamic sequenceNumber;
+@dynamic scanId;
 @dynamic url;
 @dynamic faces;
 
@@ -19,10 +19,16 @@
     return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
 }
 
-+ (CPPhoto *)photoOfURL:(NSString *)url inManagedObjectContext:(NSManagedObjectContext *)context {
-    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
++ (NSArray *)photosInManagedObjectContext:(NSManagedObjectContext *)context {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:entityDescription];
+    request.entity = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"url" ascending:YES], nil];
+    return [context executeFetchRequest:request error:nil];
+}
+
++ (CPPhoto *)photoOfURL:(NSString *)url inManagedObjectContext:(NSManagedObjectContext *)context {
+    NSFetchRequest *request = [[NSFetchRequest alloc] init];
+    [request setEntity:[NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context]];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"url == %@", url];
     [request setPredicate:predicate];
     
@@ -34,11 +40,11 @@
     }
 }
 
-+ (NSArray *)expiredPhotosWithSequenceNumber:(NSNumber *)sequenceNumber fromManagedObjectContext:(NSManagedObjectContext *)context {
++ (NSArray *)expiredPhotosWithScanId:(NSNumber *)scanId fromManagedObjectContext:(NSManagedObjectContext *)context {
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CPPhoto" inManagedObjectContext:context];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:entityDescription];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"sequenceNumber != %@", sequenceNumber];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"scanId != %@", scanId];
     [request setPredicate:predicate];
     return [context executeFetchRequest:request error:nil];
 }
