@@ -19,7 +19,7 @@
 
 @interface CPFacesViewController ()
 
-@property (strong, nonatomic) CPFacesManager *faceManager;
+@property (strong, nonatomic) CPFacesManager *facesManager;
 
 @property (strong, nonatomic) NSMutableArray *selectedFaces;
 
@@ -34,53 +34,49 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidBecomeActiveNotification:) name:UIApplicationDidBecomeActiveNotification object:nil];
     
-    self.faceManager.facesController.delegate = self;
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", self.faceManager.facesController.fetchedObjects.count];
+    self.facesManager.facesController.delegate = self;
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", self.facesManager.facesController.fetchedObjects.count];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     
-    [self.faceManager stopScan];
+    [self.facesManager stopScan];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPStitchViewControllerSegue"]) {
         CPStitchViewController *stitchViewController = (CPStitchViewController *)segue.destinationViewController;
-        stitchViewController.facesManager = self.faceManager;
+        stitchViewController.facesManager = self.facesManager;
         
         stitchViewController.stitchedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
         for (CPFace *face in self.selectedFaces) {
             CPFaceEditInformation *stitchedFace = [[CPFaceEditInformation alloc] init];
             stitchedFace.face = face;
-            stitchedFace.userBounds = CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue);
-            NSURL *url = [[NSURL alloc] initWithString:face.photo.url];
-            [self.faceManager assertForURL:url resultBlock:^(ALAsset *result) {
-                stitchedFace.asset = result;
-            }];
+            stitchedFace.asset = nil;
             [stitchViewController.stitchedFaces addObject:stitchedFace];
         }
     }
 }
 
 - (void)handleApplicationDidBecomeActiveNotification:(NSNotification *)notification {
-    [self.faceManager scanFaces];
+    [self.facesManager scanFaces];
 }
 
 - (void)handleApplicationDidEnterBackgroundNotification:(NSNotification *)notification {
-    [self.faceManager stopScan];
+    [self.facesManager stopScan];
 }
 
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.faceManager.facesController.fetchedObjects.count;
+    return self.facesManager.facesController.fetchedObjects.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
-    CPFace *face = [self.faceManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
-    cell.image = [self.faceManager thumbnailOfFace:face];
+    CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
+    cell.image = [self.facesManager thumbnailOfFace:face];
     cell.isSelected = [self.selectedFaces containsObject:face];
     
     return cell;
@@ -94,7 +90,7 @@
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    CPFace *face = [self.faceManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
+    CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
     NSAssert(face, @"");
     if ([self.selectedFaces containsObject:face]) {
         [self.selectedFaces removeObject:face];
@@ -127,11 +123,11 @@
 
 #pragma mark - lazy init
 
-- (CPFacesManager *)faceManager {
-    if (!_faceManager) {
-        _faceManager = [[CPFacesManager alloc] initWithAssetsLibrary:[[CPAssetsLibrary alloc] init]];
+- (CPFacesManager *)facesManager {
+    if (!_facesManager) {
+        _facesManager = [[CPFacesManager alloc] initWithAssetsLibrary:[[CPAssetsLibrary alloc] init]];
     }
-    return _faceManager;
+    return _facesManager;
 }
 
 - (NSMutableArray *)selectedFaces {

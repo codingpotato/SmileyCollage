@@ -92,6 +92,7 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
     [self.assetsLibrary stopScan];
     [self removeExpiredPhotos];
     [self saveContext];
+    self.isScanning = NO;
 }
 
 - (NSArray *)photos {

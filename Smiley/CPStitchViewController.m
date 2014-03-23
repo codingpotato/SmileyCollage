@@ -33,6 +33,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.selectedIndex = -1;
+
+    __block NSUInteger index = 0;
+    for (CPFaceEditInformation *faceEditInformation in self.stitchedFaces) {
+        faceEditInformation.userBounds = CGRectMake(faceEditInformation.face.x.floatValue, faceEditInformation.face.y.floatValue, faceEditInformation.face.width.floatValue, faceEditInformation.face.height.floatValue);
+        NSURL *url = [[NSURL alloc] initWithString:faceEditInformation.face.photo.url];
+        [self.facesManager assertForURL:url resultBlock:^(ALAsset *result) {
+            faceEditInformation.asset = result;
+            [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index++ inSection:0]]];
+        }];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -130,9 +140,11 @@
     CPFaceEditInformation *faceEditInformation = [self.stitchedFaces objectAtIndex:indexPath.row];
     NSAssert(faceEditInformation, @"");
     
-    CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.userBounds);
-    cell.image = [UIImage imageWithCGImage:faceImage scale:faceEditInformation.userBounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
-    CGImageRelease(faceImage);
+    if (faceEditInformation.asset) {
+        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.userBounds);
+        cell.image = [UIImage imageWithCGImage:faceImage scale:faceEditInformation.userBounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
+        CGImageRelease(faceImage);
+    }
     return cell;
 }
 
