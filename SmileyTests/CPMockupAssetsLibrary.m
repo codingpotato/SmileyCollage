@@ -97,6 +97,10 @@
     completionBlock();
 }
 
+- (NSUInteger)numberOfTotalPhotos {
+    return self.assetsProvider.count;
+}
+
 - (void)stopScan {
 }
 

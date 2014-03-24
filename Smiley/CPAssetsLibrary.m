@@ -14,14 +14,28 @@
 
 @property (strong, nonatomic) ALAssetsLibrary *assetsLibrary;
 
+@property (nonatomic) NSUInteger numberOfTotalPhotos;
+
 @end
 
 @implementation CPAssetsLibrary
 
 static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.numberOfTotalPhotos = 0;
+    }
+    return self;
+}
+
 - (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(scanCompletionBlock)completionBlock {
     [self enumerateSmileyPhotosBySkipAssetBlock:skipAssetBlock resultBlock:resultBlock completionBlock:completionBlock];
+}
+
+- (NSUInteger)numberOfTotalPhotos {
+    return _numberOfTotalPhotos;
 }
 
 - (void)stopScan {
@@ -66,11 +80,10 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
                     if (result) {
                         NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
                         [smileyPhotos addObject:assetURL.absoluteString];
-                    } else {
-                        // finish Smiley Photos album
-                        *stop = YES;
                     }
                 }];
+                // find Smiley Photo album, finish enumration
+                *stop = YES;
             }
         } else {
             // finish enumerate Smiley Photos album
@@ -85,8 +98,11 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                 if (result) {
                     NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
-                    if (![smileyPhotos containsObject:assetURL.absoluteString] && !skipAssetBlock(assetURL.absoluteString)) {
-                        [self detectFacesFromAsset:result resultBlock:resultBlock];
+                    if (![smileyPhotos containsObject:assetURL.absoluteString]) {
+                        self.numberOfTotalPhotos++;
+                        if (!skipAssetBlock(assetURL.absoluteString)) {
+                            [self detectFacesFromAsset:result resultBlock:resultBlock];
+                        }
                     }
                 }
             }];

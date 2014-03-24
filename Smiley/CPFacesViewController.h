@@ -6,6 +6,6 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@interface CPFacesViewController : UICollectionViewController <NSFetchedResultsControllerDelegate, UICollectionViewDelegateFlowLayout>
+@interface CPFacesViewController : UIViewController <NSFetchedResultsControllerDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @end

@@ -16,7 +16,7 @@
                     <nil name="viewControllers"/>
                     <connections>
                         <outlet property="delegate" destination="Pm8-t2-MRk" id="TNF-S0-qgi"/>
-                        <segue destination="d7R-VU-fY1" kind="relationship" relationship="rootViewController" id="kIl-2x-MGF"/>
+                        <segue destination="QFy-Gf-6GD" kind="relationship" relationship="rootViewController" id="Ts9-4M-4Ip"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mn4-NX-cLH" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -24,47 +24,101 @@
             </objects>
             <point key="canvasLocation" x="180" y="-228"/>
         </scene>
-        <!--Faces View Controller - Smiles Searching-->
-        <scene sceneID="Prf-mh-eek">
+        <!--Faces View Controller - Faces-->
+        <scene sceneID="QAz-Di-bjO">
             <objects>
-                <collectionViewController autoresizesArchivedViewToFullSize="NO" id="d7R-VU-fY1" customClass="CPFacesViewController" sceneMemberID="viewController">
-                    <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="Lv7-hw-72A">
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x4z-ZN-v9f" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController id="QFy-Gf-6GD" customClass="CPFacesViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wUV-nS-A5H"/>
+                        <viewControllerLayoutGuide type="bottom" id="GYH-Zv-uBH"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="n4W-2L-vQ1">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="su9-qZ-ydW">
-                            <size key="itemSize" width="78" height="78"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPPhotoCell" id="0pu-Ir-GjZ" customClass="CPPhotoCell">
-                                <rect key="frame" x="0.0" y="64" width="78" height="78"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="78" height="78"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                            </collectionViewCell>
-                        </cells>
-                        <connections>
-                            <outlet property="dataSource" destination="d7R-VU-fY1" id="JRV-aO-yl5"/>
-                            <outlet property="delegate" destination="d7R-VU-fY1" id="VEw-Cb-Kkz"/>
-                        </connections>
-                    </collectionView>
-                    <navigationItem key="navigationItem" title="Smiles Searching" id="0aS-Z2-eJI">
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6bY-zF-vA6" userLabel="Notification View">
+                                <rect key="frame" x="0.0" y="497" width="320" height="71"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zM3-wD-T4H">
+                                        <rect key="frame" x="20" y="49" width="280" height="2"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </progressView>
+                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iga-In-oLd">
+                                        <rect key="frame" x="20" y="20" width="280" height="21"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="21" id="edB-Uf-Acy"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="iga-In-oLd" firstAttribute="leading" secondItem="zM3-wD-T4H" secondAttribute="leading" id="8Bd-tu-wWN"/>
+                                    <constraint firstItem="iga-In-oLd" firstAttribute="top" secondItem="6bY-zF-vA6" secondAttribute="top" constant="20" symbolic="YES" id="BIB-mc-M2o"/>
+                                    <constraint firstItem="zM3-wD-T4H" firstAttribute="top" secondItem="iga-In-oLd" secondAttribute="bottom" constant="8" symbolic="YES" id="Idb-ik-hrG"/>
+                                    <constraint firstAttribute="bottom" secondItem="zM3-wD-T4H" secondAttribute="bottom" constant="20" symbolic="YES" id="MwX-qQ-rGr"/>
+                                    <constraint firstItem="zM3-wD-T4H" firstAttribute="leading" secondItem="6bY-zF-vA6" secondAttribute="leading" constant="20" symbolic="YES" id="hGO-Wd-gio"/>
+                                    <constraint firstItem="iga-In-oLd" firstAttribute="trailing" secondItem="zM3-wD-T4H" secondAttribute="trailing" id="nWu-T5-dB3"/>
+                                    <constraint firstAttribute="trailing" secondItem="zM3-wD-T4H" secondAttribute="trailing" constant="20" symbolic="YES" id="nj7-pP-lVM"/>
+                                </constraints>
+                            </view>
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-QR-r64">
+                                <rect key="frame" x="0.0" y="66" width="320" height="431"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="psz-ze-OT1">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPPhotoCell" id="has-kH-7sg" customClass="CPPhotoCell">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="QFy-Gf-6GD" id="8a6-M7-1rZ"/>
+                                    <outlet property="delegate" destination="QFy-Gf-6GD" id="eiZ-SV-gMd"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="6bY-zF-vA6" secondAttribute="bottom" id="04Q-JA-WJC"/>
+                            <constraint firstItem="Teu-QR-r64" firstAttribute="top" secondItem="wUV-nS-A5H" secondAttribute="bottom" id="5lo-JB-B2S"/>
+                            <constraint firstItem="6bY-zF-vA6" firstAttribute="top" secondItem="Teu-QR-r64" secondAttribute="bottom" id="99m-xU-89O"/>
+                            <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="n4W-2L-vQ1" secondAttribute="leading" id="NqD-xZ-Dd0"/>
+                            <constraint firstAttribute="trailing" secondItem="Teu-QR-r64" secondAttribute="trailing" id="R9F-Cb-5WW"/>
+                            <constraint firstItem="Teu-QR-r64" firstAttribute="trailing" secondItem="6bY-zF-vA6" secondAttribute="trailing" id="fQx-1I-ZXC"/>
+                            <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="6bY-zF-vA6" secondAttribute="leading" id="gdn-3J-GrU"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Faces" id="LiH-Uw-Urq">
                         <barButtonItem key="rightBarButtonItem" systemItem="play" id="xtm-Nc-Ing">
                             <connections>
-                                <segue destination="R4b-4T-tfo" kind="push" identifier="CPStitchViewControllerSegue" id="5YD-2d-hYu"/>
+                                <segue destination="R4b-4T-tfo" kind="push" identifier="CPStitchViewControllerSegue" id="Vip-73-Cxs"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="yO0-Wv-pVb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                    <connections>
+                        <outlet property="collectionView" destination="Teu-QR-r64" id="n8K-sr-K5o"/>
+                        <outlet property="message" destination="iga-In-oLd" id="MiX-1o-SnP"/>
+                        <outlet property="progressView" destination="zM3-wD-T4H" id="BFH-Vk-vGU"/>
+                    </connections>
+                </viewController>
             </objects>
-            <point key="canvasLocation" x="679" y="-228"/>
+            <point key="canvasLocation" x="675" y="-228"/>
         </scene>
         <!--Stitch View Controller - Stitch Smiles-->
         <scene sceneID="5BB-Sj-eop">

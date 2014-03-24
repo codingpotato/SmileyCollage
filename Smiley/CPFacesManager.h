@@ -14,15 +14,17 @@
 
 @interface CPFacesManager : NSObject
 
-@property (nonatomic) BOOL isScanning;
-
 @property (strong, nonatomic) CPConfig *config;
 
 @property (strong, nonatomic) NSFetchedResultsController *facesController;
 
+@property (nonatomic) NSUInteger numberOfScannedPhotos;
+
 - (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary;
 
 - (void)scanFaces;
+
+- (NSUInteger)numberOfTotalPhotos;
 
 - (void)stopScan;
 

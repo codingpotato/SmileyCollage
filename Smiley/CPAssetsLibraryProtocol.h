@@ -7,16 +7,19 @@
 //
 
 typedef BOOL (^skipAssetBlock)(NSString *assetURL);
+
 typedef void (^scanResultBlock)(NSString *assetURL, NSMutableArray *boundsOfFaces, NSMutableArray *thumbnails);
+
 typedef void (^scanCompletionBlock)();
 
 typedef void (^assetResultBlock)(ALAsset *asset);
 
-typedef void (^writeCompletionBlock)(NSURL *assetURL, NSError *error);
 
 @protocol CPAssetsLibraryProtocol <NSObject>
 
 - (void)scanFacesBySkipAssetBlock:(skipAssetBlock)skipAssetBlock resultBlock:(scanResultBlock)resultBlock completionBlock:(scanCompletionBlock)completionBlock;
+
+- (NSUInteger)numberOfTotalPhotos;
 
 - (void)stopScan;
 

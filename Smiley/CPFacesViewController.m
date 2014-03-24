@@ -23,6 +23,11 @@
 
 @property (strong, nonatomic) NSMutableArray *selectedFaces;
 
+@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+@property (weak, nonatomic) IBOutlet UILabel *message;
+
+@property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+
 @end
 
 @implementation CPFacesViewController
@@ -60,14 +65,30 @@
 }
 
 - (void)handleApplicationDidBecomeActiveNotification:(NSNotification *)notification {
+    [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos)) options:NSKeyValueObservingOptionNew context:nil];
     [self.facesManager scanFaces];
 }
 
 - (void)handleApplicationDidEnterBackgroundNotification:(NSNotification *)notification {
     [self.facesManager stopScan];
+    [self.facesManager removeObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos))];
 }
 
-#pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:NSStringFromSelector(@selector(numberOfScannedPhotos))]) {
+        NSNumber *newValue = change[NSKeyValueChangeNewKey];
+        [self.progressView setProgress:newValue.floatValue / self.facesManager.numberOfTotalPhotos animated:YES];
+    }
+}
+
+#pragma mark - NSFetchedResultsControllerDelegate implement
+
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", controller.fetchedObjects.count];
+    [self.collectionView reloadData];
+}
+
+#pragma mark - UICollectionViewDataSource implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.facesManager.facesController.fetchedObjects.count;
@@ -82,12 +103,7 @@
     return cell;
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    // TODO: 5 images each line
-    const int number = 5;
-    CGFloat width = (collectionView.bounds.size.width - (number + 1) * 1.0) / number;
-    return CGSizeMake(width, width);
-}
+#pragma mark - UICollectionViewDelegate implement
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
@@ -100,14 +116,14 @@
     [collectionView reloadItemsAtIndexPaths:@[indexPath]];
 }
 
-#pragma mark - NSFetchedResultsControllerDelegate implement
-
-- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", controller.fetchedObjects.count];
-    [self.collectionView reloadData];
-}
-
 #pragma mark - UICollectionViewDelegateFlowLayout implement
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    // TODO: 5 images each line
+    const int number = 5;
+    CGFloat width = (collectionView.bounds.size.width - (number + 1) * 1.0) / number;
+    return CGSizeMake(width, width);
+}
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     return UIEdgeInsetsMake(1.0, 1.0, 1.0, 1.0);

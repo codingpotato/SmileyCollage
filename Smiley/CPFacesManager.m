@@ -23,6 +23,8 @@
 @property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
+@property (nonatomic) BOOL isScanning;
+
 @end
 
 @implementation CPFacesManager
@@ -32,8 +34,10 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
 - (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary {
     self = [super init];
     if (self) {
-        self.isScanning = NO;
         self.assetsLibrary = assetsLibrary;
+        self.numberOfScannedPhotos = 0;
+        self.isScanning = NO;
+
         NSFileManager *fileManager = [NSFileManager defaultManager];
         NSString *thumbnailPath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName];
         if (![fileManager fileExistsAtPath:thumbnailPath]) {
@@ -52,6 +56,7 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
             CPPhoto *photo = [CPPhoto photoOfURL:assetURL inManagedObjectContext:self.managedObjectContext];
             if (photo) {
                 photo.scanId = self.config.currentScanId;
+                self.numberOfScannedPhotos++;
                 return YES;
             } else {
                 return NO;
@@ -75,17 +80,24 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
                 face.photo = photo;
                 [photo addFacesObject:face];
                 
-                face.thumbnail = [NSString stringWithFormat:@"face_%d.jpg", face.id.integerValue];
+                face.thumbnail = [NSString stringWithFormat:@"face_%d.jpg", face.id.intValue];
                 NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
                 UIImage *image = [thumbnails objectAtIndex:index];
                 [UIImageJPEGRepresentation(image, 0.5) writeToFile:filePath atomically:YES];
             }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.numberOfScannedPhotos++;
+            });
         } completionBlock:^{
             [self removeExpiredPhotos];
             [self saveContext];
             self.isScanning = NO;
         }];
     }
+}
+
+- (NSUInteger)numberOfTotalPhotos {
+    return self.assetsLibrary.numberOfTotalPhotos;
 }
 
 - (void)stopScan {
