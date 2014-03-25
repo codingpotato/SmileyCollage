@@ -86,6 +86,7 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
                 [UIImageJPEGRepresentation(image, 0.5) writeToFile:filePath atomically:YES];
             }
             dispatch_async(dispatch_get_main_queue(), ^{
+                // inform ui thread to update progress bar
                 self.numberOfScannedPhotos++;
             });
         } completionBlock:^{

@@ -24,9 +24,14 @@
 @property (strong, nonatomic) NSMutableArray *selectedFaces;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
 @property (weak, nonatomic) IBOutlet UILabel *message;
 
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+
+@property (weak, nonatomic) IBOutlet UIView *notificationView;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *notificationViewBottomConstraint;
 
 @end
 
@@ -40,7 +45,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidBecomeActiveNotification:) name:UIApplicationDidBecomeActiveNotification object:nil];
     
     self.facesManager.facesController.delegate = self;
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", self.facesManager.facesController.fetchedObjects.count];
+    self.navigationItem.title = [NSString stringWithFormat:@"Faces: %d", (int)self.facesManager.facesController.fetchedObjects.count];
+    self.message.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -77,14 +83,24 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:NSStringFromSelector(@selector(numberOfScannedPhotos))]) {
         NSNumber *newValue = change[NSKeyValueChangeNewKey];
-        [self.progressView setProgress:newValue.floatValue / self.facesManager.numberOfTotalPhotos animated:YES];
+        [self.progressView setProgress:newValue.floatValue / self.facesManager.numberOfTotalPhotos];
+        self.message.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
+
+        if (newValue.integerValue == self.facesManager.numberOfTotalPhotos) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void) {
+                self.notificationViewBottomConstraint.constant = self.notificationView.bounds.size.height;
+                [UIView animateWithDuration:0.5 animations:^{
+                    [self.view layoutIfNeeded];
+                }];
+            });
+        }
     }
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate implement
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiles Searching: %d", controller.fetchedObjects.count];
+    self.navigationItem.title = [NSString stringWithFormat:@"Faces: %d", (int)controller.fetchedObjects.count];
     [self.collectionView reloadData];
 }
 

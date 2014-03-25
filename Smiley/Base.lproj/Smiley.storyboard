@@ -27,7 +27,6 @@
         <!--Faces View Controller - Faces-->
         <scene sceneID="QAz-Di-bjO">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="x4z-ZN-v9f" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="QFy-Gf-6GD" customClass="CPFacesViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="wUV-nS-A5H"/>
@@ -37,10 +36,41 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-QR-r64">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="psz-ze-OT1">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPPhotoCell" id="has-kH-7sg" customClass="CPPhotoCell">
+                                        <rect key="frame" x="0.0" y="64" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="QFy-Gf-6GD" id="8a6-M7-1rZ"/>
+                                    <outlet property="delegate" destination="QFy-Gf-6GD" id="eiZ-SV-gMd"/>
+                                </connections>
+                            </collectionView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6bY-zF-vA6" userLabel="Notification View">
                                 <rect key="frame" x="0.0" y="497" width="320" height="71"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
+                                    <view alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fb8-7f-hOJ" userLabel="Mask">
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="71"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    </view>
                                     <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zM3-wD-T4H">
                                         <rect key="frame" x="20" y="49" width="280" height="2"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -55,10 +85,14 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
-                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
+                                    <constraint firstItem="fb8-7f-hOJ" firstAttribute="leading" secondItem="6bY-zF-vA6" secondAttribute="leading" id="5On-A7-kL7"/>
                                     <constraint firstItem="iga-In-oLd" firstAttribute="leading" secondItem="zM3-wD-T4H" secondAttribute="leading" id="8Bd-tu-wWN"/>
+                                    <constraint firstItem="fb8-7f-hOJ" firstAttribute="top" secondItem="6bY-zF-vA6" secondAttribute="top" id="Ab5-Wm-oeZ"/>
                                     <constraint firstItem="iga-In-oLd" firstAttribute="top" secondItem="6bY-zF-vA6" secondAttribute="top" constant="20" symbolic="YES" id="BIB-mc-M2o"/>
+                                    <constraint firstAttribute="bottom" secondItem="fb8-7f-hOJ" secondAttribute="bottom" id="CMh-Po-Ect"/>
+                                    <constraint firstItem="fb8-7f-hOJ" firstAttribute="centerX" secondItem="zM3-wD-T4H" secondAttribute="centerX" id="DZo-ec-WHA"/>
                                     <constraint firstItem="zM3-wD-T4H" firstAttribute="top" secondItem="iga-In-oLd" secondAttribute="bottom" constant="8" symbolic="YES" id="Idb-ik-hrG"/>
                                     <constraint firstAttribute="bottom" secondItem="zM3-wD-T4H" secondAttribute="bottom" constant="20" symbolic="YES" id="MwX-qQ-rGr"/>
                                     <constraint firstItem="zM3-wD-T4H" firstAttribute="leading" secondItem="6bY-zF-vA6" secondAttribute="leading" constant="20" symbolic="YES" id="hGO-Wd-gio"/>
@@ -66,42 +100,16 @@
                                     <constraint firstAttribute="trailing" secondItem="zM3-wD-T4H" secondAttribute="trailing" constant="20" symbolic="YES" id="nj7-pP-lVM"/>
                                 </constraints>
                             </view>
-                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-QR-r64">
-                                <rect key="frame" x="0.0" y="66" width="320" height="431"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="psz-ze-OT1">
-                                    <size key="itemSize" width="50" height="50"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPPhotoCell" id="has-kH-7sg" customClass="CPPhotoCell">
-                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        </view>
-                                    </collectionViewCell>
-                                </cells>
-                                <connections>
-                                    <outlet property="dataSource" destination="QFy-Gf-6GD" id="8a6-M7-1rZ"/>
-                                    <outlet property="delegate" destination="QFy-Gf-6GD" id="eiZ-SV-gMd"/>
-                                </connections>
-                            </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="6bY-zF-vA6" secondAttribute="bottom" id="04Q-JA-WJC"/>
-                            <constraint firstItem="Teu-QR-r64" firstAttribute="top" secondItem="wUV-nS-A5H" secondAttribute="bottom" id="5lo-JB-B2S"/>
-                            <constraint firstItem="6bY-zF-vA6" firstAttribute="top" secondItem="Teu-QR-r64" secondAttribute="bottom" id="99m-xU-89O"/>
+                            <constraint firstItem="6bY-zF-vA6" firstAttribute="bottom" secondItem="n4W-2L-vQ1" secondAttribute="bottom" id="04Q-JA-WJC"/>
                             <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="n4W-2L-vQ1" secondAttribute="leading" id="NqD-xZ-Dd0"/>
                             <constraint firstAttribute="trailing" secondItem="Teu-QR-r64" secondAttribute="trailing" id="R9F-Cb-5WW"/>
                             <constraint firstItem="Teu-QR-r64" firstAttribute="trailing" secondItem="6bY-zF-vA6" secondAttribute="trailing" id="fQx-1I-ZXC"/>
                             <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="6bY-zF-vA6" secondAttribute="leading" id="gdn-3J-GrU"/>
+                            <constraint firstItem="Teu-QR-r64" firstAttribute="top" secondItem="n4W-2L-vQ1" secondAttribute="top" id="rli-T1-kg0"/>
+                            <constraint firstItem="Teu-QR-r64" firstAttribute="bottom" secondItem="6bY-zF-vA6" secondAttribute="bottom" id="scW-hA-EeP"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Faces" id="LiH-Uw-Urq">
@@ -114,9 +122,12 @@
                     <connections>
                         <outlet property="collectionView" destination="Teu-QR-r64" id="n8K-sr-K5o"/>
                         <outlet property="message" destination="iga-In-oLd" id="MiX-1o-SnP"/>
+                        <outlet property="notificationView" destination="6bY-zF-vA6" id="Azw-3S-Hgn"/>
+                        <outlet property="notificationViewBottomConstraint" destination="04Q-JA-WJC" id="MwE-Sa-w7S"/>
                         <outlet property="progressView" destination="zM3-wD-T4H" id="BFH-Vk-vGU"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x4z-ZN-v9f" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="675" y="-228"/>
         </scene>
