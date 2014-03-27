@@ -11,7 +11,7 @@
 
 @implementation CPPhoto
 
-@dynamic scanId;
+@dynamic timestamp;
 @dynamic url;
 @dynamic faces;
 
@@ -26,10 +26,10 @@
     return [context executeFetchRequest:request error:nil];
 }
 
-+ (CPPhoto *)photoOfURL:(NSString *)url inManagedObjectContext:(NSManagedObjectContext *)context {
++ (CPPhoto *)photoOfAssetURL:(NSString *)assetURL inManagedObjectContext:(NSManagedObjectContext *)context {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:[NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"url == %@", url];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"url == %@", assetURL];
     [request setPredicate:predicate];
     
     NSArray *array = [context executeFetchRequest:request error:nil];
@@ -40,11 +40,11 @@
     }
 }
 
-+ (NSArray *)expiredPhotosWithScanId:(NSNumber *)scanId fromManagedObjectContext:(NSManagedObjectContext *)context {
++ (NSArray *)expiredPhotosWithTimestamp:(NSTimeInterval)timestamp fromManagedObjectContext:(NSManagedObjectContext *)context {
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CPPhoto" inManagedObjectContext:context];
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:entityDescription];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"scanId != %@", scanId];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"timestamp < %lf", timestamp];
     [request setPredicate:predicate];
     return [context executeFetchRequest:request error:nil];
 }

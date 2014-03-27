@@ -10,7 +10,7 @@
 
 @implementation CPFace
 
-@dynamic id;
+@dynamic timestamp;
 @dynamic x;
 @dynamic y;
 @dynamic width;
@@ -25,7 +25,7 @@
 + (NSArray *)facesInManagedObjectContext:(NSManagedObjectContext *)context {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     request.entity = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
-    request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"id" ascending:YES], nil];
+    request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES], nil];
     return [context executeFetchRequest:request error:nil];
 }
 

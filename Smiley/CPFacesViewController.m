@@ -11,7 +11,6 @@
 #import "CPPhotoCell.h"
 #import "CPStitchViewController.h"
 
-#import "CPAssetsLibrary.h"
 #import "CPFace.h"
 #import "CPFaceEditInformation.h"
 #import "CPFacesManager.h"
@@ -72,12 +71,14 @@
 
 - (void)handleApplicationDidBecomeActiveNotification:(NSNotification *)notification {
     [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos)) options:NSKeyValueObservingOptionNew context:nil];
+    [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning)) options:NSKeyValueObservingOptionNew context:nil];
     [self.facesManager scanFaces];
 }
 
 - (void)handleApplicationDidEnterBackgroundNotification:(NSNotification *)notification {
     [self.facesManager stopScan];
     [self.facesManager removeObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos))];
+    [self.facesManager removeObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning))];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -85,8 +86,9 @@
         NSNumber *newValue = change[NSKeyValueChangeNewKey];
         [self.progressView setProgress:newValue.floatValue / self.facesManager.numberOfTotalPhotos];
         self.message.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
-
-        if (newValue.integerValue == self.facesManager.numberOfTotalPhotos) {
+    } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(isScanning))]) {
+        NSNumber *newValue = change[NSKeyValueChangeNewKey];
+        if (!newValue.boolValue) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void) {
                 self.notificationViewBottomConstraint.constant = self.notificationView.bounds.size.height;
                 [UIView animateWithDuration:0.5 animations:^{
@@ -157,7 +159,7 @@
 
 - (CPFacesManager *)facesManager {
     if (!_facesManager) {
-        _facesManager = [[CPFacesManager alloc] initWithAssetsLibrary:[[CPAssetsLibrary alloc] init]];
+        _facesManager = [[CPFacesManager alloc] init];
     }
     return _facesManager;
 }

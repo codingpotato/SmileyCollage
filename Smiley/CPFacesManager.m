@@ -8,38 +8,42 @@
 
 #import "CPFacesManager.h"
 
-#import "CPAssetsLibraryProtocol.h"
+#import "CPUtility.h"
 
-#import "CPConfig.h"
+#import "CPCleanupOperation.h"
+#import "CPFaceDetectOperation.h"
+
 #import "CPFace.h"
 #import "CPFaceEditInformation.h"
 #import "CPPhoto.h"
 
 @interface CPFacesManager ()
 
-@property (strong, nonatomic) id<CPAssetsLibraryProtocol> assetsLibrary;
+@property (strong, nonatomic) NSOperationQueue *queue;
+
+@property (strong, nonatomic) ALAssetsLibrary *assetsLibrary;
 
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-@property (strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+
 @property (strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-@property (nonatomic) BOOL isScanning;
+@property (nonatomic) NSTimeInterval scanStartTime;
 
 @end
 
 @implementation CPFacesManager
 
-static NSString *g_thumbnailDirectoryName = @"thumbnail";
+static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 
-- (id)initWithAssetsLibrary:(id<CPAssetsLibraryProtocol>)assetsLibrary {
+- (id)init {
     self = [super init];
     if (self) {
-        self.assetsLibrary = assetsLibrary;
-        self.numberOfScannedPhotos = 0;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mergeContextChangesForNotification:) name:NSManagedObjectContextDidSaveNotification object:nil];
+        
         self.isScanning = NO;
 
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *thumbnailPath = [[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName];
+        NSString *thumbnailPath = [CPUtility thumbnailPath];
         if (![fileManager fileExistsAtPath:thumbnailPath]) {
             [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
         }
@@ -47,82 +51,37 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
     return self;
 }
 
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 - (void)scanFaces {
     if (!self.isScanning) {
         self.isScanning = YES;
-        [self.config increaseCurrentScanId];
+        self.numberOfScannedPhotos = 0;
+        self.numberOfTotalPhotos = 0;
+        self.scanStartTime = [NSDate timeIntervalSinceReferenceDate];
         
-        [self.assetsLibrary scanFacesBySkipAssetBlock:^BOOL(NSString *assetURL) {
-            CPPhoto *photo = [CPPhoto photoOfURL:assetURL inManagedObjectContext:self.managedObjectContext];
-            if (photo) {
-                photo.scanId = self.config.currentScanId;
-                self.numberOfScannedPhotos++;
-                return YES;
-            } else {
-                return NO;
-            }
-        } resultBlock:^(NSString *assetURL, NSMutableArray *boundsOfFaces, NSMutableArray *thumbnails) {
-            NSAssert(boundsOfFaces.count == thumbnails.count, @"");
-            
-            CPPhoto *photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
-            photo.url = assetURL;
-            photo.scanId = self.config.currentScanId;
-            
-            for (NSUInteger index = 0; index < boundsOfFaces.count; ++index) {
-                CPFace *face = [CPFace createFaceInManagedObjectContext:self.managedObjectContext];
-                face.id = self.config.nextFaceId;
-                [self.config increaseNextFaceId];
-                CGRect bounds = ((NSValue *)[boundsOfFaces objectAtIndex:index]).CGRectValue;
-                face.x = [NSNumber numberWithFloat:bounds.origin.x];
-                face.y = [NSNumber numberWithFloat:bounds.origin.y];
-                face.width = [NSNumber numberWithFloat:bounds.size.width];
-                face.height = [NSNumber numberWithFloat:bounds.size.height];
-                face.photo = photo;
-                [photo addFacesObject:face];
-                
-                face.thumbnail = [NSString stringWithFormat:@"face_%d.jpg", face.id.intValue];
-                NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
-                UIImage *image = [thumbnails objectAtIndex:index];
-                [UIImageJPEGRepresentation(image, 0.5) writeToFile:filePath atomically:YES];
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                // inform ui thread to update progress bar
-                self.numberOfScannedPhotos++;
-            });
-        } completionBlock:^{
-            [self removeExpiredPhotos];
-            [self saveContext];
-            self.isScanning = NO;
-        }];
+        [self enumerateSmileyPhotos];
     }
 }
 
-- (NSUInteger)numberOfTotalPhotos {
-    return self.assetsLibrary.numberOfTotalPhotos;
-}
-
 - (void)stopScan {
-    [self.assetsLibrary stopScan];
-    [self removeExpiredPhotos];
-    [self saveContext];
-    self.isScanning = NO;
-}
+    if (self.isScanning) {
+        [self.queue cancelAllOperations];
+        [self.queue waitUntilAllOperationsAreFinished];
 
-- (NSArray *)photos {
-    return [CPPhoto photosInManagedObjectContext:self.managedObjectContext];
-}
-
-- (NSArray *)faces {
-    return [CPFace facesInManagedObjectContext:self.managedObjectContext];
+        [self removeExpiredPhotos];
+    }
 }
 
 - (UIImage *)thumbnailOfFace:(CPFace *)face {
-    NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
+    NSString *filePath = [[CPUtility thumbnailPath] stringByAppendingPathComponent:face.thumbnail];
     return [UIImage imageWithContentsOfFile:filePath];
 }
 
-- (void)assertForURL:(NSURL *)url resultBlock:(assetResultBlock)resultBlock {
-    [self.assetsLibrary assetForURL:url resultBlock:resultBlock];
+- (void)assertForURL:(NSURL *)assetURL resultBlock:(ALAssetsLibraryAssetForURLResultBlock)resultBlock {
+    [self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
 }
 
 - (void)saveImageByStitchedFaces:(NSMutableArray *)stitchedFaces {
@@ -149,59 +108,121 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
         }
     }
     
-    [self.assetsLibrary saveStitchedImage:UIGraphicsGetImageFromCurrentImageContext()];
+    [self saveStitchedImage:UIGraphicsGetImageFromCurrentImageContext()];
     UIGraphicsEndImageContext();
 }
 
+- (void)enumerateSmileyPhotos {
+    NSMutableArray *smileyPhotos = [[NSMutableArray alloc] init];
+    [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+        if (group) {
+            if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
+                [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                    if (result) {
+                        NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
+                        [smileyPhotos addObject:assetURL.absoluteString];
+                    }
+                }];
+                // find Smiley Photo album, finish enumration
+                *stop = YES;
+            }
+        } else {
+            // finish enumerate Smiley Photos album
+            [self enumerateAllPhotosExceptSmileyPhotos:smileyPhotos];
+        }
+    } failureBlock:nil];
+}
+
+- (void)enumerateAllPhotosExceptSmileyPhotos:(NSMutableArray *)smileyPhotos {
+    [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos | ALAssetsGroupLibrary usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+        if (group) {
+            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                if (result) {
+                    NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
+                    if (![smileyPhotos containsObject:assetURL.absoluteString]) {
+                        self.numberOfTotalPhotos++;
+                        CPFaceDetectOperation *faceDetecOperation = [[CPFaceDetectOperation alloc] initWithAsset:result persistentStoreCoordinator:self.persistentStoreCoordinator];
+                        faceDetecOperation.completionBlock = ^() {
+                            // inform ui thread
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                self.numberOfScannedPhotos++;
+                            });
+                        };
+                        [self.queue addOperation:faceDetecOperation];
+                    }
+                }
+            }];
+        } else {
+            // finish enumerate all photos
+            [self removeExpiredPhotos];
+        }
+    } failureBlock:nil];
+}
+
 - (void)removeExpiredPhotos {
-    NSArray *expiredPhotos = [CPPhoto expiredPhotosWithScanId:self.config.currentScanId fromManagedObjectContext:self.managedObjectContext];
-    for (CPPhoto *photo in expiredPhotos) {
-        for (CPFace *face in photo.faces) {
-            NSString *filePath = [[[self applicationDocumentsDirectory] stringByAppendingPathComponent:g_thumbnailDirectoryName] stringByAppendingPathComponent:face.thumbnail];
-            [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-        }
-        [self.managedObjectContext deleteObject:photo];
-    }
+    CPCleanupOperation *cleanupOperation = [[CPCleanupOperation alloc] initWithScanStartTime:self.scanStartTime persistentStoreCoordinator:self.persistentStoreCoordinator];
+    cleanupOperation.completionBlock = ^() {
+        self.isScanning = NO;
+    };
+    [self.queue addOperation:cleanupOperation];
 }
 
-- (NSString *)applicationDocumentsDirectory {
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+- (void)saveStitchedImage:(UIImage *)image {
+    [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
+        if (!error) {
+            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
+                __block BOOL foundGroup = NO;
+                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                    if (group) {
+                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
+                            [group addAsset:asset];
+                            foundGroup = YES;
+                        }
+                    } else {
+                        if (!foundGroup) {
+                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyPhotos resultBlock:^(ALAssetsGroup *group) {
+                                [group addAsset:asset];
+                            } failureBlock:nil];
+                        }
+                    }
+                } failureBlock:nil];
+            } failureBlock:nil];
+        }
+    }];
 }
 
-- (void)saveContext {
-    NSError *error = nil;
-    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
-    if (managedObjectContext != nil) {
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            /*
-             TODO: MAY ABORT! Handle the error appropriately when saving context.
-             
-             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-             */
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-    }
+- (void)mergeContextChangesForNotification:(NSNotification *)notification {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.managedObjectContext mergeChangesFromContextDidSaveNotification:notification];
+    });
 }
 
 #pragma mark - lazy init
-
-- (CPConfig *)config {
-    if (!_config) {
-        _config = [CPConfig configInManagedObjectContext:self.managedObjectContext];
-    }
-    return _config;
-}
 
 - (NSFetchedResultsController *)facesController {
     if (!_facesController) {
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         request.entity = [NSEntityDescription entityForName:NSStringFromClass([CPFace class]) inManagedObjectContext:self.managedObjectContext];
-        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"id" ascending:YES], nil];
+        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES], nil];
         _facesController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPFaceCache"];
         [_facesController performFetch:nil];
     }
     return _facesController;
+}
+
+- (NSOperationQueue *)queue {
+    if (!_queue) {
+        _queue = [[NSOperationQueue alloc] init];
+        _queue.maxConcurrentOperationCount = 1;
+    }
+    return _queue;
+}
+
+- (ALAssetsLibrary *)assetsLibrary {
+    if (!_assetsLibrary) {
+        _assetsLibrary = [[ALAssetsLibrary alloc] init];
+    }
+    return _assetsLibrary;
 }
 
 - (NSManagedObjectContext *)managedObjectContext {
@@ -215,21 +236,16 @@ static NSString *g_thumbnailDirectoryName = @"thumbnail";
     return _managedObjectContext;
 }
 
-- (NSManagedObjectModel *)managedObjectModel {
-    if (!_managedObjectModel) {
-        NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Smiley" withExtension:@"momd"];
-        _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-    }
-    return _managedObjectModel;
-}
-
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
     if (!_persistentStoreCoordinator) {
-        NSURL *applicationDocumentsDirectoryURL = [NSURL fileURLWithPath:self.applicationDocumentsDirectory];
+        NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Smiley" withExtension:@"momd"];
+        NSManagedObjectModel *managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
+        _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:managedObjectModel];
+
+        NSURL *applicationDocumentsDirectoryURL = [NSURL fileURLWithPath:[CPUtility applicationDocumentsPath]];
         NSURL *storeURL = [applicationDocumentsDirectoryURL URLByAppendingPathComponent:@"Smiley.sqlite"];
         NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
         NSError *error = nil;
-        _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:self.managedObjectModel];
         if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
             /*
              TODO: MAY ABORT! Handle the error appropriately when initializing persistent store coordinator.

@@ -1,26 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5063" systemVersion="13C64" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
-    <entity name="CPConfig" representedClassName="CPConfig" syncable="YES">
-        <attribute name="currentScanId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-        <attribute name="nextFaceId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
-    </entity>
     <entity name="CPFace" representedClassName="CPFace" syncable="YES">
         <attribute name="height" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
-        <attribute name="id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="thumbnail" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Double" defaultValueString="0" syncable="YES"/>
         <attribute name="width" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
         <attribute name="x" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
         <attribute name="y" attributeType="Float" defaultValueString="0.0" syncable="YES"/>
         <relationship name="photo" maxCount="1" deletionRule="Nullify" destinationEntity="CPPhoto" inverseName="faces" inverseEntity="CPPhoto" syncable="YES"/>
     </entity>
     <entity name="CPPhoto" representedClassName="CPPhoto" syncable="YES">
-        <attribute name="scanId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Double" defaultValueString="0" syncable="YES"/>
         <attribute name="url" attributeType="String" syncable="YES"/>
         <relationship name="faces" toMany="YES" deletionRule="Cascade" destinationEntity="CPFace" inverseName="photo" inverseEntity="CPFace" syncable="YES"/>
     </entity>
     <elements>
-        <element name="CPConfig" positionX="9" positionY="54" width="128" height="73"/>
         <element name="CPFace" positionX="0" positionY="0" width="128" height="150"/>
-        <element name="CPPhoto" positionX="0" positionY="0" width="128" height="88"/>
+        <element name="CPPhoto" positionX="0" positionY="0" width="128" height="90"/>
     </elements>
 </model>

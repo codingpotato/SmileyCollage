@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		FC1A3A3618DB2875004E4C38 /* CPFacesManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3518DB2875004E4C38 /* CPFacesManagerTests.m */; };
-		FC1A3A3918DB28F3004E4C38 /* CPMockupAssetsLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3818DB28F3004E4C38 /* CPMockupAssetsLibrary.m */; };
 		FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287418CC6A960050AD08 /* CPTransitionManager.m */; };
 		FC2B287818CC6C300050AD08 /* CPStitchEditTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287718CC6C300050AD08 /* CPStitchEditTransition.m */; };
 		FC46714018C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
@@ -24,18 +23,20 @@
 		FC46716418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
 		FC46716C18C2CAF600E472BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC46716A18C2CAF600E472BF /* InfoPlist.strings */; };
 		FC58103218DDD06100B6BE03 /* CPFaceEditInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */; };
+		FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5E8F6118E45DA20012EB59 /* CPCleanupOperation.m */; };
+		FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */; };
+		FC60EBCF18E1C10B00AD74FB /* CPFaceDetectOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */; };
 		FC61A46A18DD93B8009D9442 /* CPCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46918DD93B8009D9442 /* CPCell.m */; };
 		FC61A46D18DD94A3009D9442 /* CPStitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46C18DD94A3009D9442 /* CPStitchCell.m */; };
+		FC782A8C18E304B10024C477 /* CPUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = FC782A8B18E304B10024C477 /* CPUtility.m */; };
 		FC80EC6418C9F5D2008E83B6 /* CPStitchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPStitchViewController.m */; };
 		FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */; };
-		FC899EC518D48B02006A14BC /* CPConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = FC899EC418D48B02006A14BC /* CPConfig.m */; };
 		FC8BCA1018D424F000748335 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC8BCA0F18D424F000748335 /* CoreData.framework */; };
 		FC8BCA1318D4256900748335 /* Smiley.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1118D4256900748335 /* Smiley.xcdatamodeld */; };
 		FC8BCA1618D42E4100748335 /* CPFace.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1518D42E4100748335 /* CPFace.m */; };
 		FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1818D42E4100748335 /* CPPhoto.m */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
 		FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD844C318C761C3003BA834 /* CoreImage.framework */; };
-		FCEF793E18D880A2007DBC86 /* CPAssetsLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = FCEF793D18D880A2007DBC86 /* CPAssetsLibrary.m */; };
 		FCF8FE9618C2D016007FA358 /* CPFacesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9518C2D016007FA358 /* CPFacesViewController.m */; };
 		FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */; };
 		FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */; };
@@ -53,8 +54,6 @@
 
 /* Begin PBXFileReference section */
 		FC1A3A3518DB2875004E4C38 /* CPFacesManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManagerTests.m; sourceTree = "<group>"; };
-		FC1A3A3718DB28F3004E4C38 /* CPMockupAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPMockupAssetsLibrary.h; sourceTree = "<group>"; };
-		FC1A3A3818DB28F3004E4C38 /* CPMockupAssetsLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPMockupAssetsLibrary.m; sourceTree = "<group>"; };
 		FC2B287318CC6A960050AD08 /* CPTransitionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTransitionManager.h; sourceTree = "<group>"; };
 		FC2B287418CC6A960050AD08 /* CPTransitionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTransitionManager.m; sourceTree = "<group>"; };
 		FC2B287618CC6C300050AD08 /* CPStitchEditTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchEditTransition.h; sourceTree = "<group>"; };
@@ -77,16 +76,22 @@
 		FC46716B18C2CAF600E472BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC58103018DDD06100B6BE03 /* CPFaceEditInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFaceEditInformation.h; sourceTree = "<group>"; };
 		FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceEditInformation.m; sourceTree = "<group>"; };
+		FC5E8F6018E45DA20012EB59 /* CPCleanupOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCleanupOperation.h; sourceTree = "<group>"; };
+		FC5E8F6118E45DA20012EB59 /* CPCleanupOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCleanupOperation.m; sourceTree = "<group>"; };
+		FC60EBCA18E1BD8E00AD74FB /* CPCoreDataOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCoreDataOperation.h; sourceTree = "<group>"; };
+		FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataOperation.m; sourceTree = "<group>"; };
+		FC60EBCD18E1C10B00AD74FB /* CPFaceDetectOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFaceDetectOperation.h; sourceTree = "<group>"; };
+		FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceDetectOperation.m; sourceTree = "<group>"; };
 		FC61A46818DD93B8009D9442 /* CPCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCell.h; sourceTree = "<group>"; };
 		FC61A46918DD93B8009D9442 /* CPCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCell.m; sourceTree = "<group>"; };
 		FC61A46B18DD94A3009D9442 /* CPStitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchCell.h; sourceTree = "<group>"; };
 		FC61A46C18DD94A3009D9442 /* CPStitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPStitchCell.m; sourceTree = "<group>"; };
+		FC782A8A18E304B10024C477 /* CPUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUtility.h; sourceTree = "<group>"; };
+		FC782A8B18E304B10024C477 /* CPUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPUtility.m; sourceTree = "<group>"; };
 		FC80EC6218C9F5D2008E83B6 /* CPStitchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchViewController.h; sourceTree = "<group>"; };
 		FC80EC6318C9F5D2008E83B6 /* CPStitchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPStitchViewController.m; sourceTree = "<group>"; };
 		FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEditViewController.h; sourceTree = "<group>"; };
 		FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEditViewController.m; sourceTree = "<group>"; };
-		FC899EC318D48B02006A14BC /* CPConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConfig.h; sourceTree = "<group>"; };
-		FC899EC418D48B02006A14BC /* CPConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConfig.m; sourceTree = "<group>"; };
 		FC8BCA0F18D424F000748335 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		FC8BCA1218D4256900748335 /* Smiley.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Smiley.xcdatamodel; sourceTree = "<group>"; };
 		FC8BCA1418D42E4100748335 /* CPFace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFace.h; sourceTree = "<group>"; };
@@ -96,9 +101,6 @@
 		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
 		FCD844C318C761C3003BA834 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
-		FCEF793C18D880A2007DBC86 /* CPAssetsLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAssetsLibrary.h; sourceTree = "<group>"; };
-		FCEF793D18D880A2007DBC86 /* CPAssetsLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPAssetsLibrary.m; sourceTree = "<group>"; };
-		FCEF793F18D8925F007DBC86 /* CPAssetsLibraryProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPAssetsLibraryProtocol.h; sourceTree = "<group>"; };
 		FCF8FE9418C2D016007FA358 /* CPFacesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesViewController.h; sourceTree = "<group>"; };
 		FCF8FE9518C2D016007FA358 /* CPFacesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesViewController.m; sourceTree = "<group>"; };
 		FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
@@ -183,21 +185,17 @@
 				FC61A46718DD9390009D9442 /* Cells */,
 				FC46714E18C2CAF600E472BF /* CPAppDelegate.h */,
 				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
-				FCEF793C18D880A2007DBC86 /* CPAssetsLibrary.h */,
-				FCEF793D18D880A2007DBC86 /* CPAssetsLibrary.m */,
-				FCEF793F18D8925F007DBC86 /* CPAssetsLibraryProtocol.h */,
 				FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */,
 				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
-				FC58103018DDD06100B6BE03 /* CPFaceEditInformation.h */,
-				FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */,
-				FC93443718C363F500657BBC /* CPFacesManager.h */,
-				FC93443818C363F500657BBC /* CPFacesManager.m */,
 				FCF8FE9418C2D016007FA358 /* CPFacesViewController.h */,
 				FCF8FE9518C2D016007FA358 /* CPFacesViewController.m */,
 				FC80EC6218C9F5D2008E83B6 /* CPStitchViewController.h */,
 				FC80EC6318C9F5D2008E83B6 /* CPStitchViewController.m */,
+				FC782A8A18E304B10024C477 /* CPUtility.h */,
+				FC782A8B18E304B10024C477 /* CPUtility.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
 				FC8BCA1A18D42E7100748335 /* Managed Objects */,
+				FC60EBC918E1B9C200AD74FB /* Models */,
 				FC46715118C2CAF600E472BF /* Smiley.storyboard */,
 				FC8BCA1118D4256900748335 /* Smiley.xcdatamodeld */,
 				FC46714618C2CAF600E472BF /* Supporting Files */,
@@ -221,8 +219,6 @@
 			isa = PBXGroup;
 			children = (
 				FC1A3A3518DB2875004E4C38 /* CPFacesManagerTests.m */,
-				FC1A3A3718DB28F3004E4C38 /* CPMockupAssetsLibrary.h */,
-				FC1A3A3818DB28F3004E4C38 /* CPMockupAssetsLibrary.m */,
 				FC46716818C2CAF600E472BF /* Supporting Files */,
 			);
 			path = SmileyTests;
@@ -235,6 +231,23 @@
 				FC46716A18C2CAF600E472BF /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FC60EBC918E1B9C200AD74FB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				FC5E8F6018E45DA20012EB59 /* CPCleanupOperation.h */,
+				FC5E8F6118E45DA20012EB59 /* CPCleanupOperation.m */,
+				FC60EBCA18E1BD8E00AD74FB /* CPCoreDataOperation.h */,
+				FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */,
+				FC60EBCD18E1C10B00AD74FB /* CPFaceDetectOperation.h */,
+				FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */,
+				FC58103018DDD06100B6BE03 /* CPFaceEditInformation.h */,
+				FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */,
+				FC93443718C363F500657BBC /* CPFacesManager.h */,
+				FC93443818C363F500657BBC /* CPFacesManager.m */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		FC61A46718DD9390009D9442 /* Cells */ = {
@@ -253,8 +266,6 @@
 		FC8BCA1A18D42E7100748335 /* Managed Objects */ = {
 			isa = PBXGroup;
 			children = (
-				FC899EC318D48B02006A14BC /* CPConfig.h */,
-				FC899EC418D48B02006A14BC /* CPConfig.m */,
 				FC8BCA1718D42E4100748335 /* CPPhoto.h */,
 				FC8BCA1818D42E4100748335 /* CPPhoto.m */,
 				FC8BCA1418D42E4100748335 /* CPFace.h */,
@@ -361,8 +372,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FCEF793E18D880A2007DBC86 /* CPAssetsLibrary.m in Sources */,
+				FC60EBCF18E1C10B00AD74FB /* CPFaceDetectOperation.m in Sources */,
 				FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */,
+				FC782A8C18E304B10024C477 /* CPUtility.m in Sources */,
 				FC58103218DDD06100B6BE03 /* CPFaceEditInformation.m in Sources */,
 				FC46714C18C2CAF600E472BF /* main.m in Sources */,
 				FC80EC6418C9F5D2008E83B6 /* CPStitchViewController.m in Sources */,
@@ -370,11 +382,12 @@
 				FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */,
 				FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */,
 				FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */,
+				FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */,
 				FC61A46A18DD93B8009D9442 /* CPCell.m in Sources */,
 				FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */,
 				FC2B287818CC6C300050AD08 /* CPStitchEditTransition.m in Sources */,
 				FC61A46D18DD94A3009D9442 /* CPStitchCell.m in Sources */,
-				FC899EC518D48B02006A14BC /* CPConfig.m in Sources */,
+				FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */,
 				FC8BCA1618D42E4100748335 /* CPFace.m in Sources */,
 				FCF8FE9618C2D016007FA358 /* CPFacesViewController.m in Sources */,
 				FC93443918C363F500657BBC /* CPFacesManager.m in Sources */,
@@ -385,7 +398,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC1A3A3918DB28F3004E4C38 /* CPMockupAssetsLibrary.m in Sources */,
 				FC1A3A3618DB2875004E4C38 /* CPFacesManagerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

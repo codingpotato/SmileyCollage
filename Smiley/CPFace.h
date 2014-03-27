@@ -10,7 +10,7 @@
 
 @interface CPFace : NSManagedObject
 
-@property (strong, nonatomic) NSNumber *id;
+@property (strong, nonatomic) NSNumber *timestamp;
 @property (strong, nonatomic) NSNumber *x;
 @property (strong, nonatomic) NSNumber *y;
 @property (strong, nonatomic) NSNumber *width;
