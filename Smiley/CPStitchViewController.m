@@ -68,7 +68,7 @@
 }
 
 - (IBAction)actionBarButtonPressed:(id)sender {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save Photo", nil];
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
     [actionSheet showFromBarButtonItem:sender animated:YES];
 }
 
@@ -172,11 +172,23 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
-        case 0:
+        case 0: {
+            // Save
             NSAssert(self.facesManager, @"");
             NSAssert(self.stitchedFaces, @"");
-            [self.facesManager saveImageByStitchedFaces:self.stitchedFaces];
+            UIImage *image = [self.facesManager imageOfStitchedFaces:self.stitchedFaces];
+            [self.facesManager saveStitchedImage:image];
             break;
+        }
+        case 1: {
+            // share
+            NSString *sharedText = @"Shared from Smiley app";
+            UIImage *sharedImage = [self.facesManager imageOfStitchedFaces:self.stitchedFaces];
+            NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
+            UIActivityViewController *activityViewCOntroller = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, sharedImage, sharedURL] applicationActivities:nil];
+            [self presentViewController:activityViewCOntroller animated:YES completion:nil];
+            break;
+        }
         default:
             break;
     }

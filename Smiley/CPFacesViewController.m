@@ -89,6 +89,7 @@
     } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(isScanning))]) {
         NSNumber *isScanning = change[NSKeyValueChangeNewKey];
         if (isScanning.boolValue) {
+            self.message.text = @"Scanning photos......";
             self.notificationViewBottomConstraint.constant = 0.0;
             [UIView animateWithDuration:0.5 animations:^{
                 [self.view layoutIfNeeded];

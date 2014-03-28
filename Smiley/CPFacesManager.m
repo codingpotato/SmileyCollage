@@ -84,7 +84,7 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     [self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
 }
 
-- (void)saveImageByStitchedFaces:(NSMutableArray *)stitchedFaces {
+- (UIImage *)imageOfStitchedFaces:(NSMutableArray *)stitchedFaces {
     CGFloat rowsFloat = sqrtf(stitchedFaces.count);
     // TODO: layout algorithm
     NSUInteger rows = (NSUInteger)rowsFloat == rowsFloat ? rowsFloat : rowsFloat + 1;
@@ -108,8 +108,33 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
         }
     }
     
-    [self saveStitchedImage:UIGraphicsGetImageFromCurrentImageContext()];
+    UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+    return resultImage;
+}
+
+- (void)saveStitchedImage:(UIImage *)image {
+    [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
+        if (!error) {
+            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
+                __block BOOL foundGroup = NO;
+                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+                    if (group) {
+                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
+                            [group addAsset:asset];
+                            foundGroup = YES;
+                        }
+                    } else {
+                        if (!foundGroup) {
+                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyPhotos resultBlock:^(ALAssetsGroup *group) {
+                                [group addAsset:asset];
+                            } failureBlock:nil];
+                        }
+                    }
+                } failureBlock:nil];
+            } failureBlock:nil];
+        }
+    }];
 }
 
 - (void)enumerateSmileyPhotos {
@@ -165,30 +190,6 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
         self.isScanning = NO;
     };
     [self.queue addOperation:cleanupOperation];
-}
-
-- (void)saveStitchedImage:(UIImage *)image {
-    [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
-        if (!error) {
-            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
-                __block BOOL foundGroup = NO;
-                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-                    if (group) {
-                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
-                            [group addAsset:asset];
-                            foundGroup = YES;
-                        }
-                    } else {
-                        if (!foundGroup) {
-                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyPhotos resultBlock:^(ALAssetsGroup *group) {
-                                [group addAsset:asset];
-                            } failureBlock:nil];
-                        }
-                    }
-                } failureBlock:nil];
-            } failureBlock:nil];
-        }
-    }];
 }
 
 - (void)mergeContextChangesForNotification:(NSNotification *)notification {
