@@ -37,7 +37,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-QR-r64">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="639"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="psz-ze-OT1">
@@ -63,7 +63,7 @@
                                 </connections>
                             </collectionView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6bY-zF-vA6" userLabel="Notification View">
-                                <rect key="frame" x="0.0" y="497" width="320" height="71"/>
+                                <rect key="frame" x="0.0" y="568" width="320" height="71"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fb8-7f-hOJ" userLabel="Mask">
@@ -103,7 +103,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="6bY-zF-vA6" firstAttribute="bottom" secondItem="n4W-2L-vQ1" secondAttribute="bottom" id="04Q-JA-WJC"/>
+                            <constraint firstItem="6bY-zF-vA6" firstAttribute="bottom" secondItem="n4W-2L-vQ1" secondAttribute="bottom" constant="71" id="04Q-JA-WJC"/>
                             <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="n4W-2L-vQ1" secondAttribute="leading" id="NqD-xZ-Dd0"/>
                             <constraint firstAttribute="trailing" secondItem="Teu-QR-r64" secondAttribute="trailing" id="R9F-Cb-5WW"/>
                             <constraint firstItem="Teu-QR-r64" firstAttribute="trailing" secondItem="6bY-zF-vA6" secondAttribute="trailing" id="fQx-1I-ZXC"/>

@@ -57,9 +57,9 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 
 - (void)scanFaces {
     if (!self.isScanning) {
-        self.isScanning = YES;
         self.numberOfScannedPhotos = 0;
         self.numberOfTotalPhotos = 0;
+        self.isScanning = YES;
         self.scanStartTime = [NSDate timeIntervalSinceReferenceDate];
         
         [self enumerateSmileyPhotos];

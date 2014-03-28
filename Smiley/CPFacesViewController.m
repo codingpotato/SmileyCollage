@@ -83,12 +83,17 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:NSStringFromSelector(@selector(numberOfScannedPhotos))]) {
-        NSNumber *newValue = change[NSKeyValueChangeNewKey];
-        [self.progressView setProgress:newValue.floatValue / self.facesManager.numberOfTotalPhotos];
+        NSNumber *numberOfScannedPhotos = change[NSKeyValueChangeNewKey];
+        [self.progressView setProgress:numberOfScannedPhotos.floatValue / self.facesManager.numberOfTotalPhotos];
         self.message.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
     } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(isScanning))]) {
-        NSNumber *newValue = change[NSKeyValueChangeNewKey];
-        if (!newValue.boolValue) {
+        NSNumber *isScanning = change[NSKeyValueChangeNewKey];
+        if (isScanning.boolValue) {
+            self.notificationViewBottomConstraint.constant = 0.0;
+            [UIView animateWithDuration:0.5 animations:^{
+                [self.view layoutIfNeeded];
+            }];
+        } else {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void) {
                 self.notificationViewBottomConstraint.constant = self.notificationView.bounds.size.height;
                 [UIView animateWithDuration:0.5 animations:^{
