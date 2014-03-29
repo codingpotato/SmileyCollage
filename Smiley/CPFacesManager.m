@@ -39,6 +39,7 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     self = [super init];
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mergeContextChangesForNotification:) name:NSManagedObjectContextDidSaveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAssetsLibraryChangeForNotification:) name:ALAssetsLibraryChangedNotification object:nil];
         
         self.isScanning = NO;
 
@@ -70,8 +71,7 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     if (self.isScanning) {
         [self.queue cancelAllOperations];
         [self.queue waitUntilAllOperationsAreFinished];
-
-        [self removeExpiredPhotos];
+        self.isScanning = NO;
     }
 }
 
@@ -196,6 +196,10 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.managedObjectContext mergeChangesFromContextDidSaveNotification:notification];
     });
+}
+
+- (void)handleAssetsLibraryChangeForNotification:(NSNotification *)notification {
+    [self scanFaces];
 }
 
 #pragma mark - lazy init

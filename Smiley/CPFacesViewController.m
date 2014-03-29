@@ -22,6 +22,8 @@
 
 @property (strong, nonatomic) NSMutableArray *selectedFaces;
 
+@property (nonatomic) BOOL isScanCancelled;
+
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
 @property (weak, nonatomic) IBOutlet UILabel *message;
@@ -39,19 +41,29 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackgroundNotification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidBecomeActiveNotification:) name:UIApplicationDidBecomeActiveNotification object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackgroundNotification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
+    self.isScanCancelled = NO;
     self.facesManager.facesController.delegate = self;
     self.navigationItem.title = [NSString stringWithFormat:@"Faces: %d", (int)self.facesManager.facesController.fetchedObjects.count];
-    self.message.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
+    
+    [self showNotificationViewWithAnimation];
+    [self.facesManager scanFaces];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     
-    [self.facesManager stopScan];
+    if (self.facesManager.isScanning) {
+        [self.facesManager stopScan];
+        self.isScanCancelled = YES;
+    }
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -70,39 +82,66 @@
 }
 
 - (void)handleApplicationDidBecomeActiveNotification:(NSNotification *)notification {
-    [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos)) options:NSKeyValueObservingOptionNew context:nil];
-    [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning)) options:NSKeyValueObservingOptionNew context:nil];
-    [self.facesManager scanFaces];
+    [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos)) options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
+    [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning)) options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
+    
+    if (self.isScanCancelled) {
+        [self showNotificationViewWithAnimation];
+        [self.facesManager scanFaces];
+        self.isScanCancelled = NO;
+    }
 }
 
 - (void)handleApplicationDidEnterBackgroundNotification:(NSNotification *)notification {
-    [self.facesManager stopScan];
     [self.facesManager removeObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos))];
     [self.facesManager removeObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning))];
+    
+    [self hideNotificationView];
+    
+    if (self.facesManager.isScanning) {
+        [self.facesManager stopScan];
+        self.isScanCancelled = YES;
+    }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:NSStringFromSelector(@selector(numberOfScannedPhotos))]) {
-        NSNumber *numberOfScannedPhotos = change[NSKeyValueChangeNewKey];
-        [self.progressView setProgress:numberOfScannedPhotos.floatValue / self.facesManager.numberOfTotalPhotos];
-        self.message.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
+        NSNumber *oldValue = change[NSKeyValueChangeOldKey];
+        NSNumber *newValue = change[NSKeyValueChangeNewKey];
+        if (![oldValue isEqual:newValue]) {
+            self.progressView.progress = newValue.floatValue / self.facesManager.numberOfTotalPhotos;
+            self.message.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
+        }
     } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(isScanning))]) {
-        NSNumber *isScanning = change[NSKeyValueChangeNewKey];
-        if (isScanning.boolValue) {
-            self.message.text = @"Scanning photos......";
-            self.notificationViewBottomConstraint.constant = 0.0;
-            [UIView animateWithDuration:0.5 animations:^{
-                [self.view layoutIfNeeded];
-            }];
-        } else {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void) {
-                self.notificationViewBottomConstraint.constant = self.notificationView.bounds.size.height;
-                [UIView animateWithDuration:0.5 animations:^{
-                    [self.view layoutIfNeeded];
-                }];
-            });
+        NSNumber *oldValue = change[NSKeyValueChangeOldKey];
+        NSNumber *newValue = change[NSKeyValueChangeNewKey];
+        if (oldValue.boolValue && !newValue.boolValue) {
+            [self hideNotificationViewWithAnimation];
         }
     }
+}
+
+- (void)showNotificationViewWithAnimation {
+    self.progressView.progress = 0.0;
+    self.message.text = @"Scanning photos......";
+    self.notificationViewBottomConstraint.constant = 0.0;
+    [UIView animateWithDuration:0.5 animations:^{
+        [self.view layoutIfNeeded];
+    }];
+}
+
+- (void)hideNotificationView {
+    self.notificationViewBottomConstraint.constant = self.notificationView.bounds.size.height;
+    [self.view layoutIfNeeded];
+}
+
+- (void)hideNotificationViewWithAnimation {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void) {
+        self.notificationViewBottomConstraint.constant = self.notificationView.bounds.size.height;
+        [UIView animateWithDuration:0.5 animations:^{
+            [self.view layoutIfNeeded];
+        }];
+    });
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate implement
