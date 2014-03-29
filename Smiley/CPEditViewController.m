@@ -102,7 +102,6 @@
 }
 
 - (void)setFaceIndicatorPosition {
-    NSLog(@"%@ - %@", [NSValue valueWithCGRect:self.view.bounds], [NSValue valueWithCGRect:self.imageView.bounds]);
     CGSize imageViewSize = self.imageView.bounds.size;
     CGFloat ratioWidth = imageViewSize.width / self.originalImageSize.width;
     CGFloat ratioHeight = imageViewSize.height / self.originalImageSize.height;
