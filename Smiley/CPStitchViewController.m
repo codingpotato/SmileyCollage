@@ -19,6 +19,8 @@
 
 @interface CPStitchViewController ()
 
+@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
 @property (nonatomic) NSInteger selectedIndex;
 
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
@@ -33,7 +35,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.selectedIndex = -1;
-
+    
     __block NSUInteger index = 0;
     for (CPFaceEditInformation *faceEditInformation in self.stitchedFaces) {
         faceEditInformation.userBounds = CGRectMake(faceEditInformation.face.x.floatValue, faceEditInformation.face.y.floatValue, faceEditInformation.face.width.floatValue, faceEditInformation.face.height.floatValue);
@@ -56,6 +58,12 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    
+    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -129,35 +137,6 @@
     }
 }
 
-#pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.stitchedFaces.count;
-}
-
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
-    CPFaceEditInformation *faceEditInformation = [self.stitchedFaces objectAtIndex:indexPath.row];
-    NSAssert(faceEditInformation, @"");
-    
-    if (faceEditInformation.asset) {
-        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.userBounds);
-        cell.image = [UIImage imageWithCGImage:faceImage scale:faceEditInformation.userBounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
-        CGImageRelease(faceImage);
-    }
-    return cell;
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CGFloat width = self.widthOfStitchCell;
-    return CGSizeMake(width, width);
-}
-
-- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
-    self.selectedIndex = indexPath.row;
-    [self performSegueWithIdentifier:@"CPEditViewControllerSegue" sender:nil];
-}
-
 - (CGFloat)widthOfStitchCell {
     return self.collectionView.bounds.size.width / self.rowsOfStitchCell;
 }
@@ -194,10 +173,41 @@
     }
 }
 
+#pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.stitchedFaces.count;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
+    CPFaceEditInformation *faceEditInformation = [self.stitchedFaces objectAtIndex:indexPath.row];
+    NSAssert(faceEditInformation, @"");
+    
+    if (faceEditInformation.asset) {
+        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.userBounds);
+        cell.image = [UIImage imageWithCGImage:faceImage scale:faceEditInformation.userBounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
+        CGImageRelease(faceImage);
+    }
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    self.selectedIndex = indexPath.row;
+    [self performSegueWithIdentifier:@"CPEditViewControllerSegue" sender:nil];
+}
+
 #pragma mark - UICollectionViewDelegateFlowLayout implement
 
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
+    CGFloat width = self.widthOfStitchCell;
+    return CGSizeMake(width, width);
+}
+
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0);
+    NSAssert(section == 0, @"");
+    CGFloat inset = MAX(0.0, (collectionView.bounds.size.height - self.topLayoutGuide.length - self.widthOfStitchCell * self.rowsOfStitchCell) / 2);
+    return UIEdgeInsetsMake(inset, 0.0, inset, 0.0);
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {

@@ -36,7 +36,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-QR-r64">
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Teu-QR-r64">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -115,7 +115,7 @@
                     <navigationItem key="navigationItem" title="Faces" id="LiH-Uw-Urq">
                         <barButtonItem key="rightBarButtonItem" systemItem="play" id="xtm-Nc-Ing">
                             <connections>
-                                <segue destination="R4b-4T-tfo" kind="push" identifier="CPStitchViewControllerSegue" id="Vip-73-Cxs"/>
+                                <segue destination="RNr-7G-8mP" kind="push" identifier="CPStitchViewControllerSegue" id="eoF-JQ-Ch0"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -131,57 +131,62 @@
             </objects>
             <point key="canvasLocation" x="675" y="-228"/>
         </scene>
-        <!--Stitch View Controller - Stitch Smiles-->
-        <scene sceneID="5BB-Sj-eop">
+        <!--Stitch View Controller - Stitch Faces-->
+        <scene sceneID="km2-Yy-FMC">
             <objects>
-                <collectionViewController autoresizesArchivedViewToFullSize="NO" id="R4b-4T-tfo" customClass="CPStitchViewController" sceneMemberID="viewController">
-                    <collectionView key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" id="Abn-f3-wQj">
+                <viewController id="RNr-7G-8mP" customClass="CPStitchViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="rQA-fr-jSl"/>
+                        <viewControllerLayoutGuide type="bottom" id="4gb-mR-Avm"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="UJn-Qa-S2G">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <gestureRecognizers/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="lAK-1J-FPB">
-                            <size key="itemSize" width="100" height="100"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPStitchCell" id="Tmf-EA-n7b" customClass="CPStitchCell">
-                                <rect key="frame" x="0.0" y="64" width="100" height="100"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                </view>
-                            </collectionViewCell>
-                        </cells>
-                        <connections>
-                            <outlet property="dataSource" destination="R4b-4T-tfo" id="EKK-Ok-QHN"/>
-                            <outlet property="delegate" destination="R4b-4T-tfo" id="AeK-zE-Vzj"/>
-                            <outletCollection property="gestureRecognizers" destination="xpG-Hg-Rhk" appends="YES" id="O5g-hx-QxL"/>
-                        </connections>
-                    </collectionView>
-                    <navigationItem key="navigationItem" title="Stitch Smiles" id="i1x-iK-f0z">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="5AT-P2-IYn">
-                            <connections>
-                                <action selector="actionBarButtonPressed:" destination="R4b-4T-tfo" id="5sj-0d-YOR"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <collectionView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="h2J-26-ace">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="CU9-oT-Gdn">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPStitchCell" id="CzE-6j-T7c" customClass="CPStitchCell">
+                                        <rect key="frame" x="0.0" y="64" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="RNr-7G-8mP" id="gHz-95-tCl"/>
+                                    <outlet property="delegate" destination="RNr-7G-8mP" id="FdU-SX-AWs"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="h2J-26-ace" secondAttribute="trailing" id="Gif-jx-8IX"/>
+                            <constraint firstAttribute="bottom" secondItem="h2J-26-ace" secondAttribute="bottom" id="cNo-Cq-H3w"/>
+                            <constraint firstItem="h2J-26-ace" firstAttribute="top" secondItem="UJn-Qa-S2G" secondAttribute="top" id="o0B-am-Lxd"/>
+                            <constraint firstItem="h2J-26-ace" firstAttribute="leading" secondItem="UJn-Qa-S2G" secondAttribute="leading" id="wb7-qa-Sg5"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Stitch Faces" id="k7i-rc-daj"/>
                     <connections>
-                        <segue destination="8HI-ey-MKV" kind="push" identifier="CPEditViewControllerSegue" id="y0Y-qa-WMO"/>
+                        <outlet property="collectionView" destination="h2J-26-ace" id="Cmq-ND-qqs"/>
+                        <segue destination="8HI-ey-MKV" kind="push" identifier="CPEditViewControllerSegue" id="Ynd-xb-qjg"/>
                     </connections>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="iLb-Tn-faX" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <panGestureRecognizer minimumNumberOfTouches="1" id="xpG-Hg-Rhk">
-                    <connections>
-                        <action selector="handlePanGesture:" destination="R4b-4T-tfo" id="ifN-Fy-wts"/>
-                    </connections>
-                </panGestureRecognizer>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="tB4-hB-Tv8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1164" y="-228"/>
+            <point key="canvasLocation" x="1166" y="-228"/>
         </scene>
         <!--Edit View Controller - Edit Smile-->
         <scene sceneID="LPt-de-zO5">
@@ -200,7 +205,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </imageView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MBA-x5-NeI" userLabel="Face Indicator">
+                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MBA-x5-NeI" userLabel="Face Indicator">
                                 <rect key="frame" x="100" y="100" width="160" height="284"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>

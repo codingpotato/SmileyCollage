@@ -8,6 +8,7 @@
 
 #import "CPFaceDetectOperation.h"
 
+#import "CPConfig.h"
 #import "CPFace.h"
 #import "CPPhoto.h"
 #import "CPUtility.h"
@@ -82,7 +83,7 @@
     face.width = [NSNumber numberWithFloat:bounds.size.width];
     face.height = [NSNumber numberWithFloat:bounds.size.height];
     face.photo = photo;
-    face.thumbnail = [[NSUUID alloc] init].UUIDString;
+    face.thumbnail = [[[NSUUID alloc] init].UUIDString stringByAppendingPathExtension:@"jpg"];
     [photo addFacesObject:face];
     
     return face;
@@ -90,8 +91,7 @@
 
 - (void)writeThumbnailOfName:(NSString *)name fromImage:(CGImageRef)image bounds:(CGRect)bounds {
     CGImageRef faceImage = CGImageCreateWithImageInRect(image, bounds);
-    // TODO: scale the image to 100.0
-    CGFloat width = MIN(bounds.size.width, 100.0);
+    CGFloat width = MIN(bounds.size.width, [CPConfig thumbnailSize]);
     UIImage *thumbnail = [UIImage imageWithCGImage:faceImage scale:width orientation:UIImageOrientationUp];
     CGImageRelease(faceImage);
     NSString *filePath = [[CPUtility thumbnailPath] stringByAppendingPathComponent:name];

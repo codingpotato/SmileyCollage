@@ -8,7 +8,7 @@
 
 @class CPFacesManager;
 
-@interface CPStitchViewController : UICollectionViewController <UIActionSheetDelegate, UICollectionViewDelegateFlowLayout>
+@interface CPStitchViewController : UIViewController <UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (weak, nonatomic) CPFacesManager *facesManager;
 

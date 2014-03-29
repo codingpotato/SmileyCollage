@@ -8,6 +8,8 @@
 
 #import "CPFacesViewController.h"
 
+#import "CPConfig.h"
+
 #import "CPPhotoCell.h"
 #import "CPStitchViewController.h"
 
@@ -64,6 +66,12 @@
         [self.facesManager stopScan];
         self.isScanCancelled = YES;
     }
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    
+    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -182,8 +190,7 @@
 #pragma mark - UICollectionViewDelegateFlowLayout implement
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    // TODO: 5 images each line
-    const int number = 5;
+    int number = collectionView.bounds.size.width / [CPConfig thumbnailSize];
     CGFloat width = (collectionView.bounds.size.width - (number + 1) * 1.0) / number;
     return CGSizeMake(width, width);
 }
