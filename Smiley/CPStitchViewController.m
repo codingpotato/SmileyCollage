@@ -19,18 +19,24 @@
 
 @interface CPStitchViewController ()
 
-@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+@property (strong, nonatomic) NSArray *numberOfColumnsInRows;
 
 @property (nonatomic) NSInteger selectedIndex;
 
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
+@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
 
 @end
 
 @implementation CPStitchViewController
+
+static NSUInteger g_numberOfColumnsInRows[] = {
+    1, 11, 111, 22, 32, 222, 322, 332, 333, 442, 443, 3333, 4333, 4433, 4443, 4444
+};
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -137,14 +143,58 @@
     }
 }
 
-- (CGFloat)widthOfStitchCell {
-    return self.collectionView.bounds.size.width / self.rowsOfStitchCell;
+- (CGFloat)sizeOfCellAtIndex:(NSUInteger)index {
+    NSUInteger row = [self rowOfCellAtIndex:index];
+    NSNumber *numberOfColumns = [self.numberOfColumnsInRows objectAtIndex:row];
+    return self.widthOfStitchedImage / numberOfColumns.integerValue;
 }
 
-- (NSUInteger)rowsOfStitchCell {
-    // TODO: layout algorithm
-    float rows = sqrtf(self.stitchedFaces.count);
-    return ((NSUInteger)rows) == rows ? rows : rows + 1;
+- (NSUInteger)rowOfCellAtIndex:(NSUInteger)index {
+    NSUInteger row = 0;
+    NSUInteger items = 0;
+    for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
+        items += numberOfColumns.integerValue;
+        if (items > index) {
+            break;
+        } else {
+            row++;
+        }
+    }
+    return row;
+}
+
+- (CGFloat)widthOfStitchedImage {
+    if (self.ratioOfCollectionViewWidthHeight < self.ratioOfImageWidthHeight) {
+        return self.collectionView.bounds.size.width;
+    } else {
+        return (self.collectionView.bounds.size.height - self.topLayoutGuide.length) * self.ratioOfImageWidthHeight;
+    }
+}
+
+- (CGFloat)heightOfStitchedImage {
+    if (self.ratioOfImageWidthHeight < self.ratioOfCollectionViewWidthHeight) {
+        return self.collectionView.bounds.size.width / self.ratioOfImageWidthHeight;
+    } else {
+        return self.collectionView.bounds.size.height;
+    }
+}
+
+- (CGFloat)ratioOfCollectionViewWidthHeight {
+    return self.collectionView.bounds.size.width / (self.collectionView.bounds.size.height - self.topLayoutGuide.length);
+}
+
+- (CGFloat)ratioOfImageWidthHeight {
+    CGFloat maxColumns = 0;
+    for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
+        if (numberOfColumns.integerValue > maxColumns) {
+            maxColumns = numberOfColumns.integerValue;
+        }
+    }
+    CGFloat ratio = 0.0;
+    for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
+        ratio += maxColumns / numberOfColumns.integerValue;
+    }
+    return ratio;
 }
 
 #pragma mark - UIActionSheetDelegate implement
@@ -186,7 +236,7 @@
     
     if (faceEditInformation.asset) {
         CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.userBounds);
-        cell.image = [UIImage imageWithCGImage:faceImage scale:faceEditInformation.userBounds.size.width / self.widthOfStitchCell orientation:UIImageOrientationUp];
+        cell.image = [UIImage imageWithCGImage:faceImage scale:1.0 orientation:UIImageOrientationUp];
         CGImageRelease(faceImage);
     }
     return cell;
@@ -200,13 +250,13 @@
 #pragma mark - UICollectionViewDelegateFlowLayout implement
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CGFloat width = self.widthOfStitchCell;
+    CGFloat width = [self sizeOfCellAtIndex:indexPath.row];
     return CGSizeMake(width, width);
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
-    CGFloat inset = MAX(0.0, (collectionView.bounds.size.height - self.topLayoutGuide.length - self.widthOfStitchCell * self.rowsOfStitchCell) / 2);
+    CGFloat inset = MAX(0.0, (collectionView.bounds.size.height - self.topLayoutGuide.length - self.heightOfStitchedImage));
     return UIEdgeInsetsMake(inset, 0.0, inset, 0.0);
 }
 
@@ -216,6 +266,23 @@
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
     return 0.0;
+}
+
+#pragma mark - lazy init
+
+- (NSArray *)numberOfColumnsInRows {
+    if (!_numberOfColumnsInRows) {
+        NSMutableArray *numberOfColumnsInRows = [[NSMutableArray alloc] init];
+        
+        NSAssert(self.stitchedFaces.count > 0 && self.stitchedFaces.count < sizeof(g_numberOfColumnsInRows), @"");
+        NSUInteger numbers = g_numberOfColumnsInRows[self.stitchedFaces.count - 1];
+        while (numbers > 0) {
+            [numberOfColumnsInRows addObject:[NSNumber numberWithInteger:numbers % 10]];
+            numbers /= 10;
+        }
+        _numberOfColumnsInRows = [numberOfColumnsInRows copy];
+    }
+    return _numberOfColumnsInRows;
 }
 
 @end

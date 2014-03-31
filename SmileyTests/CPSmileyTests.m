@@ -1,5 +1,5 @@
 //
-//  CPFacesManagerTests.m
+//  CPSmileyTests.m
 //  Smiley
 //
 //  Created by wangyw on 3/20/14.
@@ -8,11 +8,11 @@
 
 #import <XCTest/XCTest.h>
 
-@interface CPFacesManagerTests : XCTestCase
+@interface CPSmileyTests : XCTestCase
 
 @end
 
-@implementation CPFacesManagerTests
+@implementation CPSmileyTests
 
 - (void)setUp {
     [super setUp];
