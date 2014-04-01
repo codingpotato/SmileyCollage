@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FC1A3A3618DB2875004E4C38 /* CPSmileyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3518DB2875004E4C38 /* CPSmileyTests.m */; };
+		FC1A3A3618DB2875004E4C38 /* CPStitchViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3518DB2875004E4C38 /* CPStitchViewControllerTests.m */; };
 		FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287418CC6A960050AD08 /* CPTransitionManager.m */; };
 		FC2B287818CC6C300050AD08 /* CPStitchEditTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287718CC6C300050AD08 /* CPStitchEditTransition.m */; };
 		FC46714018C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
@@ -54,7 +54,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		FC1A3A3518DB2875004E4C38 /* CPSmileyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSmileyTests.m; sourceTree = "<group>"; };
+		FC1A3A3518DB2875004E4C38 /* CPStitchViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPStitchViewControllerTests.m; sourceTree = "<group>"; };
 		FC2B287318CC6A960050AD08 /* CPTransitionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTransitionManager.h; sourceTree = "<group>"; };
 		FC2B287418CC6A960050AD08 /* CPTransitionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTransitionManager.m; sourceTree = "<group>"; };
 		FC2B287618CC6C300050AD08 /* CPStitchEditTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchEditTransition.h; sourceTree = "<group>"; };
@@ -223,7 +223,7 @@
 		FC46716718C2CAF600E472BF /* SmileyTests */ = {
 			isa = PBXGroup;
 			children = (
-				FC1A3A3518DB2875004E4C38 /* CPSmileyTests.m */,
+				FC1A3A3518DB2875004E4C38 /* CPStitchViewControllerTests.m */,
 				FC46716818C2CAF600E472BF /* Supporting Files */,
 			);
 			path = SmileyTests;
@@ -404,7 +404,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC1A3A3618DB2875004E4C38 /* CPSmileyTests.m in Sources */,
+				FC1A3A3618DB2875004E4C38 /* CPStitchViewControllerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

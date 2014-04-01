@@ -26,8 +26,6 @@
 
 - (void)assertForURL:(NSURL *)assetURL resultBlock:(ALAssetsLibraryAssetForURLResultBlock)resultBlock;
 
-- (UIImage *)imageOfStitchedFaces:(NSMutableArray *)stitchedFaces;
-
 - (void)saveStitchedImage:(UIImage *)image;
 
 @end

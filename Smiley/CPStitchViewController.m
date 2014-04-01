@@ -21,12 +21,16 @@
 
 @property (strong, nonatomic) NSArray *numberOfColumnsInRows;
 
+@property (nonatomic) CGFloat ratioOfImageWidthHeight;
+
 @property (nonatomic) NSInteger selectedIndex;
 
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
+- (IBAction)actionBarButtonPressed:(id)sender;
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
 
@@ -35,7 +39,7 @@
 @implementation CPStitchViewController
 
 static NSUInteger g_numberOfColumnsInRows[] = {
-    1, 11, 111, 22, 32, 222, 322, 332, 333, 442, 443, 3333, 4333, 4433, 4443, 4444
+    1, 11, 21, 22, 32, 222, 322, 332, 333, 442, 443, 3333, 4333, 4433, 4443, 4444
 };
 
 - (void)viewDidLoad {
@@ -81,14 +85,14 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
-- (IBAction)actionBarButtonPressed:(id)sender {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
-    [actionSheet showFromBarButtonItem:sender animated:YES];
-}
-
 - (CGRect)frameOfSelectedCell {
     UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
     return [self.view convertRect:cell.frame fromView:self.collectionView];
+}
+
+- (IBAction)actionBarButtonPressed:(id)sender {
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
+    [actionSheet showFromBarButtonItem:sender animated:YES];
 }
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
@@ -172,7 +176,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (CGFloat)heightOfStitchedImage {
-    if (self.ratioOfImageWidthHeight < self.ratioOfCollectionViewWidthHeight) {
+    if (self.ratioOfCollectionViewWidthHeight < self.ratioOfImageWidthHeight) {
         return self.collectionView.bounds.size.width / self.ratioOfImageWidthHeight;
     } else {
         return self.collectionView.bounds.size.height;
@@ -183,18 +187,44 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return self.collectionView.bounds.size.width / (self.collectionView.bounds.size.height - self.topLayoutGuide.length);
 }
 
-- (CGFloat)ratioOfImageWidthHeight {
+- (UIImage *)stitchedImage {
     CGFloat maxColumns = 0;
     for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
         if (numberOfColumns.integerValue > maxColumns) {
             maxColumns = numberOfColumns.integerValue;
         }
     }
-    CGFloat ratio = 0.0;
-    for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
-        ratio += maxColumns / numberOfColumns.integerValue;
+    CGFloat width = 256.0 * maxColumns;
+    CGFloat height = width / self.ratioOfImageWidthHeight;
+    UIGraphicsBeginImageContext(CGSizeMake(width, height));
+    
+    CGFloat x = 0.0;
+    CGFloat y = 0.0;
+    NSUInteger index = 0;
+    NSUInteger row = 0;
+    NSNumber *numberOfColumns = [self.numberOfColumnsInRows objectAtIndex:row];
+    NSUInteger items = numberOfColumns.integerValue;
+    for (CPFaceEditInformation *faceEditInformation in self.stitchedFaces) {
+        CGRect faceBounds = faceEditInformation.userBounds;
+        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceBounds);
+        CGFloat widthOfFace = width / numberOfColumns.integerValue;
+        UIImage *image = [UIImage imageWithCGImage:faceImage scale:faceBounds.size.width / widthOfFace orientation:UIImageOrientationUp];
+        CGImageRelease(faceImage);
+        [image drawAtPoint:CGPointMake(x, y)];
+        x += widthOfFace;
+        index++;
+        if (index >= items && index < self.stitchedFaces.count) {
+            x = 0.0;
+            y += widthOfFace;
+            row++;
+            numberOfColumns = [self.numberOfColumnsInRows objectAtIndex:row];
+            items += numberOfColumns.integerValue;
+        }
     }
-    return ratio;
+    
+    UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return resultImage;
 }
 
 #pragma mark - UIActionSheetDelegate implement
@@ -205,16 +235,14 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             // Save
             NSAssert(self.facesManager, @"");
             NSAssert(self.stitchedFaces, @"");
-            UIImage *image = [self.facesManager imageOfStitchedFaces:self.stitchedFaces];
-            [self.facesManager saveStitchedImage:image];
+            [self.facesManager saveStitchedImage:self.stitchedImage];
             break;
         }
         case 1: {
             // share
             NSString *sharedText = @"Shared from Smiley app";
-            UIImage *sharedImage = [self.facesManager imageOfStitchedFaces:self.stitchedFaces];
             NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
-            UIActivityViewController *activityViewCOntroller = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, sharedImage, sharedURL] applicationActivities:nil];
+            UIActivityViewController *activityViewCOntroller = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, self.stitchedImage, sharedURL] applicationActivities:nil];
             [self presentViewController:activityViewCOntroller animated:YES completion:nil];
             break;
         }
@@ -256,7 +284,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
-    CGFloat inset = MAX(0.0, (collectionView.bounds.size.height - self.topLayoutGuide.length - self.heightOfStitchedImage));
+    CGFloat inset = MAX(0.0, (collectionView.bounds.size.height - self.topLayoutGuide.length - self.heightOfStitchedImage) / 2);
     return UIEdgeInsetsMake(inset, 0.0, inset, 0.0);
 }
 
@@ -283,6 +311,22 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         _numberOfColumnsInRows = [numberOfColumnsInRows copy];
     }
     return _numberOfColumnsInRows;
+}
+
+- (CGFloat)ratioOfImageWidthHeight {
+    if (_ratioOfImageWidthHeight == 0.0) {
+        CGFloat maxColumns = 0;
+        for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
+            if (numberOfColumns.integerValue > maxColumns) {
+                maxColumns = numberOfColumns.integerValue;
+            }
+        }
+        for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
+            _ratioOfImageWidthHeight += maxColumns / numberOfColumns.integerValue;
+        }
+        _ratioOfImageWidthHeight = maxColumns / _ratioOfImageWidthHeight;
+    }
+    return _ratioOfImageWidthHeight;
 }
 
 @end

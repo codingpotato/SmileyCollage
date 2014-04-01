@@ -171,20 +171,35 @@
                             </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="h2J-26-ace" secondAttribute="trailing" id="Gif-jx-8IX"/>
                             <constraint firstAttribute="bottom" secondItem="h2J-26-ace" secondAttribute="bottom" id="cNo-Cq-H3w"/>
                             <constraint firstItem="h2J-26-ace" firstAttribute="top" secondItem="UJn-Qa-S2G" secondAttribute="top" id="o0B-am-Lxd"/>
                             <constraint firstItem="h2J-26-ace" firstAttribute="leading" secondItem="UJn-Qa-S2G" secondAttribute="leading" id="wb7-qa-Sg5"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="Hsf-Zf-yx1" appends="YES" id="ydj-Fc-Kr6"/>
+                        </connections>
                     </view>
-                    <navigationItem key="navigationItem" title="Stitch Faces" id="k7i-rc-daj"/>
+                    <navigationItem key="navigationItem" title="Stitch Faces" id="k7i-rc-daj">
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="46Y-pp-zR6">
+                            <connections>
+                                <action selector="actionBarButtonPressed:" destination="RNr-7G-8mP" id="nVz-J0-Eps"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="collectionView" destination="h2J-26-ace" id="Cmq-ND-qqs"/>
                         <segue destination="8HI-ey-MKV" kind="push" identifier="CPEditViewControllerSegue" id="Ynd-xb-qjg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tB4-hB-Tv8" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="Hsf-Zf-yx1">
+                    <connections>
+                        <action selector="handlePanGesture:" destination="RNr-7G-8mP" id="Dwf-dK-y9s"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1166" y="-228"/>
         </scene>

@@ -84,35 +84,6 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
     [self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
 }
 
-- (UIImage *)imageOfStitchedFaces:(NSMutableArray *)stitchedFaces {
-    CGFloat rowsFloat = sqrtf(stitchedFaces.count);
-    // TODO: layout algorithm
-    NSUInteger rows = (NSUInteger)rowsFloat == rowsFloat ? rowsFloat : rowsFloat + 1;
-    // TODO: width of each face
-    CGFloat widthOfEachFace = 512.0;
-    CGFloat width = widthOfEachFace * rows;
-    UIGraphicsBeginImageContext(CGSizeMake(width, width));
-    
-    int x = 0.0;
-    int y = 0.0;
-    for (CPFaceEditInformation *faceEditInformation in stitchedFaces) {
-        CGRect faceBounds = faceEditInformation.userBounds;
-        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceBounds);
-        UIImage *image = [UIImage imageWithCGImage:faceImage scale:faceBounds.size.width / widthOfEachFace orientation:UIImageOrientationUp];
-        CGImageRelease(faceImage);
-        [image drawAtPoint:CGPointMake(x * widthOfEachFace, y * widthOfEachFace)];
-        x++;
-        if (x >= rows) {
-            x = 0;
-            y++;
-        }
-    }
-    
-    UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return resultImage;
-}
-
 - (void)saveStitchedImage:(UIImage *)image {
     [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
         if (!error) {
