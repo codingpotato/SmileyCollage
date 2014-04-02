@@ -14,6 +14,8 @@
 
 @property (strong, nonatomic) NSMutableArray *stitchedFaces;
 
++ (NSUInteger)maxNumberOfStitchedFaces;
+
 - (CGRect)frameOfSelectedCell;
 
 @end

@@ -9,6 +9,7 @@
 #import "CPFacesViewController.h"
 
 #import "CPConfig.h"
+#import "CPUtility.h"
 
 #import "CPPhotoCell.h"
 #import "CPStitchViewController.h"
@@ -26,14 +27,15 @@
 
 @property (nonatomic) BOOL isScanCancelled;
 
+@property (strong, nonatomic) UIView *bubbleView;
+@property (strong, nonatomic) UILabel *bubbleLabel;
+@property (strong, nonatomic) NSLayoutConstraint *bubbleViewTopConatraint;
+
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
 @property (weak, nonatomic) IBOutlet UILabel *message;
-
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
-
 @property (weak, nonatomic) IBOutlet UIView *notificationView;
-
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *notificationViewBottomConstraint;
 
 @end
@@ -152,6 +154,39 @@
     });
 }
 
+- (void)showBubbleViewAtPosition:(CGPoint)position withSelectedNumber:(NSUInteger)selectedNumber maxSelectedNumber:(NSUInteger)maxSelectedNumber {
+    if (!self.bubbleView) {
+        self.bubbleView = [[UIView alloc] init];
+        self.bubbleView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.bubbleView.backgroundColor = [UIColor whiteColor];
+        self.bubbleView.layer.borderColor = [UIColor grayColor].CGColor;
+        self.bubbleView.layer.borderWidth = 1.0;
+        self.bubbleView.layer.cornerRadius = 5.0;
+        [self.view addSubview:self.bubbleView];
+        self.bubbleViewTopConatraint = [CPUtility constraintWithView:self.bubbleView alignToView:self.view attribute:NSLayoutAttributeTop];
+        [self.view addConstraint:self.bubbleViewTopConatraint];
+        [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView alignToView:self.view attribute:NSLayoutAttributeCenterX]];
+        
+        self.bubbleLabel = [[UILabel alloc] init];
+        self.bubbleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.bubbleView addSubview:self.bubbleLabel];
+        [self.bubbleView addConstraints:[CPUtility constraintsWithView:self.bubbleLabel edgesAlignToView:self.bubbleView]];
+    }
+    self.bubbleLabel.text = [NSString stringWithFormat:@" Selected: %d / %d ", selectedNumber, maxSelectedNumber];
+    [self.bubbleLabel sizeToFit];
+    self.bubbleViewTopConatraint.constant = position.y;
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBubbleView) object:nil];
+    [self performSelector:@selector(hideBubbleView) withObject:nil afterDelay:2.0];
+}
+
+- (void)hideBubbleView {
+    [self.bubbleView removeFromSuperview];
+    self.bubbleView = nil;
+    self.bubbleLabel = nil;
+    self.bubbleViewTopConatraint = nil;
+}
+
 #pragma mark - NSFetchedResultsControllerDelegate implement
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
@@ -179,12 +214,20 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
     NSAssert(face, @"");
+
     if ([self.selectedFaces containsObject:face]) {
         [self.selectedFaces removeObject:face];
+        [collectionView reloadItemsAtIndexPaths:@[indexPath]];
     } else {
-        [self.selectedFaces addObject:face];
+        if (self.selectedFaces.count < [CPStitchViewController maxNumberOfStitchedFaces]) {
+            [self.selectedFaces addObject:face];
+            [collectionView reloadItemsAtIndexPaths:@[indexPath]];
+        }
     }
-    [collectionView reloadItemsAtIndexPaths:@[indexPath]];
+    UICollectionViewLayoutAttributes *attributes = [collectionView layoutAttributesForItemAtIndexPath:indexPath];
+    CGPoint position = attributes.frame.origin;
+    position.y += self.topLayoutGuide.length;
+    [self showBubbleViewAtPosition:position withSelectedNumber:self.selectedFaces.count maxSelectedNumber:[CPStitchViewController maxNumberOfStitchedFaces]];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
@@ -218,7 +261,7 @@
 
 - (NSMutableArray *)selectedFaces {
     if (!_selectedFaces) {
-        _selectedFaces = [[NSMutableArray alloc] init];
+        _selectedFaces = [[NSMutableArray alloc] initWithCapacity:[CPStitchViewController maxNumberOfStitchedFaces]];
     }
     return _selectedFaces;
 }

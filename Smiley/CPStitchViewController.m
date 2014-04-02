@@ -42,6 +42,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     1, 11, 21, 22, 32, 222, 322, 332, 333, 442, 443, 3333, 4333, 4433, 4443, 4444
 };
 
++ (NSUInteger)maxNumberOfStitchedFaces {
+    return sizeof(g_numberOfColumnsInRows) / sizeof(NSUInteger);
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.selectedIndex = -1;
@@ -86,8 +90,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (CGRect)frameOfSelectedCell {
-    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
-    return [self.view convertRect:cell.frame fromView:self.collectionView];
+    UICollectionViewLayoutAttributes *attributes = [self.collectionView layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
+    CGRect frame = attributes.frame;
+    frame.origin.y += self.topLayoutGuide.length;
+    return [self.view convertRect:frame fromView:self.collectionView];
 }
 
 - (IBAction)actionBarButtonPressed:(id)sender {
@@ -254,6 +260,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    NSAssert(self.stitchedFaces.count < [CPStitchViewController maxNumberOfStitchedFaces], @"");
     return self.stitchedFaces.count;
 }
 
