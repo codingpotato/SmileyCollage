@@ -39,7 +39,10 @@
 @implementation CPStitchViewController
 
 static NSUInteger g_numberOfColumnsInRows[] = {
-    1, 11, 21, 22, 32, 222, 322, 332, 333, 442, 443, 3333, 4333, 4433, 4443, 4444
+    1, 11, 21, 22, 32, 222, 322, 332, 333, 442,
+    443, 3333, 4333, 4433, 4443, 4444, 53333, 54333, 54433, 54443,
+    54444, 55444, 55544, 55554, 55555, 644444, 654444, 655444, 655544, 655554,
+    655555, 665555, 666555, 666655, 666665, 666666
 };
 
 + (NSUInteger)maxNumberOfStitchedFaces {
@@ -56,7 +59,9 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         NSURL *url = [[NSURL alloc] initWithString:faceEditInformation.face.photo.url];
         [self.facesManager assertForURL:url resultBlock:^(ALAsset *result) {
             faceEditInformation.asset = result;
-            [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForRow:index++ inSection:0]]];
+            if (++index == self.stitchedFaces.count) {
+                [self.collectionView reloadData];
+            }
         }];
     }
 }
@@ -260,7 +265,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    NSAssert(self.stitchedFaces.count < [CPStitchViewController maxNumberOfStitchedFaces], @"");
+    NSAssert(self.stitchedFaces.count <= [CPStitchViewController maxNumberOfStitchedFaces], @"");
     return self.stitchedFaces.count;
 }
 
@@ -291,8 +296,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
-    CGFloat inset = MAX(0.0, (collectionView.bounds.size.height - self.topLayoutGuide.length - self.heightOfStitchedImage) / 2);
-    return UIEdgeInsetsMake(inset, 0.0, inset, 0.0);
+    if (self.ratioOfCollectionViewWidthHeight < self.ratioOfImageWidthHeight) {
+        CGFloat inset = MAX(0.0, (collectionView.bounds.size.height - self.topLayoutGuide.length - self.heightOfStitchedImage) / 2);
+        return UIEdgeInsetsMake(inset, 0.0, inset, 0.0);
+    } else {
+        CGFloat inset = MAX(0.0, (collectionView.bounds.size.width - self.widthOfStitchedImage) / 2);
+        return UIEdgeInsetsMake(0.0, inset, 0.0, inset);
+    }
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {

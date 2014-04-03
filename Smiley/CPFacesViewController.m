@@ -29,7 +29,6 @@
 
 @property (strong, nonatomic) UIView *bubbleView;
 @property (strong, nonatomic) UILabel *bubbleLabel;
-@property (strong, nonatomic) NSLayoutConstraint *bubbleViewTopConatraint;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
@@ -158,23 +157,20 @@
     if (!self.bubbleView) {
         self.bubbleView = [[UIView alloc] init];
         self.bubbleView.translatesAutoresizingMaskIntoConstraints = NO;
+        self.bubbleView.alpha = 0.9;
         self.bubbleView.backgroundColor = [UIColor whiteColor];
-        self.bubbleView.layer.borderColor = [UIColor grayColor].CGColor;
-        self.bubbleView.layer.borderWidth = 1.0;
-        self.bubbleView.layer.cornerRadius = 5.0;
         [self.view addSubview:self.bubbleView];
-        self.bubbleViewTopConatraint = [CPUtility constraintWithView:self.bubbleView alignToView:self.view attribute:NSLayoutAttributeTop];
-        [self.view addConstraint:self.bubbleViewTopConatraint];
-        [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView alignToView:self.view attribute:NSLayoutAttributeCenterX]];
+        [self.view addConstraints:[CPUtility constraintsWithView:self.bubbleView alignToView:self.collectionView attributes:NSLayoutAttributeLeft, NSLayoutAttributeRight, NSLayoutAttributeNotAnAttribute]];
+        [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView attribute:NSLayoutAttributeTop alignToView:self.topLayoutGuide attribute:NSLayoutAttributeBaseline]];
+        [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView height:44.0]];
         
         self.bubbleLabel = [[UILabel alloc] init];
         self.bubbleLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        self.bubbleLabel.textAlignment = NSTextAlignmentCenter;
         [self.bubbleView addSubview:self.bubbleLabel];
         [self.bubbleView addConstraints:[CPUtility constraintsWithView:self.bubbleLabel edgesAlignToView:self.bubbleView]];
     }
-    self.bubbleLabel.text = [NSString stringWithFormat:@" Selected: %d / %d ", selectedNumber, maxSelectedNumber];
-    [self.bubbleLabel sizeToFit];
-    self.bubbleViewTopConatraint.constant = position.y;
+    self.bubbleLabel.text = [NSString stringWithFormat:@"Selected: %d   Maxium: %d ", selectedNumber, maxSelectedNumber];
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBubbleView) object:nil];
     [self performSelector:@selector(hideBubbleView) withObject:nil afterDelay:2.0];
@@ -184,7 +180,6 @@
     [self.bubbleView removeFromSuperview];
     self.bubbleView = nil;
     self.bubbleLabel = nil;
-    self.bubbleViewTopConatraint = nil;
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate implement
