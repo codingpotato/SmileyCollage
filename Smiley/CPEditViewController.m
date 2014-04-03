@@ -47,7 +47,12 @@
     self.faceIndicator.layer.borderWidth = 1.0;
 }
 
+/*
+ * must use did function to calculate after view appears
+ */
 - (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
     [self setFaceIndicatorPosition];
     self.faceIndicator.hidden = NO;
 }
@@ -56,9 +61,11 @@
     [super didReceiveMemoryWarning];
 }
 
+/*
+ * must use did function to calculate after the rotate
+ */
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    
     [self setFaceIndicatorPosition];
     [UIView animateWithDuration:0.5 animations:^{
         [self.view layoutIfNeeded];

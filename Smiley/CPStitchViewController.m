@@ -69,6 +69,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    [self.collectionView.collectionViewLayout invalidateLayout];
+    
     if (self.selectedIndex != -1) {
         [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.selectedIndex inSection:0]]];
         self.selectedIndex = -1;
@@ -81,7 +83,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
     [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    
     [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
@@ -182,7 +183,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (self.ratioOfCollectionViewWidthHeight < self.ratioOfImageWidthHeight) {
         return self.collectionView.bounds.size.width;
     } else {
-        return (self.collectionView.bounds.size.height - self.topLayoutGuide.length) * self.ratioOfImageWidthHeight;
+        return (self.collectionView.bounds.size.height - self.topLayoutGuide.length - 2) * self.ratioOfImageWidthHeight;
     }
 }
 
@@ -195,7 +196,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (CGFloat)ratioOfCollectionViewWidthHeight {
-    return self.collectionView.bounds.size.width / (self.collectionView.bounds.size.height - self.topLayoutGuide.length);
+    return self.collectionView.bounds.size.width / (self.collectionView.bounds.size.height - self.topLayoutGuide.length - 2);
 }
 
 - (UIImage *)stitchedImage {
