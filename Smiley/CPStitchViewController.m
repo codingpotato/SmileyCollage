@@ -69,9 +69,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    //[self.collectionView.collectionViewLayout invalidateLayout];
-    
+
     if (self.selectedIndex != -1) {
         [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.selectedIndex inSection:0]]];
         self.selectedIndex = -1;
@@ -87,11 +85,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [super didReceiveMemoryWarning];
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    //[super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    //[self.collectionView.collectionViewLayout invalidateLayout];
-}
-
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
         NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.stitchedFaces.count, @"");
@@ -103,9 +96,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (CGRect)frameOfSelectedCell {
     UICollectionViewLayoutAttributes *attributes = [self.collectionView layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
-    CGRect frame = attributes.frame;
-    //frame.origin.y += self.topLayoutGuide.length;
-    return [self.view convertRect:frame fromView:self.collectionView];
+    return [self.view convertRect:attributes.frame fromView:self.collectionView];
 }
 
 - (IBAction)actionBarButtonPressed:(id)sender {

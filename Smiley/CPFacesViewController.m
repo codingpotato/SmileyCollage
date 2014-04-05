@@ -61,6 +61,10 @@
     [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
+- (void)viewDidLayoutSubviews {
+    [self.collectionView.collectionViewLayout invalidateLayout];
+}
+
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -72,11 +76,6 @@
         [self.facesManager stopScan];
         self.isScanCancelled = YES;
     }
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -166,7 +165,7 @@
         [self.view addSubview:self.bubbleView];
         [self.view addConstraints:[CPUtility constraintsWithView:self.bubbleView alignToView:self.collectionView attributes:NSLayoutAttributeLeft, NSLayoutAttributeRight, NSLayoutAttributeNotAnAttribute]];
         [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView attribute:NSLayoutAttributeTop alignToView:self.topLayoutGuide attribute:NSLayoutAttributeBaseline]];
-        [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView height:44.0]];
+        [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView height:[CPConfig thumbnailSize] / 2]];
         
         self.bubbleLabel = [[UILabel alloc] init];
         self.bubbleLabel.translatesAutoresizingMaskIntoConstraints = NO;

@@ -54,16 +54,13 @@
     self.faceIndicator.hidden = NO;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+- (void)viewDidLayoutSubviews {
+    [self setFaceIndicatorPosition];
+    [self.view layoutIfNeeded];
 }
 
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
-    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
-    [self setFaceIndicatorPosition];
-    [UIView animateWithDuration:0.2 animations:^{
-        [self.view layoutIfNeeded];
-    }];
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
 }
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
