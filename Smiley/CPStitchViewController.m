@@ -132,27 +132,40 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     } else if (panGesture.state == UIGestureRecognizerStateEnded || panGesture.state == UIGestureRecognizerStateCancelled || panGesture.state == UIGestureRecognizerStateFailed) {
         NSIndexPath *indexPathOfDroppedCell = [self.collectionView indexPathForItemAtPoint:self.snapshotOfDraggedCell.center];
         UICollectionViewCell *droppedCell = [self.collectionView cellForItemAtIndexPath:indexPathOfDroppedCell];
+        
         if (droppedCell) {
             NSIndexPath *indexPath1 = [self.collectionView indexPathForCell:self.draggedCell];
             NSIndexPath *indexPath2 = [self.collectionView indexPathForCell:droppedCell];
-            if (indexPath1 && indexPath2) {
-                NSObject *face1 = [self.stitchedFaces objectAtIndex:indexPath1.row];
-                NSObject *face2 = [self.stitchedFaces objectAtIndex:indexPath2.row];
-                [self.stitchedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
-                [self.stitchedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
-                
-                [self.collectionView performBatchUpdates:^{
-                    [self.collectionView moveItemAtIndexPath:indexPath1 toIndexPath:indexPath2];
-                    [self.collectionView moveItemAtIndexPath:indexPath2 toIndexPath:indexPath1];
-                } completion:^(BOOL finished) {
-                }];
-            }
+            NSAssert(indexPath1 && indexPath2, @"");
+            
+            NSObject *face1 = [self.stitchedFaces objectAtIndex:indexPath1.row];
+            NSObject *face2 = [self.stitchedFaces objectAtIndex:indexPath2.row];
+            [self.stitchedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
+            [self.stitchedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
+            
+            [UIView animateWithDuration:0.3 animations:^{
+                self.snapshotOfDraggedCell.frame = droppedCell.frame;
+            } completion:nil];
+
+            [self.collectionView performBatchUpdates:^{
+                [self.collectionView moveItemAtIndexPath:indexPath1 toIndexPath:indexPath2];
+                [self.collectionView moveItemAtIndexPath:indexPath2 toIndexPath:indexPath1];
+            } completion:^(BOOL finished) {
+                [self.snapshotOfDraggedCell removeFromSuperview];
+                self.snapshotOfDraggedCell = nil;
+                self.draggedCell.hidden = NO;
+                self.draggedCell = nil;
+            }];
+        } else {
+            [UIView animateWithDuration:0.3 animations:^{
+                self.snapshotOfDraggedCell.frame = self.draggedCell.frame;
+            } completion:^(BOOL finished) {
+                [self.snapshotOfDraggedCell removeFromSuperview];
+                self.snapshotOfDraggedCell = nil;
+                self.draggedCell.hidden = NO;
+                self.draggedCell = nil;
+            }];
         }
-        
-        [self.snapshotOfDraggedCell removeFromSuperview];
-        self.snapshotOfDraggedCell = nil;
-        self.draggedCell.hidden = NO;
-        self.draggedCell = nil;        
     }
 }
 
