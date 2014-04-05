@@ -174,7 +174,7 @@
         [self.bubbleView addSubview:self.bubbleLabel];
         [self.bubbleView addConstraints:[CPUtility constraintsWithView:self.bubbleLabel edgesAlignToView:self.bubbleView]];
     }
-    self.bubbleLabel.text = [NSString stringWithFormat:@"Selected: %d   Maxium: %d ", selectedNumber, maxSelectedNumber];
+    self.bubbleLabel.text = [NSString stringWithFormat:@"Selected: %d   Maxium: %d ", (int)selectedNumber, (int)maxSelectedNumber];
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBubbleView) object:nil];
     [self performSelector:@selector(hideBubbleView) withObject:nil afterDelay:2.0];

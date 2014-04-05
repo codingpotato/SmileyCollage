@@ -8,13 +8,16 @@
 
 #import <XCTest/XCTest.h>
 
+#import "CPFaceEditInformation.h"
 #import "CPStitchViewController.h"
 
 @interface CPStitchViewController ()
 
 - (NSArray *)numberOfColumnsInRows;
 
-- (CGFloat)ratioOfImageWidthHeight;
+- (CGFloat)widthHeightRatioOfImage;
+
+- (void)calculateImageWidthHeightRatio;
 
 @end
 
@@ -23,6 +26,8 @@
 @end
 
 @implementation CPStitchViewControllerTests
+
+static const float g_floatAccuracy = 0.000001;
 
 - (void)setUp {
     [super setUp];
@@ -33,25 +38,43 @@
 }
 
 - (void)testNumberOfColumnsInRows {
-    for (NSUInteger i = 1; i <= 16; ++i) {
-        CPStitchViewController *stitchViewController = [[CPStitchViewController alloc] init];
-        stitchViewController.stitchedFaces = [[NSMutableArray alloc] init];
-        for (NSUInteger j = 0; j < i; ++j) {
-            [stitchViewController.stitchedFaces addObject:[NSNumber numberWithBool:YES]];
-        }
-        NSLog(@"%@", stitchViewController.numberOfColumnsInRows);
-    }
+    CPStitchViewController *stitchViewController = [self stitchViewControllerOfFacesNumber:1];
+    [stitchViewController calculateImageWidthHeightRatio];
+    NSArray *expectNumberOfColumnsInRows = @[@1];
+    XCTAssertEqual(stitchViewController.numberOfColumnsInRows.count, 1, @"");
+
+    stitchViewController = [self stitchViewControllerOfFacesNumber:2];
+    [stitchViewController calculateImageWidthHeightRatio];
+    expectNumberOfColumnsInRows = @[@1, @1];
+    XCTAssertEqualObjects(stitchViewController.numberOfColumnsInRows, expectNumberOfColumnsInRows, @"");
+    
+    stitchViewController = [self stitchViewControllerOfFacesNumber:3];
+    [stitchViewController calculateImageWidthHeightRatio];
+    expectNumberOfColumnsInRows = @[@1, @2];
+    XCTAssertEqualObjects(stitchViewController.numberOfColumnsInRows, expectNumberOfColumnsInRows, @"");
 }
 
 - (void)testRatioOfImageWidthHeight {
-    for (NSUInteger i = 1; i <= 16; ++i) {
-        CPStitchViewController *stitchViewController = [[CPStitchViewController alloc] init];
-        stitchViewController.stitchedFaces = [[NSMutableArray alloc] init];
-        for (NSUInteger j = 0; j < i; ++j) {
-            [stitchViewController.stitchedFaces addObject:[NSNumber numberWithBool:YES]];
-        }
-        NSLog(@"%f", stitchViewController.ratioOfImageWidthHeight);
+    CPStitchViewController *stitchViewController = [self stitchViewControllerOfFacesNumber:1];
+    [stitchViewController calculateImageWidthHeightRatio];
+    XCTAssertEqual(stitchViewController.widthHeightRatioOfImage, 1.0, @"");
+
+    stitchViewController = [self stitchViewControllerOfFacesNumber:2];
+    [stitchViewController calculateImageWidthHeightRatio];
+    XCTAssertEqualWithAccuracy(stitchViewController.widthHeightRatioOfImage, 1.0 / 2.0, g_floatAccuracy, @"");
+    
+    stitchViewController = [self stitchViewControllerOfFacesNumber:3];
+    [stitchViewController calculateImageWidthHeightRatio];
+    XCTAssertEqualWithAccuracy(stitchViewController.widthHeightRatioOfImage, 2.0 / 3.0, g_floatAccuracy, @"");
+}
+
+- (CPStitchViewController *)stitchViewControllerOfFacesNumber:(NSUInteger)number {
+    CPStitchViewController *stitchViewController = [[CPStitchViewController alloc] init];
+    stitchViewController.stitchedFaces = [[NSMutableArray alloc] init];
+    for (NSUInteger j = 0; j < number; ++j) {
+        [stitchViewController.stitchedFaces addObject:[[CPFaceEditInformation alloc] init]];
     }
+    return stitchViewController;
 }
 
 @end
