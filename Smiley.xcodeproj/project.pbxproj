@@ -212,9 +212,9 @@
 		FC46714618C2CAF600E472BF /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				FC46714718C2CAF600E472BF /* Smiley-Info.plist */,
 				FC46714818C2CAF600E472BF /* InfoPlist.strings */,
 				FC46714B18C2CAF600E472BF /* main.m */,
+				FC46714718C2CAF600E472BF /* Smiley-Info.plist */,
 				FC46714D18C2CAF600E472BF /* Smiley-Prefix.pch */,
 			);
 			name = "Supporting Files";

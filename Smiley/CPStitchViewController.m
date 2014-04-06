@@ -8,6 +8,8 @@
 
 #import "CPStitchViewController.h"
 
+#import "CPUtility.h"
+
 #import "CPEditViewController.h"
 #import "CPStitchCell.h"
 
@@ -18,6 +20,9 @@
 
 
 @interface CPStitchViewController ()
+
+@property (strong, nonatomic) UIImage *watermarkImage;
+@property (strong, nonatomic) UIImageView *watermarkImageView;
 
 @property (strong, nonatomic) NSArray *numberOfColumnsInRows;
 @property (strong, nonatomic) NSArray *sizeOfFaces;
@@ -62,6 +67,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             faceEditInformation.asset = result;
             if (++index == self.stitchedFaces.count) {
                 [self.collectionView reloadData];
+                [self showWatermarkImageView];
+                [self alignWatermarkImageView];
             }
         }];
     }
@@ -79,6 +86,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewDidLayoutSubviews {
     [self calculateSizeOfFaces];
     [self.collectionView.collectionViewLayout invalidateLayout];
+    [self alignWatermarkImageView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -118,6 +126,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
                 self.snapshotOfDraggedCell.layer.shadowOpacity = 0.8;
                 [self.collectionView addSubview:self.snapshotOfDraggedCell];
                 self.draggedCell.hidden = YES;
+                self.watermarkImageView.hidden = YES;
             }
         }
     } else if (panGesture.state == UIGestureRecognizerStateChanged) {
@@ -154,6 +163,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
                 [self.snapshotOfDraggedCell removeFromSuperview];
                 self.snapshotOfDraggedCell = nil;
                 self.draggedCell.hidden = NO;
+                self.watermarkImageView.hidden = NO;
                 self.draggedCell = nil;
             }];
         } else {
@@ -163,6 +173,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
                 [self.snapshotOfDraggedCell removeFromSuperview];
                 self.snapshotOfDraggedCell = nil;
                 self.draggedCell.hidden = NO;
+                self.watermarkImageView.hidden = NO;
                 self.draggedCell = nil;
             }];
         }
@@ -175,7 +186,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     CGFloat width = 256.0 * self.maxColumns;
     CGFloat height = width / self.widthHeightRatioOfImage;
     UIGraphicsBeginImageContext(CGSizeMake(width, height));
-    
+
     CGFloat x = 0.0;
     CGFloat y = 0.0;
     NSUInteger index = 0;
@@ -199,6 +210,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             items += numberOfColumns.integerValue;
         }
     }
+    
+    CGFloat watermarkHeight = width / self.watermarkImage.size.width * self.watermarkImage.size.height;
+    CGRect watermarkFrame = CGRectMake(0.0, height - watermarkHeight, width, watermarkHeight);
+    [self.watermarkImage drawInRect:watermarkFrame blendMode:kCGBlendModeNormal alpha:1.0];
     
     UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -262,6 +277,27 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
+- (void)showWatermarkImageView {
+    NSAssert(!self.watermarkImageView, @"");
+    self.watermarkImageView = [[UIImageView alloc] initWithImage:self.watermarkImage];
+    [self.view addSubview:self.watermarkImageView];
+}
+
+- (void)alignWatermarkImageView {
+    if (self.watermarkImageView) {
+        CGRect frame = CGRectZero;
+        if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
+            NSUInteger inset = roundf((self.collectionView.bounds.size.height - self.heightOfStitchedImage) / 2);
+            frame = [self.view convertRect:CGRectMake(0.0, inset, self.widthOfStitchedImage, self.heightOfStitchedImage) fromView:self.collectionView];
+        } else {
+            NSUInteger inset = roundf((self.collectionView.bounds.size.width - self.widthOfStitchedImage) / 2);
+            frame = [self.view convertRect:CGRectMake(inset, 0.0, self.widthOfStitchedImage, self.heightOfStitchedImage) fromView:self.collectionView];
+        }
+        CGFloat height = self.widthOfStitchedImage / self.watermarkImage.size.width * self.watermarkImage.size.height;
+        self.watermarkImageView.frame = CGRectMake(frame.origin.x, frame.origin.y + frame.size.height - height, frame.size.width, height);
+    }
+}
+
 #pragma mark - UIActionSheetDelegate implement
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -277,8 +313,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             // share
             NSString *sharedText = @"Shared from Smiley app";
             NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
-            UIActivityViewController *activityViewCOntroller = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, self.stitchedImage, sharedURL] applicationActivities:nil];
-            [self presentViewController:activityViewCOntroller animated:YES completion:nil];
+            UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, self.stitchedImage, sharedURL] applicationActivities:nil];
+            [self presentViewController:activityViewController animated:YES completion:nil];
             break;
         }
         default:
@@ -321,11 +357,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        CGFloat inset = MAX(0.0, (collectionView.bounds.size.height - self.heightOfStitchedImage) / 2);
-        return UIEdgeInsetsMake(inset, 0.0, inset, 0.0);
+        NSUInteger insetTop = roundf((collectionView.bounds.size.height - self.heightOfStitchedImage) / 2);
+        NSUInteger insetBottom = self.collectionView.bounds.size.height - insetTop - self.heightOfStitchedImage;
+        return UIEdgeInsetsMake(insetTop, 0.0, insetBottom, 0.0);
     } else {
-        CGFloat inset = MAX(0.0, (collectionView.bounds.size.width - self.widthOfStitchedImage) / 2);
-        return UIEdgeInsetsMake(0.0, inset, 0.0, inset);
+        NSUInteger insetLeft = roundf((collectionView.bounds.size.width - self.widthOfStitchedImage) / 2);
+        NSUInteger insetRight = self.collectionView.bounds.size.width - insetLeft - self.widthOfStitchedImage;
+        return UIEdgeInsetsMake(0.0, insetLeft, 0.0, insetRight);
     }
 }
 
@@ -352,6 +390,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         _numberOfColumnsInRows = [numberOfColumnsInRows copy];
     }
     return _numberOfColumnsInRows;
+}
+
+- (UIImage *)watermarkImage {
+    if (!_watermarkImage) {
+        _watermarkImage = [UIImage imageNamed:@"watermark.png"];
+    }
+    return _watermarkImage;
 }
 
 @end
