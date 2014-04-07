@@ -37,6 +37,8 @@
 		FC8BCA1618D42E4100748335 /* CPFace.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1518D42E4100748335 /* CPFace.m */; };
 		FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1818D42E4100748335 /* CPPhoto.m */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
+		FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
+		FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */; };
 		FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD844C318C761C3003BA834 /* CoreImage.framework */; };
 		FCF8FE9618C2D016007FA358 /* CPSmileyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9518C2D016007FA358 /* CPSmileyViewController.m */; };
 		FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */; };
@@ -188,14 +190,14 @@
 				FC61A46718DD9390009D9442 /* Cells */,
 				FC46714E18C2CAF600E472BF /* CPAppDelegate.h */,
 				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
+				FC80EC6218C9F5D2008E83B6 /* CPCollageViewController.h */,
+				FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */,
 				FC56ED3718E6C49700DFE80C /* CPConfig.h */,
 				FC56ED3818E6C49700DFE80C /* CPConfig.m */,
 				FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */,
 				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
 				FCF8FE9418C2D016007FA358 /* CPSmileyViewController.h */,
 				FCF8FE9518C2D016007FA358 /* CPSmileyViewController.m */,
-				FC80EC6218C9F5D2008E83B6 /* CPCollageViewController.h */,
-				FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */,
 				FC782A8A18E304B10024C477 /* CPUtility.h */,
 				FC782A8B18E304B10024C477 /* CPUtility.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
@@ -326,6 +328,11 @@
 				CLASSPREFIX = CP;
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = codingpotato;
+				TargetAttributes = {
+					FC46713B18C2CAF600E472BF = {
+						DevelopmentTeam = FY635R7KCK;
+					};
+				};
 			};
 			buildConfigurationList = FC46713718C2CAF600E472BF /* Build configuration list for PBXProject "SmileyCollage" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -400,6 +407,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC1A3A3618DB2875004E4C38 /* CPCollageViewControllerTests.m in Sources */,
+				FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */,
+				FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -518,9 +527,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Smiley/SmileyCollage-Prefix.pch";
-				INFOPLIST_FILE = "$(SRCROOT)/SmileyCollage/SmileyCollage-Info.plist";
+				GCC_PREFIX_HEADER = "SmileyCollage/SmileyCollage-Prefix.pch";
+				INFOPLIST_FILE = "SmileyCollage/SmileyCollage-Info.plist";
 				PRODUCT_NAME = SmileyCollage;
 				WRAPPER_EXTENSION = app;
 			};
@@ -531,9 +541,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Smiley/SmileyCollage-Prefix.pch";
-				INFOPLIST_FILE = "$(SRCROOT)/SmileyCollage/SmileyCollage-Info.plist";
+				GCC_PREFIX_HEADER = "SmileyCollage/SmileyCollage-Prefix.pch";
+				INFOPLIST_FILE = "SmileyCollage/SmileyCollage-Info.plist";
 				PRODUCT_NAME = SmileyCollage;
 				WRAPPER_EXTENSION = app;
 			};
@@ -548,12 +559,12 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Smiley/Smiley-Prefix.pch";
+				GCC_PREFIX_HEADER = "SmileyCollage/SmileyCollage-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "SmileyTests/SmileyCollageTests-Info.plist";
+				INFOPLIST_FILE = "SmileyCollageTests/SmileyCollageTests-Info.plist";
 				PRODUCT_NAME = SmileyCollageTests;
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -568,8 +579,8 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Smiley/Smiley-Prefix.pch";
-				INFOPLIST_FILE = "SmileyTests/SmileyCollageTests-Info.plist";
+				GCC_PREFIX_HEADER = "SmileyCollage/SmileyCollage-Prefix.pch";
+				INFOPLIST_FILE = "SmileyCollageTests/SmileyCollageTests-Info.plist";
 				PRODUCT_NAME = SmileyCollageTests;
 				WRAPPER_EXTENSION = xctest;
 			};
