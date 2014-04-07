@@ -59,11 +59,13 @@
     if (pinchGesture.state == UIGestureRecognizerStateChanged) {
         CGFloat width = self.imageView.frame.size.width * pinchGesture.scale;
         CGFloat height = self.imageView.frame.size.height * pinchGesture.scale;
-        CGFloat originalFaceWidth = self.faceIndicator.frame.size.width * self.originalImageSize.width / self.imageView.frame.size.width;
-        CGFloat originalFaceHeight = self.faceIndicator.frame.size.height * self.originalImageSize.height / self.imageView.frame.size.height;
-        static const CGFloat sizeLimitation = 10.0;
-        if ((pinchGesture.scale < 1.0 && width > sizeLimitation && height > sizeLimitation) || (pinchGesture.scale > 1.0 && originalFaceWidth > sizeLimitation && originalFaceHeight > sizeLimitation)) {
-            self.imageView.frame = CGRectMake(self.imageView.frame.origin.x - (width - self.imageView.frame.size.width) / 2, self.imageView.frame.origin.y - (height - self.imageView.frame.size.height) / 2, width, height);
+        static const CGFloat minSize = 20.0;
+        if ((pinchGesture.scale < 1.0 && width > minSize && height > minSize) || (pinchGesture.scale > 1.0 && self.faceEditInformation.frame.size.width > minSize && self.faceEditInformation.frame.size.height > minSize)) {
+            CGFloat centerX = self.faceIndicator.frame.origin.x + self.faceIndicator.frame.size.width / 2;
+            CGFloat centerY = self.faceIndicator.frame.origin.y + self.faceIndicator.frame.size.height / 2;
+            CGFloat dx = (self.imageView.frame.size.width - width) * (centerX - self.imageView.frame.origin.x) / self.imageView.frame.size.width;
+            CGFloat dy = (self.imageView.frame.size.height - height) * (centerY - self.imageView.frame.origin.y) / self.imageView.frame.size.height;
+            self.imageView.frame = CGRectMake(self.imageView.frame.origin.x + dx, self.imageView.frame.origin.y + dy, width, height);
         }
     } else if (pinchGesture.state == UIGestureRecognizerStateEnded || pinchGesture.state == UIGestureRecognizerStateCancelled || pinchGesture.state == UIGestureRecognizerStateFailed) {
         [self validateImageViewPosition];
