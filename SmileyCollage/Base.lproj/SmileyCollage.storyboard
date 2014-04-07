@@ -24,10 +24,10 @@
             </objects>
             <point key="canvasLocation" x="180" y="-228"/>
         </scene>
-        <!--Faces View Controller - Faces-->
+        <!--Smiley View Controller-->
         <scene sceneID="QAz-Di-bjO">
             <objects>
-                <viewController id="QFy-Gf-6GD" customClass="CPFacesViewController" sceneMemberID="viewController">
+                <viewController id="QFy-Gf-6GD" customClass="CPSmileyViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="wUV-nS-A5H"/>
                         <viewControllerLayoutGuide type="bottom" id="GYH-Zv-uBH"/>
@@ -112,8 +112,9 @@
                             <constraint firstItem="Teu-QR-r64" firstAttribute="top" secondItem="n4W-2L-vQ1" secondAttribute="top" id="rli-T1-kg0"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Faces" id="LiH-Uw-Urq">
-                        <barButtonItem key="rightBarButtonItem" systemItem="play" id="xtm-Nc-Ing">
+                    <navigationItem key="navigationItem" id="LiH-Uw-Urq">
+                        <barButtonItem key="leftBarButtonItem" systemItem="organize" id="7w9-W4-4Nt"/>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="play" id="xtm-Nc-Ing">
                             <connections>
                                 <segue destination="RNr-7G-8mP" kind="push" identifier="CPStitchViewControllerSegue" id="eoF-JQ-Ch0"/>
                             </connections>
@@ -131,10 +132,10 @@
             </objects>
             <point key="canvasLocation" x="675" y="-228"/>
         </scene>
-        <!--Stitch View Controller - Stitch Faces-->
+        <!--Collage View Controller - SmileyCollage Collage-->
         <scene sceneID="km2-Yy-FMC">
             <objects>
-                <viewController automaticallyAdjustsScrollViewInsets="NO" id="RNr-7G-8mP" customClass="CPStitchViewController" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="RNr-7G-8mP" customClass="CPCollageViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="rQA-fr-jSl"/>
                         <viewControllerLayoutGuide type="bottom" id="4gb-mR-Avm"/>
@@ -183,7 +184,7 @@
                         </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" title="Stitch Faces" id="k7i-rc-daj">
+                    <navigationItem key="navigationItem" title="SmileyCollage Collage" id="k7i-rc-daj">
                         <barButtonItem key="rightBarButtonItem" systemItem="action" id="46Y-pp-zR6">
                             <connections>
                                 <action selector="actionBarButtonPressed:" destination="RNr-7G-8mP" id="nVz-J0-Eps"/>
@@ -202,9 +203,9 @@
                     </connections>
                 </panGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1166" y="-228"/>
+            <point key="canvasLocation" x="1192" y="-228"/>
         </scene>
-        <!--Edit View Controller - Edit Smile-->
+        <!--Edit View Controller - SmileyCollage Edit-->
         <scene sceneID="LPt-de-zO5">
             <objects>
                 <viewController id="8HI-ey-MKV" customClass="CPEditViewController" sceneMemberID="viewController">
@@ -249,7 +250,7 @@
                         </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" title="Edit Smile" id="9k4-Qf-iWA"/>
+                    <navigationItem key="navigationItem" title="SmileyCollage Edit" id="9k4-Qf-iWA"/>
                     <connections>
                         <outlet property="faceIndicator" destination="MBA-x5-NeI" id="yG6-il-sYz"/>
                         <outlet property="faceIndicatorHeightConstraint" destination="Qpl-rd-5MA" id="Bt1-w5-X5e"/>
@@ -271,7 +272,7 @@
                     </connections>
                 </pinchGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1629" y="-228"/>
+            <point key="canvasLocation" x="1718" y="-228"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

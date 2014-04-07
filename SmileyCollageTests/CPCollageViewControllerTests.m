@@ -9,9 +9,9 @@
 #import <XCTest/XCTest.h>
 
 #import "CPFaceEditInformation.h"
-#import "CPStitchViewController.h"
+#import "CPCollageViewController.h"
 
-@interface CPStitchViewController ()
+@interface CPCollageViewController ()
 
 - (NSArray *)numberOfColumnsInRows;
 
@@ -21,11 +21,11 @@
 
 @end
 
-@interface CPStitchViewControllerTests : XCTestCase
+@interface CPCollageViewControllerTests : XCTestCase
 
 @end
 
-@implementation CPStitchViewControllerTests
+@implementation CPCollageViewControllerTests
 
 static const float g_floatAccuracy = 0.000001;
 
@@ -38,7 +38,7 @@ static const float g_floatAccuracy = 0.000001;
 }
 
 - (void)testNumberOfColumnsInRows {
-    CPStitchViewController *stitchViewController = [self stitchViewControllerOfFacesNumber:1];
+    CPCollageViewController *stitchViewController = [self stitchViewControllerOfFacesNumber:1];
     [stitchViewController calculateImageWidthHeightRatio];
     NSArray *expectNumberOfColumnsInRows = @[@1];
     XCTAssertEqual(stitchViewController.numberOfColumnsInRows.count, 1, @"");
@@ -55,7 +55,7 @@ static const float g_floatAccuracy = 0.000001;
 }
 
 - (void)testRatioOfImageWidthHeight {
-    CPStitchViewController *stitchViewController = [self stitchViewControllerOfFacesNumber:1];
+    CPCollageViewController *stitchViewController = [self stitchViewControllerOfFacesNumber:1];
     [stitchViewController calculateImageWidthHeightRatio];
     XCTAssertEqual(stitchViewController.widthHeightRatioOfImage, 1.0, @"");
 
@@ -68,8 +68,8 @@ static const float g_floatAccuracy = 0.000001;
     XCTAssertEqualWithAccuracy(stitchViewController.widthHeightRatioOfImage, 2.0 / 3.0, g_floatAccuracy, @"");
 }
 
-- (CPStitchViewController *)stitchViewControllerOfFacesNumber:(NSUInteger)number {
-    CPStitchViewController *stitchViewController = [[CPStitchViewController alloc] init];
+- (CPCollageViewController *)stitchViewControllerOfFacesNumber:(NSUInteger)number {
+    CPCollageViewController *stitchViewController = [[CPCollageViewController alloc] init];
     stitchViewController.stitchedFaces = [[NSMutableArray alloc] init];
     for (NSUInteger j = 0; j < number; ++j) {
         [stitchViewController.stitchedFaces addObject:[[CPFaceEditInformation alloc] init]];

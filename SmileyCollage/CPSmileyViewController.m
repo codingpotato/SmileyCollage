@@ -6,20 +6,20 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import "CPFacesViewController.h"
+#import "CPSmileyViewController.h"
 
 #import "CPConfig.h"
 #import "CPUtility.h"
 
 #import "CPPhotoCell.h"
-#import "CPStitchViewController.h"
+#import "CPCollageViewController.h"
 
 #import "CPFace.h"
 #import "CPFaceEditInformation.h"
 #import "CPFacesManager.h"
 #import "CPPhoto.h"
 
-@interface CPFacesViewController ()
+@interface CPSmileyViewController ()
 
 @property (strong, nonatomic) CPFacesManager *facesManager;
 
@@ -39,7 +39,7 @@
 
 @end
 
-@implementation CPFacesViewController
+@implementation CPSmileyViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -54,11 +54,6 @@
     
     [self showNotificationViewWithAnimation];
     [self.facesManager scanFaces];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -80,7 +75,7 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPStitchViewControllerSegue"]) {
-        CPStitchViewController *stitchViewController = (CPStitchViewController *)segue.destinationViewController;
+        CPCollageViewController *stitchViewController = (CPCollageViewController *)segue.destinationViewController;
         stitchViewController.facesManager = self.facesManager;
         
         stitchViewController.stitchedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
@@ -215,17 +210,21 @@
 
     if ([self.selectedFaces containsObject:face]) {
         [self.selectedFaces removeObject:face];
+        if (self.selectedFaces.count == 0) {
+            self.navigationItem.rightBarButtonItem.enabled = NO;
+        }
         [collectionView reloadItemsAtIndexPaths:@[indexPath]];
     } else {
-        if (self.selectedFaces.count < [CPStitchViewController maxNumberOfStitchedFaces]) {
+        if (self.selectedFaces.count < [CPCollageViewController maxNumberOfStitchedFaces]) {
             [self.selectedFaces addObject:face];
+            self.navigationItem.rightBarButtonItem.enabled = YES;
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
         }
     }
     UICollectionViewLayoutAttributes *attributes = [collectionView layoutAttributesForItemAtIndexPath:indexPath];
     CGPoint position = attributes.frame.origin;
     position.y += self.topLayoutGuide.length;
-    [self showBubbleViewAtPosition:position withSelectedNumber:self.selectedFaces.count maxSelectedNumber:[CPStitchViewController maxNumberOfStitchedFaces]];
+    [self showBubbleViewAtPosition:position withSelectedNumber:self.selectedFaces.count maxSelectedNumber:[CPCollageViewController maxNumberOfStitchedFaces]];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
@@ -259,7 +258,7 @@
 
 - (NSMutableArray *)selectedFaces {
     if (!_selectedFaces) {
-        _selectedFaces = [[NSMutableArray alloc] initWithCapacity:[CPStitchViewController maxNumberOfStitchedFaces]];
+        _selectedFaces = [[NSMutableArray alloc] initWithCapacity:[CPCollageViewController maxNumberOfStitchedFaces]];
     }
     return _selectedFaces;
 }

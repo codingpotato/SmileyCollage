@@ -214,12 +214,12 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
     if (!_persistentStoreCoordinator) {
-        NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"Smiley" withExtension:@"momd"];
+        NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"SmileyCollage" withExtension:@"momd"];
         NSManagedObjectModel *managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:managedObjectModel];
 
         NSURL *applicationDocumentsDirectoryURL = [NSURL fileURLWithPath:[CPUtility applicationDocumentsPath]];
-        NSURL *storeURL = [applicationDocumentsDirectoryURL URLByAppendingPathComponent:@"Smiley.sqlite"];
+        NSURL *storeURL = [applicationDocumentsDirectoryURL URLByAppendingPathComponent:@"SmileyCollage.sqlite"];
         NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
         NSError *error = nil;
         if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {

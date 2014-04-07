@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import "CPStitchViewController.h"
+#import "CPCollageViewController.h"
 
 #import "CPUtility.h"
 
@@ -19,7 +19,7 @@
 #import "CPPhoto.h"
 
 
-@interface CPStitchViewController ()
+@interface CPCollageViewController ()
 
 @property (strong, nonatomic) UIImage *watermarkImage;
 @property (strong, nonatomic) UIImageView *watermarkImageView;
@@ -41,7 +41,7 @@
 
 @end
 
-@implementation CPStitchViewController
+@implementation CPCollageViewController
 
 static NSUInteger g_numberOfColumnsInRows[] = {
     1, 11, 21, 22, 32, 222, 322, 332, 333, 442,
@@ -325,7 +325,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    NSAssert(self.stitchedFaces.count <= [CPStitchViewController maxNumberOfStitchedFaces], @"");
+    NSAssert(self.stitchedFaces.count <= [CPCollageViewController maxNumberOfStitchedFaces], @"");
     return self.stitchedFaces.count;
 }
 
@@ -379,7 +379,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (NSArray *)numberOfColumnsInRows {
     if (!_numberOfColumnsInRows) {
-        NSAssert(self.stitchedFaces.count > 0 && self.stitchedFaces.count < [CPStitchViewController maxNumberOfStitchedFaces], @"");
+        NSAssert(self.stitchedFaces.count > 0 && self.stitchedFaces.count < [CPCollageViewController maxNumberOfStitchedFaces], @"");
 
         NSMutableArray *numberOfColumnsInRows = [[NSMutableArray alloc] init];
         NSUInteger numbers = g_numberOfColumnsInRows[self.stitchedFaces.count - 1];
