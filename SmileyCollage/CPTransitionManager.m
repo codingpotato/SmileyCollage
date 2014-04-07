@@ -8,11 +8,11 @@
 
 #import "CPTransitionManager.h"
 
+#import "CPCollageViewController.h"
 #import "CPEditViewController.h"
 #import "CPSmileyViewController.h"
-#import "CPCollageViewController.h"
 
-#import "CPStitchEditTransition.h"
+#import "CPCollageToEditTransition.h"
 
 @implementation CPTransitionManager
 
@@ -20,17 +20,9 @@
 
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
     if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPEditViewController class]]) {
-        CPCollageViewController *stitchViewController = (CPCollageViewController *)fromVC;
-        CPStitchEditTransition *stitchEditTransition = [[CPStitchEditTransition alloc] init];
-        stitchEditTransition.fromStitchToEdit = YES;
-        stitchEditTransition.stitchCellFrame = stitchViewController.frameOfSelectedCell;
-        return stitchEditTransition;
+        return [[CPCollageToEditTransition alloc] initWithShowEditViewController:YES];
     } else if ([fromVC isMemberOfClass:[CPEditViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
-        CPCollageViewController *stitchViewController = (CPCollageViewController *)toVC;
-        CPStitchEditTransition *stitchEditTransition = [[CPStitchEditTransition alloc] init];
-        stitchEditTransition.fromStitchToEdit = NO;
-        stitchEditTransition.stitchCellFrame = stitchViewController.frameOfSelectedCell;
-        return stitchEditTransition;
+        return [[CPCollageToEditTransition alloc] initWithShowEditViewController:NO];
     } else {
         return nil;
     }

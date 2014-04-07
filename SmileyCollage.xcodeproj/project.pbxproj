@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		FC1A3A3618DB2875004E4C38 /* CPCollageViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */; };
 		FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287418CC6A960050AD08 /* CPTransitionManager.m */; };
-		FC2B287818CC6C300050AD08 /* CPStitchEditTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287718CC6C300050AD08 /* CPStitchEditTransition.m */; };
+		FC2B287818CC6C300050AD08 /* CPCollageToEditTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287718CC6C300050AD08 /* CPCollageToEditTransition.m */; };
 		FC46714018C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
 		FC46714218C2CAF600E472BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714118C2CAF600E472BF /* CoreGraphics.framework */; };
 		FC46714418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
@@ -28,7 +28,7 @@
 		FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */; };
 		FC60EBCF18E1C10B00AD74FB /* CPFaceDetectOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */; };
 		FC61A46A18DD93B8009D9442 /* CPCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46918DD93B8009D9442 /* CPCell.m */; };
-		FC61A46D18DD94A3009D9442 /* CPStitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46C18DD94A3009D9442 /* CPStitchCell.m */; };
+		FC61A46D18DD94A3009D9442 /* CPCollageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46C18DD94A3009D9442 /* CPCollageCell.m */; };
 		FC782A8C18E304B10024C477 /* CPUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = FC782A8B18E304B10024C477 /* CPUtility.m */; };
 		FC80EC6418C9F5D2008E83B6 /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
 		FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */; };
@@ -62,8 +62,8 @@
 		FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageViewControllerTests.m; sourceTree = "<group>"; };
 		FC2B287318CC6A960050AD08 /* CPTransitionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTransitionManager.h; sourceTree = "<group>"; };
 		FC2B287418CC6A960050AD08 /* CPTransitionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTransitionManager.m; sourceTree = "<group>"; };
-		FC2B287618CC6C300050AD08 /* CPStitchEditTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchEditTransition.h; sourceTree = "<group>"; };
-		FC2B287718CC6C300050AD08 /* CPStitchEditTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPStitchEditTransition.m; sourceTree = "<group>"; };
+		FC2B287618CC6C300050AD08 /* CPCollageToEditTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCollageToEditTransition.h; sourceTree = "<group>"; };
+		FC2B287718CC6C300050AD08 /* CPCollageToEditTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageToEditTransition.m; sourceTree = "<group>"; };
 		FC46713C18C2CAF600E472BF /* SmileyCollage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmileyCollage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC46713F18C2CAF600E472BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FC46714118C2CAF600E472BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -92,8 +92,8 @@
 		FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceDetectOperation.m; sourceTree = "<group>"; };
 		FC61A46818DD93B8009D9442 /* CPCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCell.h; sourceTree = "<group>"; };
 		FC61A46918DD93B8009D9442 /* CPCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCell.m; sourceTree = "<group>"; };
-		FC61A46B18DD94A3009D9442 /* CPStitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPStitchCell.h; sourceTree = "<group>"; };
-		FC61A46C18DD94A3009D9442 /* CPStitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPStitchCell.m; sourceTree = "<group>"; };
+		FC61A46B18DD94A3009D9442 /* CPCollageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCollageCell.h; sourceTree = "<group>"; };
+		FC61A46C18DD94A3009D9442 /* CPCollageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageCell.m; sourceTree = "<group>"; };
 		FC782A8A18E304B10024C477 /* CPUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUtility.h; sourceTree = "<group>"; };
 		FC782A8B18E304B10024C477 /* CPUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPUtility.m; sourceTree = "<group>"; };
 		FC80EC6218C9F5D2008E83B6 /* CPCollageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCollageViewController.h; sourceTree = "<group>"; };
@@ -149,8 +149,8 @@
 		FC2B287218CC69F50050AD08 /* Transitions */ = {
 			isa = PBXGroup;
 			children = (
-				FC2B287618CC6C300050AD08 /* CPStitchEditTransition.h */,
-				FC2B287718CC6C300050AD08 /* CPStitchEditTransition.m */,
+				FC2B287618CC6C300050AD08 /* CPCollageToEditTransition.h */,
+				FC2B287718CC6C300050AD08 /* CPCollageToEditTransition.m */,
 				FC2B287318CC6A960050AD08 /* CPTransitionManager.h */,
 				FC2B287418CC6A960050AD08 /* CPTransitionManager.m */,
 			);
@@ -273,8 +273,8 @@
 				FC61A46918DD93B8009D9442 /* CPCell.m */,
 				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
 				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
-				FC61A46B18DD94A3009D9442 /* CPStitchCell.h */,
-				FC61A46C18DD94A3009D9442 /* CPStitchCell.m */,
+				FC61A46B18DD94A3009D9442 /* CPCollageCell.h */,
+				FC61A46C18DD94A3009D9442 /* CPCollageCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -402,8 +402,8 @@
 				FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */,
 				FC61A46A18DD93B8009D9442 /* CPCell.m in Sources */,
 				FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */,
-				FC2B287818CC6C300050AD08 /* CPStitchEditTransition.m in Sources */,
-				FC61A46D18DD94A3009D9442 /* CPStitchCell.m in Sources */,
+				FC2B287818CC6C300050AD08 /* CPCollageToEditTransition.m in Sources */,
+				FC61A46D18DD94A3009D9442 /* CPCollageCell.m in Sources */,
 				FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */,
 				FC8BCA1618D42E4100748335 /* CPFace.m in Sources */,
 				FCF8FE9618C2D016007FA358 /* CPSmileyViewController.m in Sources */,

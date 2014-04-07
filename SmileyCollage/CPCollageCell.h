@@ -1,5 +1,5 @@
 //
-//  CPStitchCell.h
+//  CPCollageCell.h
 //  Smiley
 //
 //  Created by wangyw on 3/22/14.
@@ -8,6 +8,6 @@
 
 #import "CPCell.h"
 
-@interface CPStitchCell : CPCell
+@interface CPCollageCell : CPCell
 
 @end

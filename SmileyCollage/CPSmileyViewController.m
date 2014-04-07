@@ -1,5 +1,5 @@
 //
-//  CPFacesViewController.m
+//  CPSmileyViewController.m
 //  Smiley
 //
 //  Created by wangyw on 3/2/14.
@@ -80,12 +80,12 @@
         CPCollageViewController *stitchViewController = (CPCollageViewController *)segue.destinationViewController;
         stitchViewController.facesManager = self.facesManager;
         
-        stitchViewController.stitchedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
+        stitchViewController.collagedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
         for (CPFace *face in self.selectedFaces) {
             CPFaceEditInformation *stitchedFace = [[CPFaceEditInformation alloc] init];
             stitchedFace.face = face;
             stitchedFace.asset = nil;
-            [stitchViewController.stitchedFaces addObject:stitchedFace];
+            [stitchViewController.collagedFaces addObject:stitchedFace];
         }
     }
 }
@@ -217,7 +217,7 @@
         }
         [collectionView reloadItemsAtIndexPaths:@[indexPath]];
     } else {
-        if (self.selectedFaces.count < [CPCollageViewController maxNumberOfStitchedFaces]) {
+        if (self.selectedFaces.count < [CPCollageViewController maxNumberOfCollagedFaces]) {
             [self.selectedFaces addObject:face];
             self.navigationItem.rightBarButtonItem.enabled = YES;
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
@@ -226,7 +226,7 @@
     UICollectionViewLayoutAttributes *attributes = [collectionView layoutAttributesForItemAtIndexPath:indexPath];
     CGPoint position = attributes.frame.origin;
     position.y += self.topLayoutGuide.length;
-    [self showBubbleViewAtPosition:position withSelectedNumber:self.selectedFaces.count maxSelectedNumber:[CPCollageViewController maxNumberOfStitchedFaces]];
+    [self showBubbleViewAtPosition:position withSelectedNumber:self.selectedFaces.count maxSelectedNumber:[CPCollageViewController maxNumberOfCollagedFaces]];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
@@ -260,7 +260,7 @@
 
 - (NSMutableArray *)selectedFaces {
     if (!_selectedFaces) {
-        _selectedFaces = [[NSMutableArray alloc] initWithCapacity:[CPCollageViewController maxNumberOfStitchedFaces]];
+        _selectedFaces = [[NSMutableArray alloc] initWithCapacity:[CPCollageViewController maxNumberOfCollagedFaces]];
     }
     return _selectedFaces;
 }

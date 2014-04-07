@@ -1,5 +1,5 @@
 //
-//  CPFacesViewController.h
+//  CPSmileyViewController.h
 //  Smiley
 //
 //  Created by wangyw on 3/2/14.

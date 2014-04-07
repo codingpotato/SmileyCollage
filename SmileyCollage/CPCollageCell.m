@@ -1,13 +1,13 @@
 //
-//  CPStitchCell.m
+//  CPCollageCell.m
 //  Smiley
 //
 //  Created by wangyw on 3/22/14.
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import "CPStitchCell.h"
+#import "CPCollageCell.h"
 
-@implementation CPStitchCell
+@implementation CPCollageCell
 
 @end

@@ -12,4 +12,8 @@
 
 @property (strong, nonatomic) CPFaceEditInformation *faceEditInformation;
 
+- (CGRect)faceIndicatorFrame;
+
+- (UIView *)faceSnapshot;
+
 @end

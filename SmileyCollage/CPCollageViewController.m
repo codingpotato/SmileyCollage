@@ -1,5 +1,5 @@
 //
-//  CPStitchViewController.m
+//  CPCollageViewController.m
 //  Smiley
 //
 //  Created by wangyw on 3/7/14.
@@ -12,7 +12,7 @@
 #import "CPUtility.h"
 
 #import "CPEditViewController.h"
-#import "CPStitchCell.h"
+#import "CPCollageCell.h"
 
 #import "CPFaceEditInformation.h"
 #import "CPFacesManager.h"
@@ -52,7 +52,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     655555, 665555, 666555, 666655, 666665, 666666
 };
 
-+ (NSUInteger)maxNumberOfStitchedFaces {
++ (NSUInteger)maxNumberOfCollagedFaces {
     return sizeof(g_numberOfColumnsInRows) / sizeof(NSUInteger);
 }
 
@@ -67,12 +67,12 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [self calculateImageWidthHeightRatio];
     
     __block NSUInteger index = 0;
-    for (CPFaceEditInformation *faceEditInformation in self.stitchedFaces) {
+    for (CPFaceEditInformation *faceEditInformation in self.collagedFaces) {
         faceEditInformation.frame = CGRectMake(faceEditInformation.face.x.floatValue, faceEditInformation.face.y.floatValue, faceEditInformation.face.width.floatValue, faceEditInformation.face.height.floatValue);
         NSURL *url = [[NSURL alloc] initWithString:faceEditInformation.face.photo.url];
         [self.facesManager assertForURL:url resultBlock:^(ALAsset *result) {
             faceEditInformation.asset = result;
-            if (++index == self.stitchedFaces.count) {
+            if (++index == self.collagedFaces.count) {
                 [self.collectionView reloadData];
                 if (![CPSettings isWatermarkRemoved]) {
                     [self showWatermarkImageView];
@@ -80,15 +80,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
                 }
             }
         }];
-    }
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-
-    if (self.selectedIndex != -1) {
-        [self.collectionView reloadItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:self.selectedIndex inSection:0]]];
-        self.selectedIndex = -1;
     }
 }
 
@@ -108,16 +99,29 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
-        NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.stitchedFaces.count, @"");
+        NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.collagedFaces.count, @"");
         
         CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
-        editViewController.faceEditInformation = [self.stitchedFaces objectAtIndex:self.selectedIndex];
+        editViewController.faceEditInformation = [self.collagedFaces objectAtIndex:self.selectedIndex];
     }
 }
 
-- (CGRect)frameOfSelectedCell {
-    UICollectionViewLayoutAttributes *attributes = [self.collectionView layoutAttributesForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
-    return [self.view convertRect:attributes.frame fromView:self.collectionView];
+- (UIView *)selectedFace {
+    NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.collagedFaces.count, @"");
+    return [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
+}
+
+- (void)reloadSelectedFace {
+    if (self.selectedIndex >= 0 && self.selectedIndex < self.collagedFaces.count) {
+        // disable animation for reload items
+        [CATransaction begin];
+        [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.selectedIndex inSection:0];
+        [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
+        
+        [CATransaction commit];
+    }
 }
 
 - (void)shopBarButtonPressed:(id)sender {
@@ -165,10 +169,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             NSIndexPath *indexPath2 = [self.collectionView indexPathForCell:droppedCell];
             NSAssert(indexPath1 && indexPath2, @"");
             
-            NSObject *face1 = [self.stitchedFaces objectAtIndex:indexPath1.row];
-            NSObject *face2 = [self.stitchedFaces objectAtIndex:indexPath2.row];
-            [self.stitchedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
-            [self.stitchedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
+            NSObject *face1 = [self.collagedFaces objectAtIndex:indexPath1.row];
+            NSObject *face2 = [self.collagedFaces objectAtIndex:indexPath2.row];
+            [self.collagedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
+            [self.collagedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
             
             [UIView animateWithDuration:0.3 animations:^{
                 self.snapshotOfDraggedCell.frame = droppedCell.frame;
@@ -198,7 +202,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
-- (UIImage *)stitchedImage {
+- (UIImage *)collagedImage {
     NSAssert(self.maxColumns > 0, @"");
     
     CGFloat width = 256.0 * self.maxColumns;
@@ -211,7 +215,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     NSUInteger row = 0;
     NSNumber *numberOfColumns = [self.numberOfColumnsInRows objectAtIndex:row];
     NSUInteger items = numberOfColumns.integerValue;
-    for (CPFaceEditInformation *faceEditInformation in self.stitchedFaces) {
+    for (CPFaceEditInformation *faceEditInformation in self.collagedFaces) {
         CGRect faceBounds = faceEditInformation.frame;
         CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceBounds);
         CGFloat widthOfFace = width / numberOfColumns.integerValue;
@@ -220,7 +224,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         [image drawAtPoint:CGPointMake(x, y)];
         x += widthOfFace;
         index++;
-        if (index >= items && index < self.stitchedFaces.count) {
+        if (index >= items && index < self.collagedFaces.count) {
             x = 0.0;
             y += widthOfFace;
             row++;
@@ -253,18 +257,18 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)calculateSizeOfFaces {
-    NSMutableArray *sizeOfFaces = [[NSMutableArray alloc] initWithCapacity:self.stitchedFaces.count];
-    NSUInteger height = self.heightOfStitchedImage;
+    NSMutableArray *sizeOfFaces = [[NSMutableArray alloc] initWithCapacity:self.collagedFaces.count];
+    NSUInteger height = [self heightOfCollagedImage];
     for (NSUInteger row = 0; row < self.numberOfColumnsInRows.count; ++row) {
         NSNumber *number = [self.numberOfColumnsInRows objectAtIndex:row];
         NSUInteger rowHeight = 0.0;
         if (row < self.numberOfColumnsInRows.count - 1) {
-            rowHeight = roundf(self.widthOfStitchedImage / number.floatValue);
+            rowHeight = roundf([self widthOfCollagedImage] / number.floatValue);
             height -= rowHeight;
         } else {
             rowHeight = height;
         }
-        NSUInteger width = self.widthOfStitchedImage;
+        NSUInteger width = [self widthOfCollagedImage];
         for (NSUInteger column = 0; column < number.integerValue; ++column) {
             NSUInteger faceWidth = roundf(width / (number.floatValue - column));
             width -= faceWidth;
@@ -279,7 +283,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return self.collectionView.bounds.size.width / self.collectionView.bounds.size.height;
 }
 
-- (NSUInteger)widthOfStitchedImage {
+- (NSUInteger)widthOfCollagedImage {
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
         return roundf(self.collectionView.bounds.size.width);
     } else {
@@ -287,7 +291,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
-- (NSUInteger)heightOfStitchedImage {
+- (NSUInteger)heightOfCollagedImage {
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
         return roundf(self.collectionView.bounds.size.width / self.widthHeightRatioOfImage);
     } else {
@@ -305,13 +309,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (self.watermarkImageView) {
         CGRect frame = CGRectZero;
         if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-            NSUInteger inset = roundf((self.collectionView.bounds.size.height - self.heightOfStitchedImage) / 2);
-            frame = [self.view convertRect:CGRectMake(0.0, inset, self.widthOfStitchedImage, self.heightOfStitchedImage) fromView:self.collectionView];
+            NSUInteger inset = roundf((self.collectionView.bounds.size.height - [self heightOfCollagedImage]) / 2);
+            frame = [self.view convertRect:CGRectMake(0.0, inset, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
         } else {
-            NSUInteger inset = roundf((self.collectionView.bounds.size.width - self.widthOfStitchedImage) / 2);
-            frame = [self.view convertRect:CGRectMake(inset, 0.0, self.widthOfStitchedImage, self.heightOfStitchedImage) fromView:self.collectionView];
+            NSUInteger inset = roundf((self.collectionView.bounds.size.width - [self widthOfCollagedImage]) / 2);
+            frame = [self.view convertRect:CGRectMake(inset, 0.0, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
         }
-        CGFloat height = self.widthOfStitchedImage / self.watermarkImage.size.width * self.watermarkImage.size.height;
+        CGFloat height = [self widthOfCollagedImage] / self.watermarkImage.size.width * self.watermarkImage.size.height;
         self.watermarkImageView.frame = CGRectMake(frame.origin.x, frame.origin.y + frame.size.height - height, frame.size.width, height);
     }
 }
@@ -324,15 +328,15 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             case 0: {
                 // Save
                 NSAssert(self.facesManager, @"");
-                NSAssert(self.stitchedFaces, @"");
-                [self.facesManager saveStitchedImage:self.stitchedImage];
+                NSAssert(self.collagedFaces, @"");
+                [self.facesManager saveStitchedImage:[self collagedImage]];
                 break;
             }
             case 1: {
                 // share
                 NSString *sharedText = @"Shared from Smiley app";
                 NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
-                UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, self.stitchedImage, sharedURL] applicationActivities:nil];
+                UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
                 [self presentViewController:activityViewController animated:YES completion:nil];
                 break;
             }
@@ -362,13 +366,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    NSAssert(self.stitchedFaces.count <= [CPCollageViewController maxNumberOfStitchedFaces], @"");
-    return self.stitchedFaces.count;
+    NSAssert(self.collagedFaces.count <= [CPCollageViewController maxNumberOfCollagedFaces], @"");
+    return self.collagedFaces.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CPStitchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
-    CPFaceEditInformation *faceEditInformation = [self.stitchedFaces objectAtIndex:indexPath.row];
+    CPCollageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
+    CPFaceEditInformation *faceEditInformation = [self.collagedFaces objectAtIndex:indexPath.row];
     NSAssert(faceEditInformation, @"");
     
     if (faceEditInformation.asset) {
@@ -394,12 +398,12 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        NSUInteger insetTop = roundf((collectionView.bounds.size.height - self.heightOfStitchedImage) / 2);
-        NSUInteger insetBottom = self.collectionView.bounds.size.height - insetTop - self.heightOfStitchedImage;
+        NSUInteger insetTop = roundf((collectionView.bounds.size.height - [self heightOfCollagedImage]) / 2);
+        NSUInteger insetBottom = self.collectionView.bounds.size.height - insetTop - [self heightOfCollagedImage];
         return UIEdgeInsetsMake(insetTop, 0.0, insetBottom, 0.0);
     } else {
-        NSUInteger insetLeft = roundf((collectionView.bounds.size.width - self.widthOfStitchedImage) / 2);
-        NSUInteger insetRight = self.collectionView.bounds.size.width - insetLeft - self.widthOfStitchedImage;
+        NSUInteger insetLeft = roundf((collectionView.bounds.size.width - [self widthOfCollagedImage]) / 2);
+        NSUInteger insetRight = self.collectionView.bounds.size.width - insetLeft - [self widthOfCollagedImage];
         return UIEdgeInsetsMake(0.0, insetLeft, 0.0, insetRight);
     }
 }
@@ -416,10 +420,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (NSArray *)numberOfColumnsInRows {
     if (!_numberOfColumnsInRows) {
-        NSAssert(self.stitchedFaces.count > 0 && self.stitchedFaces.count < [CPCollageViewController maxNumberOfStitchedFaces], @"");
+        NSAssert(self.collagedFaces.count > 0 && self.collagedFaces.count < [CPCollageViewController maxNumberOfCollagedFaces], @"");
 
         NSMutableArray *numberOfColumnsInRows = [[NSMutableArray alloc] init];
-        NSUInteger numbers = g_numberOfColumnsInRows[self.stitchedFaces.count - 1];
+        NSUInteger numbers = g_numberOfColumnsInRows[self.collagedFaces.count - 1];
         while (numbers > 0) {
             [numberOfColumnsInRows addObject:[NSNumber numberWithInteger:numbers % 10]];
             numbers /= 10;

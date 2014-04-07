@@ -70,9 +70,9 @@ static const float g_floatAccuracy = 0.000001;
 
 - (CPCollageViewController *)stitchViewControllerOfFacesNumber:(NSUInteger)number {
     CPCollageViewController *stitchViewController = [[CPCollageViewController alloc] init];
-    stitchViewController.stitchedFaces = [[NSMutableArray alloc] init];
+    stitchViewController.collagedFaces = [[NSMutableArray alloc] init];
     for (NSUInteger j = 0; j < number; ++j) {
-        [stitchViewController.stitchedFaces addObject:[[CPFaceEditInformation alloc] init]];
+        [stitchViewController.collagedFaces addObject:[[CPFaceEditInformation alloc] init]];
     }
     return stitchViewController;
 }

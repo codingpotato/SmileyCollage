@@ -44,6 +44,16 @@
     [super didReceiveMemoryWarning];
 }
 
+- (CGRect)faceIndicatorFrame {
+    CGFloat size = MIN(self.view.bounds.size.width, self.view.bounds.size.height);
+    return CGRectMake((self.view.bounds.size.width - size) / 2, (self.view.bounds.size.height - size) / 2, size, size);
+}
+
+- (UIView *)faceSnapshot {
+    CGRect frame = [self.imageView convertRect:self.faceIndicator.frame fromView:self.view];
+    return [self.imageView resizableSnapshotViewFromRect:frame afterScreenUpdates:NO withCapInsets:UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0)];
+}
+
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
     if (panGesture.state == UIGestureRecognizerStateChanged) {
         CGPoint translation = [panGesture translationInView:self.view];
@@ -85,8 +95,7 @@
 }
 
 - (void)layoutFaceIndicator {
-    CGFloat size = MIN(self.view.bounds.size.width, self.view.bounds.size.height);
-    self.faceIndicator.frame = CGRectMake((self.view.bounds.size.width - size) / 2, (self.view.bounds.size.height - size) / 2, size, size);
+    self.faceIndicator.frame = self.faceIndicatorFrame;
 }
 
 - (void)showImageView {
