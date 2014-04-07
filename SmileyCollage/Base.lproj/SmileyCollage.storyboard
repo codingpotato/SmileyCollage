@@ -113,7 +113,6 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="LiH-Uw-Urq">
-                        <barButtonItem key="leftBarButtonItem" systemItem="organize" id="7w9-W4-4Nt"/>
                         <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="play" id="xtm-Nc-Ing">
                             <connections>
                                 <segue destination="RNr-7G-8mP" kind="push" identifier="CPStitchViewControllerSegue" id="eoF-JQ-Ch0"/>
@@ -132,7 +131,7 @@
             </objects>
             <point key="canvasLocation" x="675" y="-228"/>
         </scene>
-        <!--Collage View Controller - SmileyCollage Collage-->
+        <!--Collage View Controller - Smiley Collage-->
         <scene sceneID="km2-Yy-FMC">
             <objects>
                 <viewController automaticallyAdjustsScrollViewInsets="NO" id="RNr-7G-8mP" customClass="CPCollageViewController" sceneMemberID="viewController">
@@ -184,13 +183,7 @@
                         </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" title="SmileyCollage Collage" id="k7i-rc-daj">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="46Y-pp-zR6">
-                            <connections>
-                                <action selector="actionBarButtonPressed:" destination="RNr-7G-8mP" id="nVz-J0-Eps"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Smiley Collage" id="k7i-rc-daj"/>
                     <connections>
                         <outlet property="collectionView" destination="h2J-26-ace" id="Cmq-ND-qqs"/>
                         <segue destination="8HI-ey-MKV" kind="push" identifier="CPEditViewControllerSegue" id="Ynd-xb-qjg"/>
@@ -205,7 +198,7 @@
             </objects>
             <point key="canvasLocation" x="1192" y="-228"/>
         </scene>
-        <!--Edit View Controller - SmileyCollage Edit-->
+        <!--Edit View Controller - Smiley Edit-->
         <scene sceneID="LPt-de-zO5">
             <objects>
                 <viewController id="8HI-ey-MKV" customClass="CPEditViewController" sceneMemberID="viewController">
@@ -250,7 +243,7 @@
                         </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" title="SmileyCollage Edit" id="9k4-Qf-iWA"/>
+                    <navigationItem key="navigationItem" title="Smiley Edit" id="9k4-Qf-iWA"/>
                     <connections>
                         <outlet property="faceIndicator" destination="MBA-x5-NeI" id="yG6-il-sYz"/>
                         <outlet property="faceIndicatorHeightConstraint" destination="Qpl-rd-5MA" id="Bt1-w5-X5e"/>

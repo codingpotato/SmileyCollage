@@ -39,6 +39,9 @@
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
 		FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
 		FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */; };
+		FCC2E59518F244AF00D7163F /* CPSettingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCC2E59418F244AF00D7163F /* CPSettingTests.m */; };
+		FCC2E59918F246EB00D7163F /* CPSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = FCC2E59818F246EB00D7163F /* CPSettings.m */; };
+		FCC2E59A18F2471500D7163F /* CPSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = FCC2E59818F246EB00D7163F /* CPSettings.m */; };
 		FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCD844C318C761C3003BA834 /* CoreImage.framework */; };
 		FCF8FE9618C2D016007FA358 /* CPSmileyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9518C2D016007FA358 /* CPSmileyViewController.m */; };
 		FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */; };
@@ -105,6 +108,9 @@
 		FC8BCA1818D42E4100748335 /* CPPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhoto.m; sourceTree = "<group>"; };
 		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
+		FCC2E59418F244AF00D7163F /* CPSettingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSettingTests.m; sourceTree = "<group>"; };
+		FCC2E59718F246EB00D7163F /* CPSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSettings.h; sourceTree = "<group>"; };
+		FCC2E59818F246EB00D7163F /* CPSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSettings.m; sourceTree = "<group>"; };
 		FCD844C318C761C3003BA834 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		FCF8FE9418C2D016007FA358 /* CPSmileyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSmileyViewController.h; sourceTree = "<group>"; };
 		FCF8FE9518C2D016007FA358 /* CPSmileyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSmileyViewController.m; sourceTree = "<group>"; };
@@ -196,6 +202,8 @@
 				FC56ED3818E6C49700DFE80C /* CPConfig.m */,
 				FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */,
 				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
+				FCC2E59718F246EB00D7163F /* CPSettings.h */,
+				FCC2E59818F246EB00D7163F /* CPSettings.m */,
 				FCF8FE9418C2D016007FA358 /* CPSmileyViewController.h */,
 				FCF8FE9518C2D016007FA358 /* CPSmileyViewController.m */,
 				FC782A8A18E304B10024C477 /* CPUtility.h */,
@@ -226,6 +234,7 @@
 			isa = PBXGroup;
 			children = (
 				FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */,
+				FCC2E59418F244AF00D7163F /* CPSettingTests.m */,
 				FC46716818C2CAF600E472BF /* Supporting Files */,
 			);
 			path = SmileyCollageTests;
@@ -383,6 +392,7 @@
 				FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */,
 				FC782A8C18E304B10024C477 /* CPUtility.m in Sources */,
 				FC58103218DDD06100B6BE03 /* CPFaceEditInformation.m in Sources */,
+				FCC2E59918F246EB00D7163F /* CPSettings.m in Sources */,
 				FC46714C18C2CAF600E472BF /* main.m in Sources */,
 				FC80EC6418C9F5D2008E83B6 /* CPCollageViewController.m in Sources */,
 				FC8BCA1318D4256900748335 /* SmileyCollage.xcdatamodeld in Sources */,
@@ -407,8 +417,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC1A3A3618DB2875004E4C38 /* CPCollageViewControllerTests.m in Sources */,
+				FCC2E59A18F2471500D7163F /* CPSettings.m in Sources */,
 				FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */,
 				FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */,
+				FCC2E59518F244AF00D7163F /* CPSettingTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

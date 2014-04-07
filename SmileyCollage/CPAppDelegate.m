@@ -8,11 +8,12 @@
 
 #import "CPAppDelegate.h"
 
-#import "CPFacesManager.h"
+#import "CPSettings.h"
 
 @implementation CPAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [CPSettings registerDefaults];
     return YES;
 }
 							

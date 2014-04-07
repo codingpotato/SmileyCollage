@@ -8,6 +8,7 @@
 
 #import "CPCollageViewController.h"
 
+#import "CPSettings.h"
 #import "CPUtility.h"
 
 #import "CPEditViewController.h"
@@ -33,9 +34,10 @@
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
-@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+@property (strong, nonatomic) UIActionSheet *actionSheet;
+@property (strong, nonatomic) UIActionSheet *shopActionSheet;
 
-- (IBAction)actionBarButtonPressed:(id)sender;
+@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
 
@@ -56,7 +58,12 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.selectedIndex = -1;
+    UIBarButtonItem *shop = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
+    UIBarButtonItem *action = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
+    self.navigationItem.rightBarButtonItems = @[action, shop];
+    
     [self calculateImageWidthHeightRatio];
     
     __block NSUInteger index = 0;
@@ -67,8 +74,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             faceEditInformation.asset = result;
             if (++index == self.stitchedFaces.count) {
                 [self.collectionView reloadData];
-                [self showWatermarkImageView];
-                [self alignWatermarkImageView];
+                if (![CPSettings isWatermarkRemoved]) {
+                    [self showWatermarkImageView];
+                    [self alignWatermarkImageView];
+                }
             }
         }];
     }
@@ -86,7 +95,9 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewDidLayoutSubviews {
     [self calculateSizeOfFaces];
     [self.collectionView.collectionViewLayout invalidateLayout];
-    [self alignWatermarkImageView];
+    if (![CPSettings isWatermarkRemoved]) {
+        [self alignWatermarkImageView];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -107,9 +118,14 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return [self.view convertRect:attributes.frame fromView:self.collectionView];
 }
 
-- (IBAction)actionBarButtonPressed:(id)sender {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
-    [actionSheet showFromBarButtonItem:sender animated:YES];
+- (void)shopBarButtonPressed:(id)sender {
+    self.shopActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Purchase Remove Watermark", @"Re-download purchased items", nil];
+    [self.shopActionSheet showFromBarButtonItem:sender animated:YES];
+}
+
+- (void)actionBarButtonPressed:(id)sender {
+    self.actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
+    [self.actionSheet showFromBarButtonItem:sender animated:YES];
 }
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
@@ -301,24 +317,43 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - UIActionSheetDelegate implement
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    switch (buttonIndex) {
-        case 0: {
-            // Save
-            NSAssert(self.facesManager, @"");
-            NSAssert(self.stitchedFaces, @"");
-            [self.facesManager saveStitchedImage:self.stitchedImage];
-            break;
+    if (actionSheet == self.actionSheet) {
+        switch (buttonIndex) {
+            case 0: {
+                // Save
+                NSAssert(self.facesManager, @"");
+                NSAssert(self.stitchedFaces, @"");
+                [self.facesManager saveStitchedImage:self.stitchedImage];
+                break;
+            }
+            case 1: {
+                // share
+                NSString *sharedText = @"Shared from Smiley app";
+                NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
+                UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, self.stitchedImage, sharedURL] applicationActivities:nil];
+                [self presentViewController:activityViewController animated:YES completion:nil];
+                break;
+            }
+            default:
+                break;
         }
-        case 1: {
-            // share
-            NSString *sharedText = @"Shared from Smiley app";
-            NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
-            UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, self.stitchedImage, sharedURL] applicationActivities:nil];
-            [self presentViewController:activityViewController animated:YES completion:nil];
-            break;
+    } else if (actionSheet == self.shopActionSheet) {
+        switch (buttonIndex) {
+            case 0:
+                // Purchase Remove Watermark
+                [CPSettings removeWatermark];
+                break;
+            default:
+                break;
         }
-        default:
-            break;
+    }
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (actionSheet == self.actionSheet) {
+        self.actionSheet = nil;
+    } else if (actionSheet == self.shopActionSheet) {
+        self.shopActionSheet = nil;
     }
 }
 
