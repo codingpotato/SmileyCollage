@@ -57,6 +57,8 @@
 }
 
 - (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
     [self.collectionView.collectionViewLayout invalidateLayout];
 }
 

@@ -15,6 +15,6 @@
 
 @property (strong, nonatomic) ALAsset *asset;
 
-@property (nonatomic) CGRect userBounds;
+@property (nonatomic) CGRect frame;
 
 @end

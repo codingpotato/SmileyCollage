@@ -209,49 +209,16 @@
                     <view key="view" contentMode="scaleToFill" id="aJk-gt-Snk">
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="o6b-QN-LVF">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </imageView>
-                            <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MBA-x5-NeI" userLabel="Face Indicator">
-                                <rect key="frame" x="100" y="100" width="160" height="284"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="160" id="PLw-aW-7qp"/>
-                                    <constraint firstAttribute="height" constant="284" id="Qpl-rd-5MA"/>
-                                </constraints>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="4tI-KM-L7w" appends="YES" id="XS5-EW-sha"/>
-                                </connections>
-                            </view>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="MBA-x5-NeI" firstAttribute="leading" secondItem="o6b-QN-LVF" secondAttribute="leading" constant="100" id="11k-kc-FfZ"/>
-                            <constraint firstAttribute="bottom" secondItem="o6b-QN-LVF" secondAttribute="bottom" id="Jba-wg-j6f"/>
-                            <constraint firstItem="o6b-QN-LVF" firstAttribute="leading" secondItem="aJk-gt-Snk" secondAttribute="leading" id="bIh-ET-rLH"/>
-                            <constraint firstItem="MBA-x5-NeI" firstAttribute="top" secondItem="o6b-QN-LVF" secondAttribute="top" constant="100" id="bcJ-Ji-MO1"/>
-                            <constraint firstItem="o6b-QN-LVF" firstAttribute="top" secondItem="aJk-gt-Snk" secondAttribute="top" id="bny-cD-dh4"/>
-                            <constraint firstAttribute="trailing" secondItem="o6b-QN-LVF" secondAttribute="trailing" id="eP9-db-bhn"/>
-                        </constraints>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <connections>
+                            <outletCollection property="gestureRecognizers" destination="4tI-KM-L7w" appends="YES" id="i9B-GZ-bTN"/>
                             <outletCollection property="gestureRecognizers" destination="flv-O0-2Hb" appends="YES" id="cm7-KA-E6L"/>
+                            <outletCollection property="gestureRecognizers" destination="flv-O0-2Hb" appends="YES" id="J13-Ei-dHd"/>
                         </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" title="Smiley Edit" id="9k4-Qf-iWA"/>
-                    <connections>
-                        <outlet property="faceIndicator" destination="MBA-x5-NeI" id="yG6-il-sYz"/>
-                        <outlet property="faceIndicatorHeightConstraint" destination="Qpl-rd-5MA" id="Bt1-w5-X5e"/>
-                        <outlet property="faceIndicatorLeadingConstraint" destination="11k-kc-FfZ" id="hZC-w3-Aam"/>
-                        <outlet property="faceIndicatorTopConstraint" destination="bcJ-Ji-MO1" id="GPh-7P-GAw"/>
-                        <outlet property="faceIndicatorWidthConstraint" destination="PLw-aW-7qp" id="cJ4-0B-dgk"/>
-                        <outlet property="imageView" destination="o6b-QN-LVF" id="1Om-ft-3t1"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4M1-mf-Wti" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <panGestureRecognizer minimumNumberOfTouches="1" id="4tI-KM-L7w">

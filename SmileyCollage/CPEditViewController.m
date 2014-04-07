@@ -8,25 +8,15 @@
 
 #import "CPEditViewController.h"
 
-#import "CPFace.h"
 #import "CPFaceEditInformation.h"
-#import "CPFacesManager.h"
-#import "CPPhoto.h"
+#import "CPUtility.h"
 
 @interface CPEditViewController ()
 
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+@property (strong, nonatomic) UIImageView *imageView;
+@property (strong, nonatomic) UIView *faceIndicator;
 
 @property (nonatomic) CGSize originalImageSize;
-
-@property (weak, nonatomic) IBOutlet UIView *faceIndicator;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *faceIndicatorLeadingConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *faceIndicatorTopConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *faceIndicatorWidthConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *faceIndicatorHeightConstraint;
-
-@property (nonatomic) CGRect imageFrame;
-@property (nonatomic) CGFloat ratio;
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
 - (IBAction)handlePinchGesture:(UIPinchGestureRecognizer *)pinchGesture;
@@ -37,26 +27,17 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     NSAssert(self.faceEditInformation, @"");
-    
-    CGImageRef fullScreenImage = self.faceEditInformation.asset.defaultRepresentation.fullScreenImage;
-    self.originalImageSize = CGSizeMake(CGImageGetWidth(fullScreenImage), CGImageGetHeight(fullScreenImage));
-    self.imageView.image = [UIImage imageWithCGImage:fullScreenImage];
-    self.faceIndicator.layer.borderColor = [UIColor redColor].CGColor;
-    self.faceIndicator.layer.borderWidth = 1.0;
-}
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-
-    [self setFaceIndicatorPosition];
-    self.faceIndicator.hidden = NO;
+    [self showImageView];
+    [self showFaceIndicator];
 }
 
 - (void)viewDidLayoutSubviews {
-    [self setFaceIndicatorPosition];
-    [self.view layoutIfNeeded];
+    [super viewDidLayoutSubviews];
+    
+    [self layoutFaceIndicator];
+    [self layoutImageView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -64,68 +45,105 @@
 }
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
-    if (panGesture.state == UIGestureRecognizerStateChanged || panGesture.state == UIGestureRecognizerStateEnded) {
-        CGPoint translation = [panGesture translationInView:self.faceIndicator];
-        self.faceIndicatorLeadingConstraint.constant += translation.x;
-        self.faceIndicatorTopConstraint.constant += translation.y;
-        if (self.faceIndicatorLeadingConstraint.constant < self.imageFrame.origin.x) {
-            self.faceIndicatorLeadingConstraint.constant = self.imageFrame.origin.x;
-        }
-        if (self.faceIndicatorTopConstraint.constant < self.imageFrame.origin.y) {
-            self.faceIndicatorTopConstraint.constant = self.imageFrame.origin.y;
-        }
-        if (self.faceIndicatorLeadingConstraint.constant + self.faceIndicatorWidthConstraint.constant > self.imageFrame.origin.x + self.imageFrame.size.width) {
-            self.faceIndicatorLeadingConstraint.constant = self.imageFrame.origin.x + self.imageFrame.size.width - self.faceIndicatorWidthConstraint.constant;
-        }
-        if (self.faceIndicatorTopConstraint.constant + self.faceIndicatorHeightConstraint.constant > self.imageFrame.origin.y + self.imageFrame.size.height) {
-            self.faceIndicatorTopConstraint.constant = self.imageFrame.origin.y + self.imageFrame.size.height - self.faceIndicatorHeightConstraint.constant;
-        }
-        self.faceEditInformation.userBounds = [self userBoundsFromFaceIndicator];
-
-        [panGesture setTranslation:CGPointZero inView:self.faceIndicator];
+    if (panGesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint translation = [panGesture translationInView:self.view];
+        self.imageView.frame = CGRectOffset(self.imageView.frame, translation.x, translation.y);
+    } else if (panGesture.state == UIGestureRecognizerStateEnded || panGesture.state == UIGestureRecognizerStateCancelled || panGesture.state == UIGestureRecognizerStateFailed) {
+        [self validateImageViewPosition];
     }
+    [panGesture setTranslation:CGPointZero inView:self.view];
+    [self updateFaceFrame];
 }
 
 - (IBAction)handlePinchGesture:(UIPinchGestureRecognizer *)pinchGesture {
-    if (pinchGesture.state == UIGestureRecognizerStateChanged || pinchGesture.state == UIGestureRecognizerStateEnded) {
-        self.faceIndicatorWidthConstraint.constant *= pinchGesture.scale;
-        self.faceIndicatorHeightConstraint.constant *= pinchGesture.scale;
-        if (self.faceIndicatorWidthConstraint.constant < 10.0 || self.faceIndicatorHeightConstraint.constant < 10.0 || self.faceIndicatorLeadingConstraint.constant + self.faceIndicatorWidthConstraint.constant > self.imageFrame.origin.x + self.imageFrame.size.width || self.faceIndicatorTopConstraint.constant + self.faceIndicatorHeightConstraint.constant > self.imageFrame.origin.y + self.imageFrame.size.height) {
-            self.faceIndicatorWidthConstraint.constant /= pinchGesture.scale;
-            self.faceIndicatorHeightConstraint.constant /= pinchGesture.scale;
+    if (pinchGesture.state == UIGestureRecognizerStateChanged) {
+        CGFloat width = self.imageView.frame.size.width * pinchGesture.scale;
+        CGFloat height = self.imageView.frame.size.height * pinchGesture.scale;
+        CGFloat originalFaceWidth = self.faceIndicator.frame.size.width * self.originalImageSize.width / self.imageView.frame.size.width;
+        CGFloat originalFaceHeight = self.faceIndicator.frame.size.height * self.originalImageSize.height / self.imageView.frame.size.height;
+        static const CGFloat sizeLimitation = 10.0;
+        if ((pinchGesture.scale < 1.0 && width > sizeLimitation && height > sizeLimitation) || (pinchGesture.scale > 1.0 && originalFaceWidth > sizeLimitation && originalFaceHeight > sizeLimitation)) {
+            self.imageView.frame = CGRectMake(self.imageView.frame.origin.x - (width - self.imageView.frame.size.width) / 2, self.imageView.frame.origin.y - (height - self.imageView.frame.size.height) / 2, width, height);
         }
-        self.faceEditInformation.userBounds = [self userBoundsFromFaceIndicator];
+    } else if (pinchGesture.state == UIGestureRecognizerStateEnded || pinchGesture.state == UIGestureRecognizerStateCancelled || pinchGesture.state == UIGestureRecognizerStateFailed) {
+        [self validateImageViewPosition];
     }
     pinchGesture.scale = 1.0;
+    [self updateFaceFrame];
 }
 
-- (void)setFaceIndicatorPosition {
-    CGSize imageViewSize = self.imageView.bounds.size;
-    CGFloat ratioWidth = imageViewSize.width / self.originalImageSize.width;
-    CGFloat ratioHeight = imageViewSize.height / self.originalImageSize.height;
-    if (ratioWidth < ratioHeight) {
-        self.ratio = ratioWidth;
-        self.imageFrame = CGRectMake(0.0, (imageViewSize.height - self.originalImageSize.height * self.ratio) / 2, imageViewSize.width, self.originalImageSize.height * self.ratio);
-    } else {
-        self.ratio = ratioHeight;
-        self.imageFrame = CGRectMake((imageViewSize.width - self.originalImageSize.width * self.ratio) / 2, 0.0, self.originalImageSize.width * self.ratio, imageViewSize.height);
+- (void)updateFaceFrame {
+    CGFloat ratioX = self.originalImageSize.width / self.imageView.frame.size.width;
+    CGFloat ratioY = self.originalImageSize.height / self.imageView.frame.size.height;
+    self.faceEditInformation.frame = CGRectMake((self.faceIndicator.frame.origin.x - self.imageView.frame.origin.x) * ratioX, (self.faceIndicator.frame.origin.y - self.imageView.frame.origin.y) * ratioY, self.faceIndicator.frame.size.width * ratioX, self.faceIndicator.frame.size.height * ratioY);
+}
+
+- (void)showFaceIndicator {
+    [self.view addSubview:self.faceIndicator];
+}
+
+- (void)layoutFaceIndicator {
+    CGFloat size = MIN(self.view.bounds.size.width, self.view.bounds.size.height);
+    self.faceIndicator.frame = CGRectMake((self.view.bounds.size.width - size) / 2, (self.view.bounds.size.height - size) / 2, size, size);
+}
+
+- (void)showImageView {
+    CGImageRef fullScreenImage = self.faceEditInformation.asset.defaultRepresentation.fullScreenImage;
+    self.originalImageSize = CGSizeMake(CGImageGetWidth(fullScreenImage), CGImageGetHeight(fullScreenImage));
+    self.imageView.image = [UIImage imageWithCGImage:fullScreenImage];
+    [self.view addSubview:self.imageView];
+}
+
+- (void)layoutImageView {
+    CGFloat ratioWidth = self.faceIndicator.frame.size.width / self.faceEditInformation.frame.size.width;
+    CGFloat ratioHeight = self.faceIndicator.frame.size.height / self.faceEditInformation.frame.size.height;
+    self.imageView.frame = CGRectMake(self.faceIndicator.frame.origin.x - self.faceEditInformation.frame.origin.x * ratioWidth, self.faceIndicator.frame.origin.y - self.faceEditInformation.frame.origin.y * ratioHeight, self.originalImageSize.width * ratioWidth, self.originalImageSize.height * ratioHeight);
+}
+
+- (void)validateImageViewPosition {
+    CGRect frame = self.imageView.frame;
+    if (frame.size.width < self.faceIndicator.frame.size.width || frame.size.height < self.faceIndicator.frame.size.height) {
+        if (frame.size.width < frame.size.height) {
+            frame.size.height *= self.faceIndicator.frame.size.width / frame.size.width;
+            frame.size.width = self.faceIndicator.frame.size.width;
+        } else {
+            frame.size.width *= self.faceIndicator.frame.size.height / frame.size.height;
+            frame.size.height = self.faceIndicator.frame.size.height;
+        }
     }
-    
-    CGRect bounds = self.faceEditInformation.userBounds;
-    self.faceIndicatorLeadingConstraint.constant = self.imageFrame.origin.x + bounds.origin.x * self.ratio;
-    self.faceIndicatorTopConstraint.constant = self.imageFrame.origin.y + bounds.origin.y * self.ratio;
-    self.faceIndicatorWidthConstraint.constant = bounds.size.width * self.ratio;
-    self.faceIndicatorHeightConstraint.constant = bounds.size.height * self.ratio;
+    if (frame.origin.x > self.faceIndicator.frame.origin.x) {
+        frame = CGRectOffset(frame, self.faceIndicator.frame.origin.x - frame.origin.x, 0.0);
+    }
+    if (frame.origin.y > self.faceIndicator.frame.origin.y) {
+        frame = CGRectOffset(frame, 0.0, self.faceIndicator.frame.origin.y - frame.origin.y);
+    }
+    if (frame.origin.x + frame.size.width < self.faceIndicator.frame.origin.x + self.faceIndicator.frame.size.width) {
+        frame = CGRectOffset(frame, self.faceIndicator.frame.origin.x + self.faceIndicator.frame.size.width - frame.origin.x - frame.size.width, 0.0);
+    }
+    if (frame.origin.y + frame.size.height < self.faceIndicator.frame.origin.y + self.faceIndicator.frame.size.height) {
+        frame = CGRectOffset(frame, 0.0, self.faceIndicator.frame.origin.y + self.faceIndicator.frame.size.height - frame.origin.y - frame.size.height);
+    }
+    [UIView animateWithDuration:0.1 animations:^{
+        self.imageView.frame = frame;
+    }];
 }
 
-- (CGRect)userBoundsFromFaceIndicator {
-    return CGRectMake(
-                      (self.faceIndicatorLeadingConstraint.constant - self.imageFrame.origin.x) / self.ratio,
-                      (self.faceIndicatorTopConstraint.constant - self.imageFrame.origin.y) / self.ratio,
-                      self.faceIndicatorWidthConstraint.constant / self.ratio,
-                      self.faceIndicatorHeightConstraint.constant / self.ratio
-                      );
+#pragma mark - lazy init
 
+- (UIImageView *)imageView {
+    if (!_imageView) {
+        _imageView = [[UIImageView alloc] init];
+    }
+    return _imageView;
+}
+
+- (UIView *)faceIndicator {
+    if (!_faceIndicator) {
+        _faceIndicator = [[UIView alloc] init];
+        _faceIndicator.layer.borderColor = [UIColor whiteColor].CGColor;
+        _faceIndicator.layer.borderWidth = 1.0;
+    }
+    return _faceIndicator;
 }
 
 @end

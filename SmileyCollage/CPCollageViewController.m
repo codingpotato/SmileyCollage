@@ -68,7 +68,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     __block NSUInteger index = 0;
     for (CPFaceEditInformation *faceEditInformation in self.stitchedFaces) {
-        faceEditInformation.userBounds = CGRectMake(faceEditInformation.face.x.floatValue, faceEditInformation.face.y.floatValue, faceEditInformation.face.width.floatValue, faceEditInformation.face.height.floatValue);
+        faceEditInformation.frame = CGRectMake(faceEditInformation.face.x.floatValue, faceEditInformation.face.y.floatValue, faceEditInformation.face.width.floatValue, faceEditInformation.face.height.floatValue);
         NSURL *url = [[NSURL alloc] initWithString:faceEditInformation.face.photo.url];
         [self.facesManager assertForURL:url resultBlock:^(ALAsset *result) {
             faceEditInformation.asset = result;
@@ -93,6 +93,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
     [self calculateSizeOfFaces];
     [self.collectionView.collectionViewLayout invalidateLayout];
     if (![CPSettings isWatermarkRemoved]) {
@@ -210,7 +212,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     NSNumber *numberOfColumns = [self.numberOfColumnsInRows objectAtIndex:row];
     NSUInteger items = numberOfColumns.integerValue;
     for (CPFaceEditInformation *faceEditInformation in self.stitchedFaces) {
-        CGRect faceBounds = faceEditInformation.userBounds;
+        CGRect faceBounds = faceEditInformation.frame;
         CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceBounds);
         CGFloat widthOfFace = width / numberOfColumns.integerValue;
         UIImage *image = [UIImage imageWithCGImage:faceImage scale:faceBounds.size.width / widthOfFace orientation:UIImageOrientationUp];
@@ -370,7 +372,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     NSAssert(faceEditInformation, @"");
     
     if (faceEditInformation.asset) {
-        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.userBounds);
+        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.frame);
         cell.image = [UIImage imageWithCGImage:faceImage scale:1.0 orientation:UIImageOrientationUp];
         CGImageRelease(faceImage);
     }
