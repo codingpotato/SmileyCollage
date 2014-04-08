@@ -23,6 +23,8 @@
 		FC46716418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
 		FC46716C18C2CAF600E472BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC46716A18C2CAF600E472BF /* InfoPlist.strings */; };
 		FC56ED3918E6C49700DFE80C /* CPConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = FC56ED3818E6C49700DFE80C /* CPConfig.m */; };
+		FC5704C518F42C6900E373C6 /* CPPortalTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5704C418F42C6900E373C6 /* CPPortalTransition.m */; };
+		FC5704C818F42CE600E373C6 /* CPReversableTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5704C718F42CE600E373C6 /* CPReversableTransition.m */; };
 		FC58103218DDD06100B6BE03 /* CPFaceEditInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */; };
 		FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5E8F6118E45DA20012EB59 /* CPCleanupOperation.m */; };
 		FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */; };
@@ -82,6 +84,10 @@
 		FC46716B18C2CAF600E472BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FC56ED3718E6C49700DFE80C /* CPConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConfig.h; sourceTree = "<group>"; };
 		FC56ED3818E6C49700DFE80C /* CPConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConfig.m; sourceTree = "<group>"; };
+		FC5704C318F42C6900E373C6 /* CPPortalTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPortalTransition.h; sourceTree = "<group>"; };
+		FC5704C418F42C6900E373C6 /* CPPortalTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPortalTransition.m; sourceTree = "<group>"; };
+		FC5704C618F42CE600E373C6 /* CPReversableTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPReversableTransition.h; sourceTree = "<group>"; };
+		FC5704C718F42CE600E373C6 /* CPReversableTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPReversableTransition.m; sourceTree = "<group>"; };
 		FC58103018DDD06100B6BE03 /* CPFaceEditInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFaceEditInformation.h; sourceTree = "<group>"; };
 		FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceEditInformation.m; sourceTree = "<group>"; };
 		FC5E8F6018E45DA20012EB59 /* CPCleanupOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCleanupOperation.h; sourceTree = "<group>"; };
@@ -151,6 +157,10 @@
 			children = (
 				FC2B287618CC6C300050AD08 /* CPCollageToEditTransition.h */,
 				FC2B287718CC6C300050AD08 /* CPCollageToEditTransition.m */,
+				FC5704C318F42C6900E373C6 /* CPPortalTransition.h */,
+				FC5704C418F42C6900E373C6 /* CPPortalTransition.m */,
+				FC5704C618F42CE600E373C6 /* CPReversableTransition.h */,
+				FC5704C718F42CE600E373C6 /* CPReversableTransition.m */,
 				FC2B287318CC6A960050AD08 /* CPTransitionManager.h */,
 				FC2B287418CC6A960050AD08 /* CPTransitionManager.m */,
 			);
@@ -390,6 +400,7 @@
 			files = (
 				FC60EBCF18E1C10B00AD74FB /* CPFaceDetectOperation.m in Sources */,
 				FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */,
+				FC5704C818F42CE600E373C6 /* CPReversableTransition.m in Sources */,
 				FC782A8C18E304B10024C477 /* CPUtility.m in Sources */,
 				FC58103218DDD06100B6BE03 /* CPFaceEditInformation.m in Sources */,
 				FCC2E59918F246EB00D7163F /* CPSettings.m in Sources */,
@@ -405,6 +416,7 @@
 				FC2B287818CC6C300050AD08 /* CPCollageToEditTransition.m in Sources */,
 				FC61A46D18DD94A3009D9442 /* CPCollageCell.m in Sources */,
 				FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */,
+				FC5704C518F42C6900E373C6 /* CPPortalTransition.m in Sources */,
 				FC8BCA1618D42E4100748335 /* CPFace.m in Sources */,
 				FCF8FE9618C2D016007FA358 /* CPSmileyViewController.m in Sources */,
 				FC56ED3918E6C49700DFE80C /* CPConfig.m in Sources */,

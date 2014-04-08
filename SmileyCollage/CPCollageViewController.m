@@ -420,7 +420,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (NSArray *)numberOfColumnsInRows {
     if (!_numberOfColumnsInRows) {
-        NSAssert(self.collagedFaces.count > 0 && self.collagedFaces.count < [CPCollageViewController maxNumberOfCollagedFaces], @"");
+        NSAssert(self.collagedFaces.count > 0 && self.collagedFaces.count <= [CPCollageViewController maxNumberOfCollagedFaces], @"");
 
         NSMutableArray *numberOfColumnsInRows = [[NSMutableArray alloc] init];
         NSUInteger numbers = g_numberOfColumnsInRows[self.collagedFaces.count - 1];

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@interface CPCollageToEditTransition : NSObject <UIViewControllerAnimatedTransitioning>
+#import "CPReversableTransition.h"
 
-- (id)initWithShowEditViewController:(BOOL)showEditViewController;
+@interface CPCollageToEditTransition : CPReversableTransition
 
 @end
