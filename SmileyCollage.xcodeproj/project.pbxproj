@@ -38,6 +38,7 @@
 		FC8BCA1318D4256900748335 /* SmileyCollage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1118D4256900748335 /* SmileyCollage.xcdatamodeld */; };
 		FC8BCA1618D42E4100748335 /* CPFace.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1518D42E4100748335 /* CPFace.m */; };
 		FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1818D42E4100748335 /* CPPhoto.m */; };
+		FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC92759B18F58CF700031FD0 /* ImageIO.framework */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
 		FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
 		FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */; };
@@ -112,6 +113,7 @@
 		FC8BCA1518D42E4100748335 /* CPFace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFace.m; sourceTree = "<group>"; };
 		FC8BCA1718D42E4100748335 /* CPPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPhoto.h; sourceTree = "<group>"; };
 		FC8BCA1818D42E4100748335 /* CPPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhoto.m; sourceTree = "<group>"; };
+		FC92759B18F58CF700031FD0 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
 		FCC2E59418F244AF00D7163F /* CPSettingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSettingTests.m; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */,
 				FC8BCA1018D424F000748335 /* CoreData.framework in Frameworks */,
 				FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */,
 				FCF8FE9C18C2E2B9007FA358 /* AssetsLibrary.framework in Frameworks */,
@@ -194,6 +197,7 @@
 				FC46714118C2CAF600E472BF /* CoreGraphics.framework */,
 				FCD844C318C761C3003BA834 /* CoreImage.framework */,
 				FC46713F18C2CAF600E472BF /* Foundation.framework */,
+				FC92759B18F58CF700031FD0 /* ImageIO.framework */,
 				FC46714318C2CAF600E472BF /* UIKit.framework */,
 				FC46716118C2CAF600E472BF /* XCTest.framework */,
 			);
@@ -552,10 +556,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmileyCollage/SmileyCollage-Prefix.pch";
 				INFOPLIST_FILE = "SmileyCollage/SmileyCollage-Info.plist";
 				PRODUCT_NAME = SmileyCollage;
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -566,10 +572,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SmileyCollage/SmileyCollage-Prefix.pch";
 				INFOPLIST_FILE = "SmileyCollage/SmileyCollage-Info.plist";
 				PRODUCT_NAME = SmileyCollage;
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

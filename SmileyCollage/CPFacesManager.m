@@ -8,6 +8,8 @@
 
 #import "CPFacesManager.h"
 
+#import <ImageIO/ImageIO.h>
+
 #import "CPUtility.h"
 
 #import "CPCleanupOperation.h"
@@ -33,7 +35,7 @@
 
 @implementation CPFacesManager
 
-static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
+static NSString *g_cameraOwnerName = @"SmileyCollage @ Codingpotato";
 
 - (id)init {
     self = [super init];
@@ -63,7 +65,7 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
         self.isScanning = YES;
         self.scanStartTime = [NSDate timeIntervalSinceReferenceDate];
         
-        [self enumerateSmileyPhotos];
+        [self scanAllPhotos];
     }
 }
 
@@ -85,57 +87,22 @@ static NSString *g_albumNameOfSmileyPhotos = @"Smiley Photos";
 }
 
 - (void)saveStitchedImage:(UIImage *)image {
-    [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage orientation:ALAssetOrientationUp completionBlock:^(NSURL *assetURL, NSError *error) {
-        if (!error) {
-            [self.assetsLibrary assetForURL:assetURL resultBlock:^(ALAsset *asset) {
-                __block BOOL foundGroup = NO;
-                [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-                    if (group) {
-                        if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
-                            [group addAsset:asset];
-                            foundGroup = YES;
-                        }
-                    } else {
-                        if (!foundGroup) {
-                            [self.assetsLibrary addAssetsGroupAlbumWithName:g_albumNameOfSmileyPhotos resultBlock:^(ALAssetsGroup *group) {
-                                [group addAsset:asset];
-                            } failureBlock:nil];
-                        }
-                    }
-                } failureBlock:nil];
-            } failureBlock:nil];
-        }
-    }];
+    NSMutableDictionary *exifDictionary = [[NSMutableDictionary alloc] init];
+    [exifDictionary setObject:g_cameraOwnerName forKey:(NSString *)kCGImagePropertyExifCameraOwnerName];
+    NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
+    [metadata setObject:exifDictionary forKey:(NSString *)kCGImagePropertyExifDictionary];
+    [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage metadata:metadata completionBlock:nil];
 }
 
-- (void)enumerateSmileyPhotos {
-    NSMutableArray *smileyPhotos = [[NSMutableArray alloc] init];
-    [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAlbum usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-        if (group) {
-            if ([[group valueForProperty:ALAssetsGroupPropertyName] isEqualToString:g_albumNameOfSmileyPhotos]) {
-                [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                    if (result) {
-                        NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
-                        [smileyPhotos addObject:assetURL.absoluteString];
-                    }
-                }];
-                // find Smiley Photo album, finish enumration
-                *stop = YES;
-            }
-        } else {
-            // finish enumerate Smiley Photos album
-            [self enumerateAllPhotosExceptSmileyPhotos:smileyPhotos];
-        }
-    } failureBlock:nil];
-}
-
-- (void)enumerateAllPhotosExceptSmileyPhotos:(NSMutableArray *)smileyPhotos {
+- (void)scanAllPhotos {
     [self.assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos | ALAssetsGroupLibrary usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         if (group) {
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                 if (result) {
-                    NSURL *assetURL = [result valueForProperty:ALAssetPropertyAssetURL];
-                    if (![smileyPhotos containsObject:assetURL.absoluteString]) {
+                    NSLog(@"%@", result.defaultRepresentation.metadata);
+                    NSMutableDictionary *exifDictionary = [result.defaultRepresentation.metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary];
+                    NSString *cameraOwnerName = [exifDictionary objectForKey:(NSString *)kCGImagePropertyExifCameraOwnerName];
+                    if (![cameraOwnerName isEqualToString:g_cameraOwnerName]) {
                         self.numberOfTotalPhotos++;
                         CPFaceDetectOperation *faceDetecOperation = [[CPFaceDetectOperation alloc] initWithAsset:result persistentStoreCoordinator:self.persistentStoreCoordinator];
                         faceDetecOperation.completionBlock = ^() {
