@@ -8,9 +8,13 @@
 
 #import "CPPhotoCell.h"
 
+#import "CPUtility.h"
+
 @interface CPPhotoCell ()
 
-@property (strong, nonatomic) UIView *selectedMask;
+@property (strong, nonatomic) UIView *mask;
+
+@property (strong, nonatomic) UIImageView *tickView;
 
 @end
 
@@ -19,23 +23,36 @@
 - (void)setIsSelected:(BOOL)isSelected {
     _isSelected = isSelected;
     if (isSelected) {
-        [self.contentView addSubview:self.selectedMask];
-        [self pinFrameOfView:self.selectedMask];
+        [self.contentView addSubview:self.mask];
+        [self.contentView addConstraints:[CPUtility constraintsWithView:self.mask edgesAlignToView:self.contentView]];
+        
+        [self.contentView addSubview:self.tickView];
+        [self.contentView addConstraints:[CPUtility constraintsWithView:self.tickView alignToView:self.contentView attributes:NSLayoutAttributeRight, NSLayoutAttributeBottom, NSLayoutAttributeNotAnAttribute]];
     } else {
-        [self.selectedMask removeFromSuperview];
+        [self.mask removeFromSuperview];
+        [self.tickView removeFromSuperview];
     }
 }
 
 #pragma mark - lazy init
 
-- (UIView *)selectedMask {
-    if (!_selectedMask) {
-        _selectedMask = [[UIView alloc] init];
-        _selectedMask.backgroundColor = [UIColor whiteColor];
-        _selectedMask.alpha = 0.5;
-        _selectedMask.translatesAutoresizingMaskIntoConstraints = NO;
+- (UIView *)mask {
+    if (!_mask) {
+        _mask = [[UIView alloc] init];
+        _mask.backgroundColor = [UIColor whiteColor];
+        _mask.alpha = 0.5;
+        _mask.translatesAutoresizingMaskIntoConstraints = NO;
+        
     }
-    return _selectedMask;
+    return _mask;
+}
+
+- (UIImageView *)tickView {
+    if (!_tickView) {
+        _tickView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tick.png"]];
+        _tickView.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _tickView;
 }
 
 @end

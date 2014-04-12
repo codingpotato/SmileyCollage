@@ -8,6 +8,8 @@
 
 #import "CPCell.h"
 
+#import "CPUtility.h"
+
 @interface CPCell ()
 
 @property (strong, nonatomic) UIImageView *imageView;
@@ -20,17 +22,8 @@
     self.imageView.image = image;
     if (!self.imageView.superview) {
         [self.contentView addSubview:self.imageView];
-        [self pinFrameOfView:self.imageView];
+        [self.contentView addConstraints:[CPUtility constraintsWithView:self.imageView edgesAlignToView:self.contentView]];
     }
-}
-
-- (void)pinFrameOfView:(UIView *)view {
-    [self.contentView addConstraints:@[
-                                       [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0.0],
-                                       [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeTop multiplier:1.0 constant:0.0],
-                                       [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1.0 constant:0.0],
-                                       [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0],
-                                       ]];
 }
 
 #pragma mark - lazy init

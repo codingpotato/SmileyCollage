@@ -10,6 +10,4 @@
 
 - (void)setImage:(UIImage *)image;
 
-- (void)pinFrameOfView:(UIView *)view;
-
 @end
