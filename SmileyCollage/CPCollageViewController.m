@@ -68,7 +68,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     __block NSUInteger index = 0;
     for (CPFaceEditInformation *faceEditInformation in self.collagedFaces) {
-        faceEditInformation.frame = CGRectMake(faceEditInformation.face.x.floatValue, faceEditInformation.face.y.floatValue, faceEditInformation.face.width.floatValue, faceEditInformation.face.height.floatValue);
         NSURL *url = [[NSURL alloc] initWithString:faceEditInformation.face.photo.url];
         [self.facesManager assertForURL:url resultBlock:^(ALAsset *result) {
             faceEditInformation.asset = result;

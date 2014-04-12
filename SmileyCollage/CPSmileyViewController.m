@@ -88,10 +88,11 @@
         
         stitchViewController.collagedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
         for (CPFace *face in self.selectedFaces) {
-            CPFaceEditInformation *stitchedFace = [[CPFaceEditInformation alloc] init];
-            stitchedFace.face = face;
-            stitchedFace.asset = nil;
-            [stitchViewController.collagedFaces addObject:stitchedFace];
+            CPFaceEditInformation *faceEditInformation = [[CPFaceEditInformation alloc] init];
+            faceEditInformation.face = face;
+            faceEditInformation.asset = nil;
+            faceEditInformation.frame = CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue);
+            [stitchViewController.collagedFaces addObject:faceEditInformation];
         }
     }
 }

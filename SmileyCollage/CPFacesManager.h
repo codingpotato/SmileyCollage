@@ -18,6 +18,8 @@
 
 @property (nonatomic) NSUInteger numberOfTotalPhotos;
 
++ (NSString *)cameraOwnerName;
+
 - (void)scanFaces;
 
 - (void)stopScan;

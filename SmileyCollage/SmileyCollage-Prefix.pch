@@ -14,5 +14,6 @@
     #import <AssetsLibrary/AssetsLibrary.h>
     #import <CoreData/CoreData.h>
     #import <Foundation/Foundation.h>
+    #import <ImageIO/ImageIO.h>
     #import <UIKit/UIKit.h>
 #endif

@@ -8,8 +8,6 @@
 
 #import "CPFacesManager.h"
 
-#import <ImageIO/ImageIO.h>
-
 #import "CPUtility.h"
 
 #import "CPCleanupOperation.h"
@@ -35,7 +33,9 @@
 
 @implementation CPFacesManager
 
-static NSString *g_cameraOwnerName = @"SmileyCollage @ Codingpotato";
++ (NSString *)cameraOwnerName {
+    return @"SmileyCollage @ Codingpotato";
+}
 
 - (id)init {
     self = [super init];
@@ -88,7 +88,7 @@ static NSString *g_cameraOwnerName = @"SmileyCollage @ Codingpotato";
 
 - (void)saveStitchedImage:(UIImage *)image {
     NSMutableDictionary *exifDictionary = [[NSMutableDictionary alloc] init];
-    [exifDictionary setObject:g_cameraOwnerName forKey:(NSString *)kCGImagePropertyExifCameraOwnerName];
+    [exifDictionary setObject:[CPFacesManager cameraOwnerName] forKey:(NSString *)kCGImagePropertyExifCameraOwnerName];
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
     [metadata setObject:exifDictionary forKey:(NSString *)kCGImagePropertyExifDictionary];
     [self.assetsLibrary writeImageToSavedPhotosAlbum:image.CGImage metadata:metadata completionBlock:nil];
@@ -99,19 +99,15 @@ static NSString *g_cameraOwnerName = @"SmileyCollage @ Codingpotato";
         if (group) {
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                 if (result) {
-                    NSMutableDictionary *exifDictionary = [result.defaultRepresentation.metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary];
-                    NSString *cameraOwnerName = [exifDictionary objectForKey:(NSString *)kCGImagePropertyExifCameraOwnerName];
-                    if (![cameraOwnerName isEqualToString:g_cameraOwnerName]) {
-                        self.numberOfTotalPhotos++;
-                        CPFaceDetectOperation *faceDetecOperation = [[CPFaceDetectOperation alloc] initWithAsset:result persistentStoreCoordinator:self.persistentStoreCoordinator];
-                        faceDetecOperation.completionBlock = ^() {
-                            // inform ui thread
-                            dispatch_async(dispatch_get_main_queue(), ^{
-                                self.numberOfScannedPhotos++;
-                            });
-                        };
-                        [self.queue addOperation:faceDetecOperation];
-                    }
+                    self.numberOfTotalPhotos++;
+                    CPFaceDetectOperation *faceDetectOperation = [[CPFaceDetectOperation alloc] initWithAsset:result persistentStoreCoordinator:self.persistentStoreCoordinator];
+                    faceDetectOperation.completionBlock = ^() {
+                        // inform ui thread
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            self.numberOfScannedPhotos++;
+                        });
+                    };
+                    [self.queue addOperation:faceDetectOperation];
                 }
             }];
         } else {
