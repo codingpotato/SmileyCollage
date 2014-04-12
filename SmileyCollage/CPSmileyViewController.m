@@ -27,10 +27,11 @@
 
 @property (nonatomic) BOOL isScanCancelled;
 
-@property (strong, nonatomic) UIView *bubbleView;
-@property (strong, nonatomic) UILabel *bubbleLabel;
+@property (strong, nonatomic) UIBarButtonItem *unselectAllBarButtonItem;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
+@property (weak, nonatomic) IBOutlet UIButton *collageButton;
 
 @property (weak, nonatomic) IBOutlet UILabel *message;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
@@ -50,10 +51,15 @@
     
     self.isScanCancelled = NO;
     self.facesManager.facesController.delegate = self;
-    self.navigationItem.title = [NSString stringWithFormat:@"Faces: %d", (int)self.facesManager.facesController.fetchedObjects.count];
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)self.facesManager.facesController.fetchedObjects.count];
     
     [self showNotificationViewWithAnimation];
     [self.facesManager scanFaces];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self displaySelectedFacesNumber];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -76,7 +82,7 @@
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"CPStitchViewControllerSegue"]) {
+    if ([segue.identifier isEqualToString:@"CPCollageViewControllerSegue"]) {
         CPCollageViewController *stitchViewController = (CPCollageViewController *)segue.destinationViewController;
         stitchViewController.facesManager = self.facesManager;
         
@@ -153,33 +159,31 @@
     });
 }
 
-- (void)showBubbleViewAtPosition:(CGPoint)position withSelectedNumber:(NSUInteger)selectedNumber maxSelectedNumber:(NSUInteger)maxSelectedNumber {
-    if (!self.bubbleView) {
-        self.bubbleView = [[UIView alloc] init];
-        self.bubbleView.translatesAutoresizingMaskIntoConstraints = NO;
-        self.bubbleView.alpha = 0.9;
-        self.bubbleView.backgroundColor = [UIColor whiteColor];
-        [self.view addSubview:self.bubbleView];
-        [self.view addConstraints:[CPUtility constraintsWithView:self.bubbleView alignToView:self.collectionView attributes:NSLayoutAttributeLeft, NSLayoutAttributeRight, NSLayoutAttributeNotAnAttribute]];
-        [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView attribute:NSLayoutAttributeTop alignToView:self.topLayoutGuide attribute:NSLayoutAttributeBaseline]];
-        [self.view addConstraint:[CPUtility constraintWithView:self.bubbleView height:[CPConfig thumbnailSize] / 2]];
-        
-        self.bubbleLabel = [[UILabel alloc] init];
-        self.bubbleLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        self.bubbleLabel.textAlignment = NSTextAlignmentCenter;
-        [self.bubbleView addSubview:self.bubbleLabel];
-        [self.bubbleView addConstraints:[CPUtility constraintsWithView:self.bubbleLabel edgesAlignToView:self.bubbleView]];
+- (void)displaySelectedFacesNumber {
+    if (self.selectedFaces.count > 9) {
+        self.collageButton.titleLabel.text = [[NSString alloc] initWithFormat:@"%d", self.selectedFaces.count];
+    } else if (self.selectedFaces.count > 0) {
+        self.collageButton.titleLabel.text = [[NSString alloc] initWithFormat:@" %d", self.selectedFaces.count];
+    } else {
+        self.collageButton.titleLabel.text = @"  ";
     }
-    self.bubbleLabel.text = [NSString stringWithFormat:@"Selected: %d   Maxium: %d ", (int)selectedNumber, (int)maxSelectedNumber];
-
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideBubbleView) object:nil];
-    [self performSelector:@selector(hideBubbleView) withObject:nil afterDelay:2.0];
 }
 
-- (void)hideBubbleView {
-    [self.bubbleView removeFromSuperview];
-    self.bubbleView = nil;
-    self.bubbleLabel = nil;
+- (void)enableBarButtonItems {
+    self.navigationItem.rightBarButtonItem.enabled = YES;
+    self.navigationItem.leftBarButtonItem = self.unselectAllBarButtonItem;
+}
+
+- (void)disableBarButtonItems {
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    self.navigationItem.leftBarButtonItem = nil;
+}
+
+- (void)unselectAllBarButtonItemPressed:(id)sender {
+    self.selectedFaces = nil;
+    [self displaySelectedFacesNumber];
+    [self disableBarButtonItems];
+    [self.collectionView reloadData];
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate implement
@@ -213,20 +217,21 @@
     if ([self.selectedFaces containsObject:face]) {
         [self.selectedFaces removeObject:face];
         if (self.selectedFaces.count == 0) {
-            self.navigationItem.rightBarButtonItem.enabled = NO;
+            [self disableBarButtonItems];
         }
         [collectionView reloadItemsAtIndexPaths:@[indexPath]];
     } else {
         if (self.selectedFaces.count < [CPCollageViewController maxNumberOfCollagedFaces]) {
             [self.selectedFaces addObject:face];
-            self.navigationItem.rightBarButtonItem.enabled = YES;
+            [self enableBarButtonItems];
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
+        } else {
+            NSString *message = [[NSString alloc] initWithFormat:@"Cannot collage more that %d faces", [CPCollageViewController maxNumberOfCollagedFaces]];
+            UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"Information" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+            [alertView show];
         }
     }
-    UICollectionViewLayoutAttributes *attributes = [collectionView layoutAttributesForItemAtIndexPath:indexPath];
-    CGPoint position = attributes.frame.origin;
-    position.y += self.topLayoutGuide.length;
-    [self showBubbleViewAtPosition:position withSelectedNumber:self.selectedFaces.count maxSelectedNumber:[CPCollageViewController maxNumberOfCollagedFaces]];
+    [self displaySelectedFacesNumber];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
@@ -263,6 +268,13 @@
         _selectedFaces = [[NSMutableArray alloc] initWithCapacity:[CPCollageViewController maxNumberOfCollagedFaces]];
     }
     return _selectedFaces;
+}
+
+- (UIBarButtonItem *)unselectAllBarButtonItem {
+    if (!_unselectAllBarButtonItem) {
+        _unselectAllBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Unselect All" style:UIBarButtonItemStyleBordered target:self action:@selector(unselectAllBarButtonItemPressed:)];
+    }
+    return _unselectAllBarButtonItem;
 }
 
 @end

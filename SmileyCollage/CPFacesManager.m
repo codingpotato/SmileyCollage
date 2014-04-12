@@ -99,7 +99,6 @@ static NSString *g_cameraOwnerName = @"SmileyCollage @ Codingpotato";
         if (group) {
             [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
                 if (result) {
-                    NSLog(@"%@", result.defaultRepresentation.metadata);
                     NSMutableDictionary *exifDictionary = [result.defaultRepresentation.metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary];
                     NSString *cameraOwnerName = [exifDictionary objectForKey:(NSString *)kCGImagePropertyExifCameraOwnerName];
                     if (![cameraOwnerName isEqualToString:g_cameraOwnerName]) {
