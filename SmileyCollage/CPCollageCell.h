@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import "CPCell.h"
+@interface CPCollageCell : UICollectionViewCell
 
-@interface CPCollageCell : CPCell
+- (void)initCell;
+
+- (void)showImage:(UIImage *)image animated:(BOOL)animated;
 
 @end

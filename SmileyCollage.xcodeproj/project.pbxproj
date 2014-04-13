@@ -29,7 +29,6 @@
 		FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5E8F6118E45DA20012EB59 /* CPCleanupOperation.m */; };
 		FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */; };
 		FC60EBCF18E1C10B00AD74FB /* CPFaceDetectOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */; };
-		FC61A46A18DD93B8009D9442 /* CPCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46918DD93B8009D9442 /* CPCell.m */; };
 		FC61A46D18DD94A3009D9442 /* CPCollageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46C18DD94A3009D9442 /* CPCollageCell.m */; };
 		FC782A8C18E304B10024C477 /* CPUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = FC782A8B18E304B10024C477 /* CPUtility.m */; };
 		FC80EC6418C9F5D2008E83B6 /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
@@ -97,8 +96,6 @@
 		FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataOperation.m; sourceTree = "<group>"; };
 		FC60EBCD18E1C10B00AD74FB /* CPFaceDetectOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFaceDetectOperation.h; sourceTree = "<group>"; };
 		FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceDetectOperation.m; sourceTree = "<group>"; };
-		FC61A46818DD93B8009D9442 /* CPCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCell.h; sourceTree = "<group>"; };
-		FC61A46918DD93B8009D9442 /* CPCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCell.m; sourceTree = "<group>"; };
 		FC61A46B18DD94A3009D9442 /* CPCollageCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCollageCell.h; sourceTree = "<group>"; };
 		FC61A46C18DD94A3009D9442 /* CPCollageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageCell.m; sourceTree = "<group>"; };
 		FC782A8A18E304B10024C477 /* CPUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUtility.h; sourceTree = "<group>"; };
@@ -283,8 +280,6 @@
 		FC61A46718DD9390009D9442 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				FC61A46818DD93B8009D9442 /* CPCell.h */,
-				FC61A46918DD93B8009D9442 /* CPCell.m */,
 				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
 				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 				FC61A46B18DD94A3009D9442 /* CPCollageCell.h */,
@@ -415,7 +410,6 @@
 				FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */,
 				FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */,
 				FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */,
-				FC61A46A18DD93B8009D9442 /* CPCell.m in Sources */,
 				FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */,
 				FC2B287818CC6C300050AD08 /* CPCollageToEditTransition.m in Sources */,
 				FC61A46D18DD94A3009D9442 /* CPCollageCell.m in Sources */,

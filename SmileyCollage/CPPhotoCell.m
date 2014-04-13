@@ -12,6 +12,8 @@
 
 @interface CPPhotoCell ()
 
+@property (strong, nonatomic) UIImageView *imageView;
+
 @property (strong, nonatomic) UIView *mask;
 
 @property (strong, nonatomic) UIImageView *tickView;
@@ -19,6 +21,15 @@
 @end
 
 @implementation CPPhotoCell
+
+- (void)initCell {
+    [self.contentView addSubview:self.imageView];
+    [self.contentView addConstraints:[CPUtility constraintsWithView:self.imageView edgesAlignToView:self.contentView]];
+}
+
+- (void)showImage:(UIImage *)image {
+    self.imageView.image = image;
+}
 
 - (void)setIsSelected:(BOOL)isSelected {
     _isSelected = isSelected;
@@ -35,6 +46,14 @@
 }
 
 #pragma mark - lazy init
+
+- (UIImageView *)imageView {
+    if (!_imageView) {
+        _imageView = [[UIImageView alloc] init];
+        _imageView.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _imageView;
+}
 
 - (UIView *)mask {
     if (!_mask) {

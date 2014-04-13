@@ -8,7 +8,6 @@
 
 @class CPFace;
 
-
 @interface CPFaceEditInformation : NSObject
 
 @property (strong, nonatomic) CPFace *face;

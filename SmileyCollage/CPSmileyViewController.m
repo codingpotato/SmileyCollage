@@ -202,8 +202,10 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
+    [cell initCell];
+    
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
-    cell.image = [self.facesManager thumbnailOfFace:face];
+    [cell showImage:[self.facesManager thumbnailOfFace:face]];
     cell.isSelected = [self.selectedFaces containsObject:face];
     
     return cell;

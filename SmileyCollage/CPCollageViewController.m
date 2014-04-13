@@ -22,6 +22,8 @@
 
 @interface CPCollageViewController ()
 
+@property (strong, nonatomic) UIBarButtonItem *action;
+
 @property (strong, nonatomic) UIImage *watermarkImage;
 @property (strong, nonatomic) UIImageView *watermarkImageView;
 
@@ -61,24 +63,14 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     self.selectedIndex = -1;
     UIBarButtonItem *shop = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
-    UIBarButtonItem *action = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
-    self.navigationItem.rightBarButtonItems = @[action, shop];
+    self.action = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
+    self.action.enabled = NO;
+    self.navigationItem.rightBarButtonItems = @[self.action, shop];
     
     [self calculateImageWidthHeightRatio];
     
-    __block NSUInteger index = 0;
-    for (CPFaceEditInformation *faceEditInformation in self.collagedFaces) {
-        NSURL *url = [[NSURL alloc] initWithString:faceEditInformation.face.photo.url];
-        [self.facesManager assertForURL:url resultBlock:^(ALAsset *result) {
-            faceEditInformation.asset = result;
-            if (++index == self.collagedFaces.count) {
-                [self.collectionView reloadData];
-                if (![CPSettings isWatermarkRemoved]) {
-                    [self showWatermarkImageView];
-                    [self alignWatermarkImageView];
-                }
-            }
-        }];
+    if (![CPSettings isWatermarkRemoved]) {
+        [self showWatermarkImageView];
     }
 }
 
@@ -319,6 +311,22 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
+- (UIImage *)imageOfFace:(CPFaceEditInformation *)faceEditInformation {
+    CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.frame);
+    UIImage *image = [UIImage imageWithCGImage:faceImage scale:1.0 orientation:UIImageOrientationUp];
+    CGImageRelease(faceImage);
+    return image;
+}
+
+- (BOOL)allFacesHaveAsset {
+    for (CPFaceEditInformation *faceEditInformation in self.collagedFaces) {
+        if (!faceEditInformation.asset) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
 #pragma mark - UIActionSheetDelegate implement
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -371,13 +379,26 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPCollageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
+    [cell initCell];
+    
     CPFaceEditInformation *faceEditInformation = [self.collagedFaces objectAtIndex:indexPath.row];
     NSAssert(faceEditInformation, @"");
     
     if (faceEditInformation.asset) {
-        CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.frame);
-        cell.image = [UIImage imageWithCGImage:faceImage scale:1.0 orientation:UIImageOrientationUp];
-        CGImageRelease(faceImage);
+        [cell showImage:[self imageOfFace:faceEditInformation] animated:NO];
+    } else {
+        [self.facesManager assertForURL:[[NSURL alloc] initWithString:faceEditInformation.face.photo.url] resultBlock:^(ALAsset *result) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                faceEditInformation.asset = result;
+                UIImage *image = [self imageOfFace:faceEditInformation];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [cell showImage:image animated:YES];
+                    if ([self allFacesHaveAsset]) {
+                        self.action.enabled = YES;
+                    }
+                });
+            });
+        }];
     }
     return cell;
 }
