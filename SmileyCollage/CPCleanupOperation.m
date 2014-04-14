@@ -15,23 +15,23 @@
 
 @interface CPCleanupOperation ()
 
-@property (nonatomic) NSTimeInterval scanStartTime;
+@property (nonatomic) NSTimeInterval scanTime;
 
 @end
 
 @implementation CPCleanupOperation
 
-- (id)initWithScanStartTime:(NSTimeInterval)scanStartTime persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator {
+- (id)initWithScanTime:(NSTimeInterval)scanTime persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator {
     self = [super initWithPersistentStoreCoordinator:persistentStoreCoordinator];
     if (self) {
-        self.scanStartTime = scanStartTime;
+        self.scanTime = scanTime;
     }
     return self;
 }
 
 - (void)main {
     @autoreleasepool {
-        NSArray *expiredPhotos = [CPPhoto expiredPhotosWithTimestamp:self.scanStartTime fromManagedObjectContext:self.managedObjectContext];
+        NSArray *expiredPhotos = [CPPhoto photosScannedBeforeTime:self.scanTime inManagedObjectContext:self.managedObjectContext];
         for (CPPhoto *photo in expiredPhotos) {
             for (CPFace *face in photo.faces) {
                 NSString *filePath = [[CPUtility thumbnailPath] stringByAppendingPathComponent:face.thumbnail];

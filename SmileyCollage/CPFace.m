@@ -8,9 +8,10 @@
 
 #import "CPFace.h"
 
+#import "CPPhoto.h"
+
 @implementation CPFace
 
-@dynamic timestamp;
 @dynamic x;
 @dynamic y;
 @dynamic width;
@@ -18,15 +19,28 @@
 @dynamic thumbnail;
 @dynamic photo;
 
-+ (CPFace *)createFaceInManagedObjectContext:(NSManagedObjectContext *)context {
-    return [NSEntityDescription insertNewObjectForEntityForName:@"CPFace" inManagedObjectContext:context];
++ (CPFace *)faceWithPhoto:(CPPhoto *)photo bounds:(CGRect)bounds inManagedObjectContext:(NSManagedObjectContext *)context {
+    NSAssert(photo, @"");
+    NSAssert(context, @"");
+    
+    CPFace *face = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    face.x = [NSNumber numberWithFloat:bounds.origin.x];
+    face.y = [NSNumber numberWithFloat:bounds.origin.y];
+    face.width = [NSNumber numberWithFloat:bounds.size.width];
+    face.height = [NSNumber numberWithFloat:bounds.size.height];
+    face.thumbnail = [[[NSUUID alloc] init].UUIDString stringByAppendingPathExtension:@"jpg"];
+    face.photo = photo;
+    [photo addFacesObject:face];
+    return face;
 }
 
-+ (NSArray *)facesInManagedObjectContext:(NSManagedObjectContext *)context {
++ (NSFetchRequest *)fetchRequestForFacesInManagedObjectContext:(NSManagedObjectContext *)context {
+    NSAssert(context, @"");
+    
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     request.entity = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
-    request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES], nil];
-    return [context executeFetchRequest:request error:nil];
+    request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"photo.createTime" ascending:YES], nil];
+    return request;
 }
 
 @end

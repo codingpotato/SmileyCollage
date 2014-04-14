@@ -11,41 +11,45 @@
 
 @implementation CPPhoto
 
-@dynamic timestamp;
+@dynamic createTime;
+@dynamic scanTime;
 @dynamic url;
 @dynamic faces;
 
-+ (CPPhoto *)createPhotoInManagedObjectContext:(NSManagedObjectContext *)context {
-    return [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
++ (CPPhoto *)photoWithURL:(NSURL *)url createTime:(NSTimeInterval)createTime scanTime:(NSTimeInterval)scanTime inManagedObjectContext:(NSManagedObjectContext *)context {
+    NSAssert(url, @"");
+    NSAssert(context, @"");
+    
+    CPPhoto *photo = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    photo.createTime = [[NSNumber alloc] initWithDouble:createTime];
+    photo.scanTime = [[NSNumber alloc] initWithDouble:scanTime];
+    photo.url = url.absoluteString;
+    return photo;
 }
 
-+ (NSArray *)photosInManagedObjectContext:(NSManagedObjectContext *)context {
++ (CPPhoto *)photoOfURL:(NSURL *)url inManagedObjectContext:(NSManagedObjectContext *)context {
+    NSAssert(url, @"");
+    NSAssert(context, @"");
+    
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     request.entity = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
-    request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"url" ascending:YES], nil];
-    return [context executeFetchRequest:request error:nil];
-}
-
-+ (CPPhoto *)photoOfAssetURL:(NSString *)assetURL inManagedObjectContext:(NSManagedObjectContext *)context {
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:[NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context]];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"url == %@", assetURL];
-    [request setPredicate:predicate];
+    request.predicate = [NSPredicate predicateWithFormat:@"url == %@", url.absoluteString];
     
     NSArray *array = [context executeFetchRequest:request error:nil];
     if (array.count > 0) {
+        NSAssert(array.count == 1, @"");
         return [array objectAtIndex:0];
     } else {
         return nil;
     }
 }
 
-+ (NSArray *)expiredPhotosWithTimestamp:(NSTimeInterval)timestamp fromManagedObjectContext:(NSManagedObjectContext *)context {
-    NSEntityDescription *entityDescription = [NSEntityDescription entityForName:@"CPPhoto" inManagedObjectContext:context];
++ (NSArray *)photosScannedBeforeTime:(NSTimeInterval)scanTime inManagedObjectContext:(NSManagedObjectContext *)context {
+    NSAssert(context, @"");
+    
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    [request setEntity:entityDescription];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"timestamp < %lf", timestamp];
-    [request setPredicate:predicate];
+    request.entity = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    request.predicate = [NSPredicate predicateWithFormat:@"scanTime < %lf", scanTime];
     return [context executeFetchRequest:request error:nil];
 }
 

@@ -31,6 +31,8 @@
 		FC60EBCF18E1C10B00AD74FB /* CPFaceDetectOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */; };
 		FC61A46D18DD94A3009D9442 /* CPCollageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46C18DD94A3009D9442 /* CPCollageCell.m */; };
 		FC782A8C18E304B10024C477 /* CPUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = FC782A8B18E304B10024C477 /* CPUtility.m */; };
+		FC78E36118FAD42400CD0F07 /* CPPhotoTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FC78E36018FAD42400CD0F07 /* CPPhotoTest.m */; };
+		FC78E36218FAD4D000CD0F07 /* CPUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = FC782A8B18E304B10024C477 /* CPUtility.m */; };
 		FC80EC6418C9F5D2008E83B6 /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
 		FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */; };
 		FC8BCA1018D424F000748335 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC8BCA0F18D424F000748335 /* CoreData.framework */; };
@@ -100,6 +102,7 @@
 		FC61A46C18DD94A3009D9442 /* CPCollageCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageCell.m; sourceTree = "<group>"; };
 		FC782A8A18E304B10024C477 /* CPUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPUtility.h; sourceTree = "<group>"; };
 		FC782A8B18E304B10024C477 /* CPUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPUtility.m; sourceTree = "<group>"; };
+		FC78E36018FAD42400CD0F07 /* CPPhotoTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhotoTest.m; sourceTree = "<group>"; };
 		FC80EC6218C9F5D2008E83B6 /* CPCollageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCollageViewController.h; sourceTree = "<group>"; };
 		FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageViewController.m; sourceTree = "<group>"; };
 		FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEditViewController.h; sourceTree = "<group>"; };
@@ -220,7 +223,6 @@
 				FC782A8A18E304B10024C477 /* CPUtility.h */,
 				FC782A8B18E304B10024C477 /* CPUtility.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
-				FC8BCA1A18D42E7100748335 /* Managed Objects */,
 				FC60EBC918E1B9C200AD74FB /* Models */,
 				FC46715118C2CAF600E472BF /* SmileyCollage.storyboard */,
 				FC8BCA1118D4256900748335 /* SmileyCollage.xcdatamodeld */,
@@ -245,6 +247,7 @@
 			isa = PBXGroup;
 			children = (
 				FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */,
+				FC78E36018FAD42400CD0F07 /* CPPhotoTest.m */,
 				FCC2E59418F244AF00D7163F /* CPSettingTests.m */,
 				FC46716818C2CAF600E472BF /* Supporting Files */,
 			);
@@ -267,12 +270,16 @@
 				FC5E8F6118E45DA20012EB59 /* CPCleanupOperation.m */,
 				FC60EBCA18E1BD8E00AD74FB /* CPCoreDataOperation.h */,
 				FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */,
+				FC8BCA1418D42E4100748335 /* CPFace.h */,
+				FC8BCA1518D42E4100748335 /* CPFace.m */,
 				FC60EBCD18E1C10B00AD74FB /* CPFaceDetectOperation.h */,
 				FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */,
 				FC58103018DDD06100B6BE03 /* CPFaceEditInformation.h */,
 				FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */,
 				FC93443718C363F500657BBC /* CPFacesManager.h */,
 				FC93443818C363F500657BBC /* CPFacesManager.m */,
+				FC8BCA1718D42E4100748335 /* CPPhoto.h */,
+				FC8BCA1818D42E4100748335 /* CPPhoto.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -286,17 +293,6 @@
 				FC61A46C18DD94A3009D9442 /* CPCollageCell.m */,
 			);
 			name = Cells;
-			sourceTree = "<group>";
-		};
-		FC8BCA1A18D42E7100748335 /* Managed Objects */ = {
-			isa = PBXGroup;
-			children = (
-				FC8BCA1718D42E4100748335 /* CPPhoto.h */,
-				FC8BCA1818D42E4100748335 /* CPPhoto.m */,
-				FC8BCA1418D42E4100748335 /* CPFace.h */,
-				FC8BCA1518D42E4100748335 /* CPFace.m */,
-			);
-			name = "Managed Objects";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -426,9 +422,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC78E36218FAD4D000CD0F07 /* CPUtility.m in Sources */,
 				FC1A3A3618DB2875004E4C38 /* CPCollageViewControllerTests.m in Sources */,
 				FCC2E59A18F2471500D7163F /* CPSettings.m in Sources */,
 				FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */,
+				FC78E36118FAD42400CD0F07 /* CPPhotoTest.m in Sources */,
 				FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */,
 				FCC2E59518F244AF00D7163F /* CPSettingTests.m in Sources */,
 			);
@@ -579,6 +577,7 @@
 		FC46717518C2CAF600E472BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SmileyCollage.app/SmileyCollage";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -592,6 +591,7 @@
 				);
 				INFOPLIST_FILE = "SmileyCollageTests/SmileyCollageTests-Info.plist";
 				PRODUCT_NAME = SmileyCollageTests;
+				TEST_HOST = "$(BUNDLE_LOADER)\n\n";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -599,6 +599,7 @@
 		FC46717618C2CAF600E472BF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/SmileyCollage.app/SmileyCollage";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -608,6 +609,7 @@
 				GCC_PREFIX_HEADER = "SmileyCollage/SmileyCollage-Prefix.pch";
 				INFOPLIST_FILE = "SmileyCollageTests/SmileyCollageTests-Info.plist";
 				PRODUCT_NAME = SmileyCollageTests;
+				TEST_HOST = "$(BUNDLE_LOADER)\n\n";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;

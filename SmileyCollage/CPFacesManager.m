@@ -44,12 +44,6 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAssetsLibraryChangeForNotification:) name:ALAssetsLibraryChangedNotification object:nil];
         
         self.isScanning = NO;
-
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSString *thumbnailPath = [CPUtility thumbnailPath];
-        if (![fileManager fileExistsAtPath:thumbnailPath]) {
-            [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
-        }
     }
     return self;
 }
@@ -118,7 +112,7 @@
 }
 
 - (void)removeExpiredPhotos {
-    CPCleanupOperation *cleanupOperation = [[CPCleanupOperation alloc] initWithScanStartTime:self.scanStartTime persistentStoreCoordinator:self.persistentStoreCoordinator];
+    CPCleanupOperation *cleanupOperation = [[CPCleanupOperation alloc] initWithScanTime:self.scanStartTime persistentStoreCoordinator:self.persistentStoreCoordinator];
     cleanupOperation.completionBlock = ^() {
         self.isScanning = NO;
     };
@@ -139,10 +133,8 @@
 
 - (NSFetchedResultsController *)facesController {
     if (!_facesController) {
-        NSFetchRequest *request = [[NSFetchRequest alloc] init];
-        request.entity = [NSEntityDescription entityForName:NSStringFromClass([CPFace class]) inManagedObjectContext:self.managedObjectContext];
-        request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"timestamp" ascending:YES], nil];
-        _facesController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPFaceCache"];
+        NSFetchRequest * fetechRequest = [CPFace fetchRequestForFacesInManagedObjectContext:self.managedObjectContext];
+        _facesController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetechRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPFaceCache"];
         [_facesController performFetch:nil];
     }
     return _facesController;
@@ -165,11 +157,8 @@
 
 - (NSManagedObjectContext *)managedObjectContext {
     if (!_managedObjectContext) {
-        NSPersistentStoreCoordinator *coordinator = self.persistentStoreCoordinator;
-        if (coordinator) {
-            _managedObjectContext = [[NSManagedObjectContext alloc] init];
-            [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-        }
+        _managedObjectContext = [[NSManagedObjectContext alloc] init];
+        _managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator;
     }
     return _managedObjectContext;
 }
@@ -180,36 +169,18 @@
         NSManagedObjectModel *managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:managedObjectModel];
 
-        NSURL *applicationDocumentsDirectoryURL = [NSURL fileURLWithPath:[CPUtility applicationDocumentsPath]];
+        NSString *applicationDocumentsPath = [CPUtility applicationDocumentsPath];
+        NSURL *applicationDocumentsDirectoryURL = [NSURL fileURLWithPath:applicationDocumentsPath];
         NSURL *storeURL = [applicationDocumentsDirectoryURL URLByAppendingPathComponent:@"SmileyCollage.sqlite"];
-        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+        NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption: @YES, NSInferMappingModelAutomaticallyOption: @YES};
         NSError *error = nil;
         if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
-            /*
-             TODO: MAY ABORT! Handle the error appropriately when initializing persistent store coordinator.
-             
-             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-             
-             Typical reasons for an error here include:
-             * The persistent store is not accessible;
-             * The schema for the persistent store is incompatible with current managed object model.
-             Check the error message to determine what the actual problem was.
-             
-             
-             If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
-             
-             If you encounter schema incompatibility errors during development, you can reduce their frequency by:
-             * Simply deleting the existing store:
-             [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
-             
-             * Performing automatic lightweight migration by passing the following dictionary as the options parameter:
-             @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
-             
-             Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
-             
-             */
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            for (NSString *filename in [fileManager contentsOfDirectoryAtPath:applicationDocumentsPath error:nil]) {
+                [fileManager removeItemAtPath:[applicationDocumentsPath stringByAppendingPathComponent:filename] error:&error];
+            }
+            NSLog(@"re-create sql file");
+            [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
         }
     }
     return _persistentStoreCoordinator;

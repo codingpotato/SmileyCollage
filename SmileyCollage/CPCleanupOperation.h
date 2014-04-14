@@ -10,6 +10,6 @@
 
 @interface CPCleanupOperation : CPCoreDataOperation
 
-- (id)initWithScanStartTime:(NSTimeInterval)scanStartTime persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator;
+- (id)initWithScanTime:(NSTimeInterval)scanTime persistentStoreCoordinator:(NSPersistentStoreCoordinator *)persistentStoreCoordinator;
 
 @end

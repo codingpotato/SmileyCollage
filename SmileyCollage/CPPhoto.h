@@ -10,17 +10,16 @@
 
 @interface CPPhoto : NSManagedObject
 
-@property (strong, nonatomic) NSNumber *timestamp;
+@property (strong, nonatomic) NSNumber *createTime;
+@property (strong, nonatomic) NSNumber *scanTime;
 @property (strong, nonatomic) NSString *url;
 @property (strong, nonatomic) NSSet *faces;
 
-+ (CPPhoto *)createPhotoInManagedObjectContext:(NSManagedObjectContext *)context;
++ (CPPhoto *)photoWithURL:(NSURL *)url createTime:(NSTimeInterval)createTime scanTime:(NSTimeInterval)scanTime  inManagedObjectContext:(NSManagedObjectContext *)context;
 
-+ (NSArray *)photosInManagedObjectContext:(NSManagedObjectContext *)context;
++ (CPPhoto *)photoOfURL:(NSURL *)url inManagedObjectContext:(NSManagedObjectContext *)context;
 
-+ (CPPhoto *)photoOfAssetURL:(NSString *)assetURL inManagedObjectContext:(NSManagedObjectContext *)context;
-
-+ (NSArray *)expiredPhotosWithTimestamp:(NSTimeInterval)timestamp fromManagedObjectContext:(NSManagedObjectContext *)context;
++ (NSArray *)photosScannedBeforeTime:(NSTimeInterval)scanTime inManagedObjectContext:(NSManagedObjectContext *)context;
 
 @end
 

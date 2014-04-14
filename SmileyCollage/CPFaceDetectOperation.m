@@ -35,15 +35,17 @@
     @autoreleasepool {
         NSAssert(self.asset, @"");
         
+        NSTimeInterval scanTime = [NSDate timeIntervalSinceReferenceDate];
         NSURL *assetURL = [self.asset valueForProperty:ALAssetPropertyAssetURL];
-        CPPhoto *photo = [CPPhoto photoOfAssetURL:assetURL.absoluteString inManagedObjectContext:self.managedObjectContext];
+        CPPhoto *photo = [CPPhoto photoOfURL:assetURL inManagedObjectContext:self.managedObjectContext];
         if (photo) {
-            photo.timestamp = [NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
+            photo.scanTime = [NSNumber numberWithDouble:scanTime];
         } else {
             NSMutableDictionary *exifDictionary = [self.asset.defaultRepresentation.metadata objectForKey:(NSString *)kCGImagePropertyExifDictionary];
             NSString *cameraOwnerName = [exifDictionary objectForKey:(NSString *)kCGImagePropertyExifCameraOwnerName];
             if (![cameraOwnerName isEqualToString:[CPFacesManager cameraOwnerName]]) {
-                CPPhoto *photo = [self newPhotoByAssetURL:assetURL];
+                NSTimeInterval createTime = [[self.asset valueForProperty:ALAssetPropertyDate] timeIntervalSinceReferenceDate];
+                photo = [CPPhoto photoWithURL:assetURL createTime:createTime scanTime:scanTime inManagedObjectContext:self.managedObjectContext];
                 
                 CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeFace context:nil options:@{CIDetectorAccuracy: CIDetectorAccuracyHigh}];
                 NSDictionary *options = @{CIDetectorSmile: @(YES), CIDetectorEyeBlink: @(YES)};
@@ -63,36 +65,13 @@
                     enlargeSize = MIN(enlargeSize, height - bounds.origin.y - bounds.size.height);
                     bounds = CGRectInset(bounds, -enlargeSize, -enlargeSize);
                     
-                    CPFace *face = [self newFaceWithPhoto:photo bounds:bounds];
+                    CPFace *face = [CPFace faceWithPhoto:photo bounds:bounds inManagedObjectContext:self.managedObjectContext];
                     [self writeThumbnailOfName:face.thumbnail fromImage:image bounds:bounds];
                 }
             }
         }
-        
         [self save];
     }
-}
-
-- (CPPhoto *)newPhotoByAssetURL:(NSURL *)assetURL {
-    CPPhoto *photo = [CPPhoto createPhotoInManagedObjectContext:self.managedObjectContext];
-    photo.timestamp = [NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
-    photo.url = assetURL.absoluteString;
-    
-    return photo;
-}
-
-- (CPFace *)newFaceWithPhoto:(CPPhoto *)photo bounds:(CGRect)bounds {
-    CPFace *face = [CPFace createFaceInManagedObjectContext:self.managedObjectContext];
-    face.timestamp = [NSNumber numberWithDouble:[NSDate timeIntervalSinceReferenceDate]];
-    face.x = [NSNumber numberWithFloat:bounds.origin.x];
-    face.y = [NSNumber numberWithFloat:bounds.origin.y];
-    face.width = [NSNumber numberWithFloat:bounds.size.width];
-    face.height = [NSNumber numberWithFloat:bounds.size.height];
-    face.photo = photo;
-    face.thumbnail = [[[NSUUID alloc] init].UUIDString stringByAppendingPathExtension:@"jpg"];
-    [photo addFacesObject:face];
-    
-    return face;
 }
 
 - (void)writeThumbnailOfName:(NSString *)name fromImage:(CGImageRef)image bounds:(CGRect)bounds {
@@ -100,10 +79,18 @@
     CGFloat width = MIN(bounds.size.width, [CPConfig thumbnailSize]);
     UIImage *thumbnail = [UIImage imageWithCGImage:faceImage scale:width orientation:UIImageOrientationUp];
     CGImageRelease(faceImage);
-    NSString *filePath = [[CPUtility thumbnailPath] stringByAppendingPathComponent:name];
+    NSString *thumbnailPath = [CPUtility thumbnailPath];
+    NSString *imagePath = [thumbnailPath stringByAppendingPathComponent:name];
     
     static const float compressionQuality = 0.5;
-    [UIImageJPEGRepresentation(thumbnail, compressionQuality) writeToFile:filePath atomically:YES];
+    NSData *imageJPEGRepresentationData = UIImageJPEGRepresentation(thumbnail, compressionQuality);
+    if (![imageJPEGRepresentationData writeToFile:imagePath atomically:YES]) {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        if (![fileManager fileExistsAtPath:thumbnailPath]) {
+            [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
+            [imageJPEGRepresentationData writeToFile:imagePath atomically:YES];
+        }
+    }
 }
 
 @end
