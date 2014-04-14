@@ -17,8 +17,8 @@
 @dynamic faces;
 
 + (CPPhoto *)photoWithURL:(NSURL *)url createTime:(NSTimeInterval)createTime scanTime:(NSTimeInterval)scanTime inManagedObjectContext:(NSManagedObjectContext *)context {
-    NSAssert(url, @"");
-    NSAssert(context, @"");
+    NSAssert(url, @"url should be valid");
+    NSAssert(context, @"managed object context should be valid");
     
     CPPhoto *photo = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
     photo.createTime = [[NSNumber alloc] initWithDouble:createTime];

@@ -179,7 +179,6 @@
             for (NSString *filename in [fileManager contentsOfDirectoryAtPath:applicationDocumentsPath error:nil]) {
                 [fileManager removeItemAtPath:[applicationDocumentsPath stringByAppendingPathComponent:filename] error:&error];
             }
-            NSLog(@"re-create sql file");
             [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
         }
     }
