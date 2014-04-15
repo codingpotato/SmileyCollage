@@ -41,6 +41,8 @@
 		FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1818D42E4100748335 /* CPPhoto.m */; };
 		FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC92759B18F58CF700031FD0 /* ImageIO.framework */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
+		FCA292E718FD64AB0029583E /* CPCoreDataTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */; };
+		FCA292E918FD664A0029583E /* CPFaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E818FD664A0029583E /* CPFaceTests.m */; };
 		FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
 		FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */; };
 		FCC2E59518F244AF00D7163F /* CPSettingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCC2E59418F244AF00D7163F /* CPSettingTests.m */; };
@@ -116,6 +118,9 @@
 		FC92759B18F58CF700031FD0 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
+		FCA292E518FD64AB0029583E /* CPCoreDataTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCoreDataTestHelper.h; sourceTree = "<group>"; };
+		FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataTestHelper.m; sourceTree = "<group>"; };
+		FCA292E818FD664A0029583E /* CPFaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceTests.m; sourceTree = "<group>"; };
 		FCC2E59418F244AF00D7163F /* CPSettingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSettingTests.m; sourceTree = "<group>"; };
 		FCC2E59718F246EB00D7163F /* CPSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSettings.h; sourceTree = "<group>"; };
 		FCC2E59818F246EB00D7163F /* CPSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSettings.m; sourceTree = "<group>"; };
@@ -247,6 +252,9 @@
 			isa = PBXGroup;
 			children = (
 				FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */,
+				FCA292E518FD64AB0029583E /* CPCoreDataTestHelper.h */,
+				FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */,
+				FCA292E818FD664A0029583E /* CPFaceTests.m */,
 				FC78E36018FAD42400CD0F07 /* CPPhotoTests.m */,
 				FCC2E59418F244AF00D7163F /* CPSettingTests.m */,
 				FC46716818C2CAF600E472BF /* Supporting Files */,
@@ -426,9 +434,11 @@
 				FC1A3A3618DB2875004E4C38 /* CPCollageViewControllerTests.m in Sources */,
 				FCC2E59A18F2471500D7163F /* CPSettings.m in Sources */,
 				FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */,
+				FCA292E918FD664A0029583E /* CPFaceTests.m in Sources */,
 				FC78E36118FAD42400CD0F07 /* CPPhotoTests.m in Sources */,
 				FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */,
 				FCC2E59518F244AF00D7163F /* CPSettingTests.m in Sources */,
+				FCA292E718FD64AB0029583E /* CPCoreDataTestHelper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

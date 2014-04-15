@@ -105,7 +105,7 @@
                 }
             }];
         } else {
-            // finish enumerate all photos
+            // finish scanning all photos
             [self removeExpiredPhotos];
         }
     } failureBlock:nil];
@@ -175,10 +175,13 @@
         NSDictionary *options = @{NSMigratePersistentStoresAutomaticallyOption: @YES, NSInferMappingModelAutomaticallyOption: @YES};
         NSError *error = nil;
         if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
+            // remove SQLite and thumbnail files
             NSFileManager *fileManager = [NSFileManager defaultManager];
             for (NSString *filename in [fileManager contentsOfDirectoryAtPath:applicationDocumentsPath error:nil]) {
                 [fileManager removeItemAtPath:[applicationDocumentsPath stringByAppendingPathComponent:filename] error:&error];
             }
+            
+            // re-create the persistent store
             [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error];
         }
     }
