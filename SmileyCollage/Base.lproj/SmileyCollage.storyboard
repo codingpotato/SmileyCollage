@@ -112,30 +112,14 @@
                             <constraint firstItem="Teu-QR-r64" firstAttribute="top" secondItem="n4W-2L-vQ1" secondAttribute="top" id="rli-T1-kg0"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="LiH-Uw-Urq">
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" id="wBP-l9-mFd">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="bBP-QX-Ini">
-                                <rect key="frame" x="269" y="11" width="35" height="22"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="16"/>
-                                <inset key="titleEdgeInsets" minX="-5" minY="-10" maxX="0.0" maxY="0.0"/>
-                                <size key="titleShadowOffset" width="1" height="1"/>
-                                <state key="normal" title="     " image="collage">
-                                    <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                </state>
-                                <connections>
-                                    <segue destination="RNr-7G-8mP" kind="push" identifier="CPCollageViewControllerSegue" id="jyU-yq-GAO"/>
-                                </connections>
-                            </button>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="LiH-Uw-Urq"/>
                     <connections>
-                        <outlet property="collageButton" destination="bBP-QX-Ini" id="VTI-Xq-ZDe"/>
                         <outlet property="collectionView" destination="Teu-QR-r64" id="n8K-sr-K5o"/>
                         <outlet property="message" destination="iga-In-oLd" id="MiX-1o-SnP"/>
                         <outlet property="notificationView" destination="6bY-zF-vA6" id="Azw-3S-Hgn"/>
                         <outlet property="notificationViewBottomConstraint" destination="04Q-JA-WJC" id="MwE-Sa-w7S"/>
                         <outlet property="progressView" destination="zM3-wD-T4H" id="BFH-Vk-vGU"/>
+                        <segue destination="RNr-7G-8mP" kind="push" identifier="CPCollageViewControllerSegue" id="Sug-tn-HGf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x4z-ZN-v9f" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -246,9 +230,6 @@
             <point key="canvasLocation" x="1718" y="-228"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="collage" width="22" height="22"/>
-    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

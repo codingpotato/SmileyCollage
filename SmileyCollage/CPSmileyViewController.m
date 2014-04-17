@@ -27,11 +27,11 @@
 
 @property (nonatomic) BOOL isScanCancelled;
 
-@property (strong, nonatomic) UIBarButtonItem *unselectAllBarButtonItem;
+@property (strong, nonatomic) UIBarButtonItem *cancelBarButtonItem;
+@property (strong, nonatomic) UIBarButtonItem *confirmBarButtonItem;
+@property (strong, nonatomic) UIButton *confirmButton;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-
-@property (weak, nonatomic) IBOutlet UIButton *collageButton;
 
 @property (weak, nonatomic) IBOutlet UILabel *message;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
@@ -46,25 +46,23 @@
     [super viewDidLoad];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidBecomeActiveNotification:) name:UIApplicationDidBecomeActiveNotification object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackgroundNotification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)self.facesManager.facesController.fetchedObjects.count];
     
     self.isScanCancelled = NO;
     self.facesManager.facesController.delegate = self;
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)self.facesManager.facesController.fetchedObjects.count];
-    
     [self showNotificationViewWithAnimation];
     [self.facesManager scanFaces];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self displaySelectedFacesNumber];
+    [self showSelectedFacesNumber];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    
     [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
@@ -83,16 +81,16 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"CPCollageViewControllerSegue"]) {
-        CPCollageViewController *stitchViewController = (CPCollageViewController *)segue.destinationViewController;
-        stitchViewController.facesManager = self.facesManager;
+        CPCollageViewController *collageViewController = (CPCollageViewController *)segue.destinationViewController;
+        collageViewController.facesManager = self.facesManager;
         
-        stitchViewController.collagedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
+        collageViewController.collagedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
         for (CPFace *face in self.selectedFaces) {
             CPFaceEditInformation *faceEditInformation = [[CPFaceEditInformation alloc] init];
             faceEditInformation.face = face;
             faceEditInformation.asset = nil;
             faceEditInformation.frame = CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue);
-            [stitchViewController.collagedFaces addObject:faceEditInformation];
+            [collageViewController.collagedFaces addObject:faceEditInformation];
         }
     }
 }
@@ -160,31 +158,39 @@
     });
 }
 
-- (void)displaySelectedFacesNumber {
+- (void)showSelectedFacesNumber {
+    [self.confirmButton setTitle:[[NSString alloc] initWithFormat:@"%d", self.selectedFaces.count] forState:UIControlStateNormal];
     if (self.selectedFaces.count > 9) {
-        self.collageButton.titleLabel.text = [[NSString alloc] initWithFormat:@"%d", self.selectedFaces.count];
-    } else if (self.selectedFaces.count > 0) {
-        self.collageButton.titleLabel.text = [[NSString alloc] initWithFormat:@" %d", self.selectedFaces.count];
+        [self.confirmButton setImage:[UIImage imageNamed:@"confirm_1.png"] forState:UIControlStateNormal];
+        self.confirmButton.titleEdgeInsets = UIEdgeInsetsMake(-10.0, -16.0, 0.0, 0.0);
+        //self.confirmButton.imageEdgeInsets = UIEdgeInsetsMake(-15.0, 0.0, 0.0, -10.0);
     } else {
-        self.collageButton.titleLabel.text = @"  ";
+        [self.confirmButton setImage:[UIImage imageNamed:@"confirm.png"] forState:UIControlStateNormal];
+        self.confirmButton.titleEdgeInsets = UIEdgeInsetsMake(-10.0, -11.0, 0.0, 0.0);
     }
 }
 
-- (void)enableBarButtonItems {
-    self.navigationItem.rightBarButtonItem.enabled = YES;
-    self.navigationItem.leftBarButtonItem = self.unselectAllBarButtonItem;
+- (void)showBarButtonItems {
+    self.navigationItem.rightBarButtonItem = self.confirmBarButtonItem;
+    self.navigationItem.leftBarButtonItem = self.cancelBarButtonItem;
 }
 
-- (void)disableBarButtonItems {
-    self.navigationItem.rightBarButtonItem.enabled = NO;
+- (void)hideBarButtonItems {
+    self.navigationItem.rightBarButtonItem = nil;
     self.navigationItem.leftBarButtonItem = nil;
 }
 
-- (void)unselectAllBarButtonItemPressed:(id)sender {
+- (void)helpBarButtonItemPressed:(id)sender {
+}
+
+- (void)cancelBarButtonItemPressed:(id)sender {
     self.selectedFaces = nil;
-    [self displaySelectedFacesNumber];
-    [self disableBarButtonItems];
+    [self hideBarButtonItems];
     [self.collectionView reloadData];
+}
+
+- (void)confirmButtonPressed:(id)sender {
+    [self performSegueWithIdentifier:@"CPCollageViewControllerSegue" sender:nil];
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate implement
@@ -220,21 +226,21 @@
     if ([self.selectedFaces containsObject:face]) {
         [self.selectedFaces removeObject:face];
         if (self.selectedFaces.count == 0) {
-            [self disableBarButtonItems];
+            [self hideBarButtonItems];
         }
         [collectionView reloadItemsAtIndexPaths:@[indexPath]];
     } else {
         if (self.selectedFaces.count < [CPCollageViewController maxNumberOfCollagedFaces]) {
             [self.selectedFaces addObject:face];
-            [self enableBarButtonItems];
+            [self showBarButtonItems];
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
         } else {
-            NSString *message = [[NSString alloc] initWithFormat:@"Cannot collage more that %d faces", [CPCollageViewController maxNumberOfCollagedFaces]];
+            NSString *message = [[NSString alloc] initWithFormat:@"Cannot select more that %d faces", [CPCollageViewController maxNumberOfCollagedFaces]];
             UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"Information" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
             [alertView show];
         }
     }
-    [self displaySelectedFacesNumber];
+    [self showSelectedFacesNumber];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
@@ -273,11 +279,30 @@
     return _selectedFaces;
 }
 
-- (UIBarButtonItem *)unselectAllBarButtonItem {
-    if (!_unselectAllBarButtonItem) {
-        _unselectAllBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Unselect All" style:UIBarButtonItemStyleBordered target:self action:@selector(unselectAllBarButtonItemPressed:)];
+- (UIBarButtonItem *)cancelBarButtonItem {
+    if (!_cancelBarButtonItem) {
+        _cancelBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelBarButtonItemPressed:)];
     }
-    return _unselectAllBarButtonItem;
+    return _cancelBarButtonItem;
+}
+
+- (UIBarButtonItem *)confirmBarButtonItem {
+    if (!_confirmBarButtonItem) {
+        _confirmBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.confirmButton];
+    }
+    return _confirmBarButtonItem;
+}
+
+- (UIButton *)confirmButton {
+	if (!_confirmButton) {
+		_confirmButton = [[UIButton alloc] init];
+        _confirmButton.frame = CGRectMake(0.0, 0.0, 22.0, 22.0);
+        _confirmButton.titleLabel.font = [UIFont boldSystemFontOfSize:10.0];
+        [_confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_confirmButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+		[_confirmButton addTarget:self action:@selector(confirmButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+	}
+	return _confirmButton;
 }
 
 @end
