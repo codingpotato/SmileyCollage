@@ -163,7 +163,6 @@
     if (self.selectedFaces.count > 9) {
         [self.confirmButton setImage:[UIImage imageNamed:@"confirm_1.png"] forState:UIControlStateNormal];
         self.confirmButton.titleEdgeInsets = UIEdgeInsetsMake(-10.0, -16.0, 0.0, 0.0);
-        //self.confirmButton.imageEdgeInsets = UIEdgeInsetsMake(-15.0, 0.0, 0.0, -10.0);
     } else {
         [self.confirmButton setImage:[UIImage imageNamed:@"confirm.png"] forState:UIControlStateNormal];
         self.confirmButton.titleEdgeInsets = UIEdgeInsetsMake(-10.0, -11.0, 0.0, 0.0);
