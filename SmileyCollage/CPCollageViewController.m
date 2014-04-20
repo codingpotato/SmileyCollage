@@ -11,8 +11,9 @@
 #import "CPSettings.h"
 #import "CPUtility.h"
 
-#import "CPEditViewController.h"
 #import "CPCollageCell.h"
+#import "CPEditViewController.h"
+#import "CPHelpViewManager.h"
 
 #import "CPFaceEditInformation.h"
 #import "CPFacesManager.h"
@@ -21,6 +22,8 @@
 
 
 @interface CPCollageViewController ()
+
+@property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
 @property (strong, nonatomic) UIBarButtonItem *action;
 
@@ -72,6 +75,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (![CPSettings isWatermarkRemoved]) {
         [self showWatermarkImageView];
     }
+    
+    [self.helpViewManager showCollageHelpWithDelayInView:self.view];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.helpViewManager = nil;
 }
 
 - (void)viewDidLayoutSubviews {
@@ -126,6 +136,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
+    [CPSettings acknowledgeCollageDragHelp];
+    
     if (panGesture.state == UIGestureRecognizerStateBegan) {
         if (!self.draggedCell) {
             CGPoint location = [panGesture locationInView:self.collectionView];
@@ -404,6 +416,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [CPSettings acknowledgeCollageTapHelp];
+    
     self.selectedIndex = indexPath.row;
     [self performSegueWithIdentifier:@"CPEditViewControllerSegue" sender:nil];
 }
@@ -437,6 +451,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 #pragma mark - lazy init
+
+- (CPHelpViewManager *)helpViewManager {
+    if (!_helpViewManager) {
+        _helpViewManager = [[CPHelpViewManager alloc] init];
+    }
+    return _helpViewManager;
+}
 
 - (NSArray *)numberOfColumnsInRows {
     if (!_numberOfColumnsInRows) {

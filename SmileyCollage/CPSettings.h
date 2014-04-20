@@ -16,4 +16,24 @@
 
 + (BOOL)isWatermarkRemoved;
 
++ (void)acknowledgeSmileyTapHelp;
+
++ (BOOL)isSmileyTapAcknowledged;
+
++ (void)acknowledgeCollageTapHelp;
+
++ (BOOL)isCollageTapAcknowledged;
+
++ (void)acknowledgeCollageDragHelp;
+
++ (BOOL)isCollageDragAcknowledged;
+
++ (void)acknowledgeEditDragHelp;
+
++ (BOOL)isEditDragAcknowledged;
+
++ (void)acknowledgeEditZoomHelp;
+
++ (BOOL)isEditZoomHelpAcknowledged;
+
 @end

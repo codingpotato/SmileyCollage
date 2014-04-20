@@ -9,9 +9,13 @@
 #import "CPEditViewController.h"
 
 #import "CPFaceEditInformation.h"
+#import "CPHelpViewManager.h"
+#import "CPSettings.h"
 #import "CPUtility.h"
 
 @interface CPEditViewController ()
+
+@property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
 @property (strong, nonatomic) UIImageView *imageView;
 @property (strong, nonatomic) UIView *faceIndicator;
@@ -31,6 +35,12 @@
 
     [self showImageView];
     [self showFaceIndicator];
+    [self.helpViewManager showEditHelpWithDelayInView:self.view];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.helpViewManager = nil;
 }
 
 - (void)viewDidLayoutSubviews {
@@ -63,6 +73,8 @@
     }
     [panGesture setTranslation:CGPointZero inView:self.view];
     [self updateFaceFrame];
+    
+    [CPSettings acknowledgeEditDragHelp];
 }
 
 - (IBAction)handlePinchGesture:(UIPinchGestureRecognizer *)pinchGesture {
@@ -82,6 +94,8 @@
     }
     pinchGesture.scale = 1.0;
     [self updateFaceFrame];
+    
+    [CPSettings acknowledgeEditZoomHelp];
 }
 
 - (void)updateFaceFrame {
@@ -140,6 +154,13 @@
 }
 
 #pragma mark - lazy init
+
+- (CPHelpViewManager *)helpViewManager {
+    if (!_helpViewManager) {
+        _helpViewManager = [[CPHelpViewManager alloc] init];
+    }
+    return _helpViewManager;
+}
 
 - (UIImageView *)imageView {
     if (!_imageView) {

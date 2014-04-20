@@ -9,10 +9,12 @@
 #import "CPSmileyViewController.h"
 
 #import "CPConfig.h"
+#import "CPSettings.h"
 #import "CPUtility.h"
 
-#import "CPPhotoCell.h"
 #import "CPCollageViewController.h"
+#import "CPHelpViewManager.h"
+#import "CPPhotoCell.h"
 
 #import "CPFace.h"
 #import "CPFaceEditInformation.h"
@@ -20,6 +22,8 @@
 #import "CPPhoto.h"
 
 @interface CPSmileyViewController ()
+
+@property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
 @property (strong, nonatomic) CPFacesManager *facesManager;
 
@@ -54,11 +58,18 @@
     self.facesManager.facesController.delegate = self;
     [self showNotificationViewWithAnimation];
     [self.facesManager scanFaces];
+    
+    [self.helpViewManager showSmileyHelpWithDelayInView:self.view];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self showSelectedFacesNumber];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    self.helpViewManager = nil;
 }
 
 - (void)viewDidLayoutSubviews {
@@ -219,6 +230,8 @@
 #pragma mark - UICollectionViewDelegate implement
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [CPSettings acknowledgeSmileyTapHelp];
+    
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
     NSAssert(face, @"");
 
@@ -263,6 +276,13 @@
 }
 
 #pragma mark - lazy init
+
+- (CPHelpViewManager *)helpViewManager {
+    if (!_helpViewManager) {
+        _helpViewManager = [[CPHelpViewManager alloc] init];
+    }
+    return _helpViewManager;
+}
 
 - (CPFacesManager *)facesManager {
     if (!_facesManager) {
