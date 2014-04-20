@@ -27,7 +27,7 @@
 
 @property (strong, nonatomic) CPFacesManager *facesManager;
 
-@property (strong, nonatomic) NSMutableArray *selectedFaces;
+@property (strong, nonatomic) NSMutableDictionary *selectedFaces;
 
 @property (nonatomic) BOOL isScanCancelled;
 
@@ -98,15 +98,7 @@
     if ([segue.identifier isEqualToString:@"CPCollageViewControllerSegue"]) {
         CPCollageViewController *collageViewController = (CPCollageViewController *)segue.destinationViewController;
         collageViewController.facesManager = self.facesManager;
-        
-        collageViewController.collagedFaces = [[NSMutableArray alloc] initWithCapacity:self.selectedFaces.count];
-        for (CPFace *face in self.selectedFaces) {
-            CPFaceEditInformation *faceEditInformation = [[CPFaceEditInformation alloc] init];
-            faceEditInformation.face = face;
-            faceEditInformation.asset = nil;
-            faceEditInformation.frame = CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue);
-            [collageViewController.collagedFaces addObject:faceEditInformation];
-        }
+        collageViewController.collagedFaces = [self.selectedFaces.allValues mutableCopy];
     }
 }
 
@@ -232,7 +224,7 @@
     
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
     [cell showImage:[self.facesManager thumbnailOfFace:face]];
-    cell.isSelected = [self.selectedFaces containsObject:face];
+    cell.isSelected = [self.selectedFaces objectForKey:face.objectID];
     
     return cell;
 }
@@ -245,15 +237,20 @@
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
     NSAssert(face, @"");
 
-    if ([self.selectedFaces containsObject:face]) {
-        [self.selectedFaces removeObject:face];
+    if ([self.selectedFaces objectForKey:face.objectID]) {
+        [self.selectedFaces removeObjectForKey:face.objectID];
         if (self.selectedFaces.count == 0) {
             [self hideBarButtonItems];
         }
         [collectionView reloadItemsAtIndexPaths:@[indexPath]];
     } else {
         if (self.selectedFaces.count < [CPCollageViewController maxNumberOfCollagedFaces]) {
-            [self.selectedFaces addObject:face];
+            CPFaceEditInformation *faceEditInformation = [[CPFaceEditInformation alloc] init];
+            faceEditInformation.face = face;
+            faceEditInformation.asset = nil;
+            faceEditInformation.frame = CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue);
+            [self.selectedFaces setObject:faceEditInformation forKey:face.objectID];
+            
             [self showBarButtonItems];
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
         } else {
@@ -301,9 +298,9 @@
     return _facesManager;
 }
 
-- (NSMutableArray *)selectedFaces {
+- (NSMutableDictionary *)selectedFaces {
     if (!_selectedFaces) {
-        _selectedFaces = [[NSMutableArray alloc] initWithCapacity:[CPCollageViewController maxNumberOfCollagedFaces]];
+        _selectedFaces = [[NSMutableDictionary alloc] initWithCapacity:[CPCollageViewController maxNumberOfCollagedFaces]];
     }
     return _selectedFaces;
 }
