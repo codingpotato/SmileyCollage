@@ -356,6 +356,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
                 NSString *sharedText = @"Shared from Smiley app";
                 NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
                 UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
+                activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll];
                 [self presentViewController:activityViewController animated:YES completion:nil];
                 break;
             }
