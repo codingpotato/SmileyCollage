@@ -52,14 +52,18 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidBecomeActiveNotification:) name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackgroundNotification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)self.facesManager.facesController.fetchedObjects.count];
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %lu", (unsigned long)self.facesManager.facesController.fetchedObjects.count];
     
     self.isScanCancelled = NO;
     self.facesManager.facesController.delegate = self;
     [self showNotificationViewWithAnimation];
     [self.facesManager scanFaces];
     
-    [self.helpViewManager showSmileyHelpWithDelayInView:self.view];
+    if (self.facesManager.facesController.fetchedObjects.count > 0) {
+        [self.helpViewManager showSmileyHelpWithDelayInView:self.view];
+    } else {
+        [self.helpViewManager showSmileyNotFoundHelpWithDelayInView:self.view];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -170,7 +174,7 @@
 }
 
 - (void)showSelectedFacesNumber {
-    [self.confirmButton setTitle:[[NSString alloc] initWithFormat:@"%d", self.selectedFaces.count] forState:UIControlStateNormal];
+    [self.confirmButton setTitle:[[NSString alloc] initWithFormat:@"%d", (int)self.selectedFaces.count] forState:UIControlStateNormal];
     if (self.selectedFaces.count > 9) {
         [self.confirmButton setImage:[UIImage imageNamed:@"confirm_1.png"] forState:UIControlStateNormal];
         self.confirmButton.titleEdgeInsets = UIEdgeInsetsMake(-10.0, -16.0, 0.0, 0.0);
@@ -206,8 +210,14 @@
 #pragma mark - NSFetchedResultsControllerDelegate implement
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
-    self.navigationItem.title = [NSString stringWithFormat:@"Faces: %d", (int)controller.fetchedObjects.count];
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)controller.fetchedObjects.count];
     [self.collectionView reloadData];
+    
+    if (controller.fetchedObjects.count > 0) {
+        [self.helpViewManager removeSmileyNotFoundHelp];
+    } else {
+        [self.helpViewManager showSmileyNotFoundHelpWithDelayInView:self.view];
+    }
 }
 
 #pragma mark - UICollectionViewDataSource implement
@@ -247,7 +257,7 @@
             [self showBarButtonItems];
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
         } else {
-            NSString *message = [[NSString alloc] initWithFormat:@"Cannot select more that %d faces", [CPCollageViewController maxNumberOfCollagedFaces]];
+            NSString *message = [[NSString alloc] initWithFormat:@"Cannot select more that %lu faces", (unsigned long)[CPCollageViewController maxNumberOfCollagedFaces]];
             UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"Information" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
             [alertView show];
         }

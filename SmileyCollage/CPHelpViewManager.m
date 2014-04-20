@@ -15,6 +15,8 @@
 
 @property (strong, nonatomic) NSMutableArray *helpViews;
 
+@property (strong, nonatomic) UIView *smileyNotFoundHelpView;
+
 @end
 
 @implementation CPHelpViewManager
@@ -23,6 +25,39 @@ static const NSUInteger g_maxHelpViews = 2;
 
 static const NSTimeInterval g_delayTimeInterval = 5.0;
 static const NSTimeInterval g_animationDuration = 0.3;
+
+- (void)showSmileyNotFoundHelpWithDelayInView:(UIView *)view {
+    if (!self.smileyNotFoundHelpView) {
+        self.smileyNotFoundHelpView = [[UIView alloc] init];
+        self.smileyNotFoundHelpView.backgroundColor = [UIColor yellowColor];
+        self.smileyNotFoundHelpView.layer.cornerRadius = 2.0;
+        self.smileyNotFoundHelpView.layer.shadowColor = [UIColor blackColor].CGColor;
+        self.smileyNotFoundHelpView.layer.shadowOffset = CGSizeMake(2.0, 2.0);
+        self.smileyNotFoundHelpView.layer.shadowOpacity = 0.8;
+        self.smileyNotFoundHelpView.translatesAutoresizingMaskIntoConstraints = NO;
+        
+        UILabel *label = [[UILabel alloc] init];
+        label.translatesAutoresizingMaskIntoConstraints = NO;
+        label.numberOfLines = 0;
+        label.textAlignment = NSTextAlignmentCenter;
+        label.text = @"Take photos with smiley faces everyday.\n\nCollage them with Smiley Collage";
+        [label sizeToFit];
+        [self.smileyNotFoundHelpView addSubview:label];
+        
+        static const CGFloat labelInset = 5.0;
+        [self.smileyNotFoundHelpView addConstraints:@[[CPUtility constraintWithView:label alignToView:self.smileyNotFoundHelpView attribute:NSLayoutAttributeLeft constant:labelInset], [CPUtility constraintWithView:label alignToView:self.smileyNotFoundHelpView attribute:NSLayoutAttributeTop constant:labelInset], [CPUtility constraintWithView:label alignToView:self.smileyNotFoundHelpView attribute:NSLayoutAttributeRight constant:-labelInset], [CPUtility constraintWithView:label alignToView:self.smileyNotFoundHelpView attribute:NSLayoutAttributeBottom constant:-labelInset]]];
+        
+        [view addSubview:self.smileyNotFoundHelpView];
+        [view addConstraints:[CPUtility constraintsWithView:self.smileyNotFoundHelpView centerAlignToView:view]];
+    }
+}
+
+- (void)removeSmileyNotFoundHelp {
+    if (self.smileyNotFoundHelpView) {
+        [self.smileyNotFoundHelpView removeFromSuperview];
+        self.smileyNotFoundHelpView = nil;
+    }
+}
 
 - (void)showSmileyHelpWithDelayInView:(UIView *)view {
     if (![CPSettings isSmileyTapAcknowledged]) {
@@ -44,6 +79,7 @@ static const NSTimeInterval g_animationDuration = 0.3;
 
 - (void)dealloc {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
+    [self removeSmileyNotFoundHelp];
     for (UIView *helpView in self.helpViews) {
         [helpView removeFromSuperview];
     }
@@ -88,7 +124,6 @@ static const NSTimeInterval g_animationDuration = 0.3;
     
     UILabel *label = [[UILabel alloc] init];
     label.translatesAutoresizingMaskIntoConstraints = NO;
-    label.numberOfLines = 0;
     label.textAlignment = NSTextAlignmentCenter;
     label.text = helpMessage;
     [label sizeToFit];
