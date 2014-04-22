@@ -25,7 +25,7 @@
 
 @property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
-@property (strong, nonatomic) UIBarButtonItem *action;
+@property (strong, nonatomic) UIBarButtonItem *actionBarButtonItem;
 
 @property (strong, nonatomic) UIImage *watermarkImage;
 @property (strong, nonatomic) UIImageView *watermarkImageView;
@@ -39,8 +39,8 @@
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
-@property (strong, nonatomic) UIActionSheet *actionSheet;
-@property (strong, nonatomic) UIActionSheet *shopActionSheet;
+@property (strong, nonatomic) UIActionSheet *currentActionSheet;
+@property (nonatomic) BOOL isShopActionSheet;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
@@ -66,9 +66,9 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     self.selectedIndex = -1;
     UIBarButtonItem *shop = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
-    self.action = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
-    self.action.enabled = NO;
-    self.navigationItem.rightBarButtonItems = @[self.action, shop];
+    self.actionBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
+    self.actionBarButtonItem.enabled = NO;
+    self.navigationItem.rightBarButtonItems = @[self.actionBarButtonItem, shop];
     
     [self calculateImageWidthHeightRatio];
     
@@ -82,6 +82,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     self.helpViewManager = nil;
+    [self dismissCurrentActionSheet];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -126,13 +127,24 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)shopBarButtonPressed:(id)sender {
-    self.shopActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Purchase Remove Watermark", @"Re-download purchased items", nil];
-    [self.shopActionSheet showFromBarButtonItem:sender animated:YES];
+    [self dismissCurrentActionSheet];
+    self.isShopActionSheet = YES;
+    self.currentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Purchase Remove Watermark", @"Re-download purchased items", nil];
+    [self.currentActionSheet showFromBarButtonItem:sender animated:YES];
 }
 
 - (void)actionBarButtonPressed:(id)sender {
-    self.actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
-    [self.actionSheet showFromBarButtonItem:sender animated:YES];
+    [self dismissCurrentActionSheet];
+    self.isShopActionSheet = NO;
+    self.currentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
+    [self.currentActionSheet showFromBarButtonItem:sender animated:YES];
+}
+
+- (void)dismissCurrentActionSheet {
+    if (self.currentActionSheet) {
+        [self.currentActionSheet dismissWithClickedButtonIndex:-1 animated:NO];
+        self.currentActionSheet = nil;
+    }
 }
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
@@ -304,6 +316,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)showWatermarkImageView {
     NSAssert(!self.watermarkImageView, @"");
+    
     self.watermarkImageView = [[UIImageView alloc] initWithImage:self.watermarkImage];
     [self.view addSubview:self.watermarkImageView];
 }
@@ -341,8 +354,17 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 #pragma mark - UIActionSheetDelegate implement
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (actionSheet == self.actionSheet) {
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (self.isShopActionSheet) {
+        switch (buttonIndex) {
+            case 0:
+                // Purchase Remove Watermark
+                [CPSettings removeWatermark];
+                break;
+            default:
+                break;
+        }
+    } else {
         switch (buttonIndex) {
             case 0: {
                 // Save
@@ -363,23 +385,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             default:
                 break;
         }
-    } else if (actionSheet == self.shopActionSheet) {
-        switch (buttonIndex) {
-            case 0:
-                // Purchase Remove Watermark
-                [CPSettings removeWatermark];
-                break;
-            default:
-                break;
-        }
-    }
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (actionSheet == self.actionSheet) {
-        self.actionSheet = nil;
-    } else if (actionSheet == self.shopActionSheet) {
-        self.shopActionSheet = nil;
     }
 }
 
@@ -399,6 +404,9 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     if (faceEditInformation.asset) {
         [cell showImage:[self imageOfFace:faceEditInformation] animated:NO];
+        if ([self allFacesHaveAsset]) {
+            self.actionBarButtonItem.enabled = YES;
+        }
     } else {
         [self.facesManager assertForURL:[[NSURL alloc] initWithString:faceEditInformation.face.photo.url] resultBlock:^(ALAsset *result) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
@@ -407,7 +415,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [cell showImage:image animated:YES];
                     if ([self allFacesHaveAsset]) {
-                        self.action.enabled = YES;
+                        self.actionBarButtonItem.enabled = YES;
                     }
                 });
             });

@@ -224,7 +224,7 @@
     
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
     [cell showImage:[self.facesManager thumbnailOfFace:face]];
-    cell.isSelected = [self.selectedFaces objectForKey:face.objectID];
+    cell.isSelected = [self.selectedFaces objectForKey:face.objectID] != nil;
     
     return cell;
 }
