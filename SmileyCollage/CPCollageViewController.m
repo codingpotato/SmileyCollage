@@ -14,16 +14,18 @@
 #import "CPCollageCell.h"
 #import "CPEditViewController.h"
 #import "CPHelpViewManager.h"
+#import "CPIAPViewManager.h"
 
 #import "CPFaceEditInformation.h"
 #import "CPFacesManager.h"
 #import "CPFace.h"
 #import "CPPhoto.h"
 
-
-@interface CPCollageViewController ()
+@interface CPCollageViewController () <CPIAPViewManagerDelegate, UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (strong, nonatomic) CPHelpViewManager *helpViewManager;
+
+@property (strong, nonatomic) CPIAPViewManager *iapViewManager;
 
 @property (strong, nonatomic) UIBarButtonItem *actionBarButtonItem;
 
@@ -40,7 +42,6 @@
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
 @property (strong, nonatomic) UIActionSheet *currentActionSheet;
-@property (nonatomic) BOOL isShopActionSheet;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
@@ -127,15 +128,19 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)shopBarButtonPressed:(id)sender {
-    [self dismissCurrentActionSheet];
+    /*[self dismissCurrentActionSheet];
     self.isShopActionSheet = YES;
     self.currentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Purchase Remove Watermark", @"Re-download purchased items", nil];
-    [self.currentActionSheet showFromBarButtonItem:sender animated:YES];
+    [self.currentActionSheet showFromBarButtonItem:sender animated:YES];*/
+    if (self.iapViewManager) {
+        [self.iapViewManager unloadView];
+    } else {
+        self.iapViewManager = [[CPIAPViewManager alloc] initWithSuperview:self.view delegate:self];
+    }
 }
 
 - (void)actionBarButtonPressed:(id)sender {
     [self dismissCurrentActionSheet];
-    self.isShopActionSheet = NO;
     self.currentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
     [self.currentActionSheet showFromBarButtonItem:sender animated:YES];
 }
@@ -352,10 +357,16 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return YES;
 }
 
+#pragma mark - CPIAPViewManagerDelegate implement
+
+- (void)iapViewManagerUnloaded:(CPIAPViewManager *)iapViewManager {
+    self.iapViewManager = nil;
+}
+
 #pragma mark - UIActionSheetDelegate implement
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    if (self.isShopActionSheet) {
+    /*if (self.isShopActionSheet) {
         switch (buttonIndex) {
             case 0:
                 // Purchase Remove Watermark
@@ -364,7 +375,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             default:
                 break;
         }
-    } else {
+    } else {*/
         switch (buttonIndex) {
             case 0: {
                 // Save
@@ -385,7 +396,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             default:
                 break;
         }
-    }
+    //}
 }
 
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement

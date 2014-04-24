@@ -40,8 +40,11 @@
 		FC8BCA1318D4256900748335 /* SmileyCollage.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1118D4256900748335 /* SmileyCollage.xcdatamodeld */; };
 		FC8BCA1618D42E4100748335 /* CPFace.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1518D42E4100748335 /* CPFace.m */; };
 		FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1818D42E4100748335 /* CPPhoto.m */; };
+		FC8FDFA019093F0900E42DE3 /* CPIAPViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8FDF9F19093F0900E42DE3 /* CPIAPViewManager.m */; };
+		FC8FDFA5190947F100E42DE3 /* CPIAPCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8FDFA4190947F100E42DE3 /* CPIAPCell.m */; };
 		FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC92759B18F58CF700031FD0 /* ImageIO.framework */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
+		FC9DACBA1908043C004FFC54 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9DACB91908043C004FFC54 /* StoreKit.framework */; };
 		FCA292E718FD64AB0029583E /* CPCoreDataTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */; };
 		FCA292E918FD664A0029583E /* CPFaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E818FD664A0029583E /* CPFaceTests.m */; };
 		FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
@@ -118,9 +121,14 @@
 		FC8BCA1518D42E4100748335 /* CPFace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFace.m; sourceTree = "<group>"; };
 		FC8BCA1718D42E4100748335 /* CPPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPhoto.h; sourceTree = "<group>"; };
 		FC8BCA1818D42E4100748335 /* CPPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhoto.m; sourceTree = "<group>"; };
+		FC8FDF9E19093F0900E42DE3 /* CPIAPViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPIAPViewManager.h; sourceTree = "<group>"; };
+		FC8FDF9F19093F0900E42DE3 /* CPIAPViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPIAPViewManager.m; sourceTree = "<group>"; };
+		FC8FDFA3190947F100E42DE3 /* CPIAPCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPIAPCell.h; sourceTree = "<group>"; };
+		FC8FDFA4190947F100E42DE3 /* CPIAPCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPIAPCell.m; sourceTree = "<group>"; };
 		FC92759B18F58CF700031FD0 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
+		FC9DACB91908043C004FFC54 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		FCA292E518FD64AB0029583E /* CPCoreDataTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCoreDataTestHelper.h; sourceTree = "<group>"; };
 		FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataTestHelper.m; sourceTree = "<group>"; };
 		FCA292E818FD664A0029583E /* CPFaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceTests.m; sourceTree = "<group>"; };
@@ -140,6 +148,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC9DACBA1908043C004FFC54 /* StoreKit.framework in Frameworks */,
 				FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */,
 				FC8BCA1018D424F000748335 /* CoreData.framework in Frameworks */,
 				FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */,
@@ -206,6 +215,7 @@
 				FCD844C318C761C3003BA834 /* CoreImage.framework */,
 				FC46713F18C2CAF600E472BF /* Foundation.framework */,
 				FC92759B18F58CF700031FD0 /* ImageIO.framework */,
+				FC9DACB91908043C004FFC54 /* StoreKit.framework */,
 				FC46714318C2CAF600E472BF /* UIKit.framework */,
 				FC46716118C2CAF600E472BF /* XCTest.framework */,
 			);
@@ -226,6 +236,8 @@
 				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
 				FC80A0C6190158D7003B278E /* CPHelpViewManager.h */,
 				FC80A0C7190158D7003B278E /* CPHelpViewManager.m */,
+				FC8FDF9E19093F0900E42DE3 /* CPIAPViewManager.h */,
+				FC8FDF9F19093F0900E42DE3 /* CPIAPViewManager.m */,
 				FCC2E59718F246EB00D7163F /* CPSettings.h */,
 				FCC2E59818F246EB00D7163F /* CPSettings.m */,
 				FCF8FE9418C2D016007FA358 /* CPSmileyViewController.h */,
@@ -300,10 +312,12 @@
 		FC61A46718DD9390009D9442 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
-				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 				FC61A46B18DD94A3009D9442 /* CPCollageCell.h */,
 				FC61A46C18DD94A3009D9442 /* CPCollageCell.m */,
+				FC8FDFA3190947F100E42DE3 /* CPIAPCell.h */,
+				FC8FDFA4190947F100E42DE3 /* CPIAPCell.m */,
+				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
+				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -414,6 +428,8 @@
 				FCC2E59918F246EB00D7163F /* CPSettings.m in Sources */,
 				FC46714C18C2CAF600E472BF /* main.m in Sources */,
 				FC80A0C8190158D7003B278E /* CPHelpViewManager.m in Sources */,
+				FC8FDFA5190947F100E42DE3 /* CPIAPCell.m in Sources */,
+				FC8FDFA019093F0900E42DE3 /* CPIAPViewManager.m in Sources */,
 				FC80EC6418C9F5D2008E83B6 /* CPCollageViewController.m in Sources */,
 				FC8BCA1318D4256900748335 /* SmileyCollage.xcdatamodeld in Sources */,
 				FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */,

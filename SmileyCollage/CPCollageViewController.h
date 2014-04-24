@@ -9,7 +9,7 @@
 @class CPCollageCell;
 @class CPFacesManager;
 
-@interface CPCollageViewController : UIViewController <UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface CPCollageViewController : UIViewController
 
 @property (weak, nonatomic) CPFacesManager *facesManager;
 
