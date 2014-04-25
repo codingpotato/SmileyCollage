@@ -10,24 +10,55 @@
 
 #import <StoreKit/StoreKit.h>
 
-#import "CPIAPCell.h"
+#import "CPSettings.h"
 #import "CPUtility.h"
 
-@interface CPIAPViewManager () <SKPaymentTransactionObserver, SKProductsRequestDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface CPMaskView : UIView
+
+@property (weak, nonatomic) NSObject *target;
+
+@property (nonatomic) SEL action;
+
+- (id)initWithTarget:(NSObject *)target action:(SEL)action;
+
+@end
+
+@implementation CPMaskView
+
+- (id)initWithTarget:(NSObject *)target action:(SEL)action {
+    self = [super init];
+    if (self) {
+        self.alpha = 0.8;
+        self.backgroundColor = [UIColor blackColor];
+        self.translatesAutoresizingMaskIntoConstraints = NO;
+        self.target = target;
+        self.action = action;
+    }
+    return self;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    // remove warning by add after delay parameter
+    // because ARC doesn't know if the returned id has a +1 retain count or not
+    // and therefore can't properly manage the memory of the returned object.
+    [self.target performSelector:self.action withObject:nil afterDelay:0];
+}
+
+@end
+
+@interface CPIAPViewManager () <SKPaymentTransactionObserver, SKProductsRequestDelegate, UITableViewDataSource>
+
+@property (weak, nonatomic) id<CPIAPViewManagerDelegate> delegate;
 
 @property (strong, nonatomic) UIView *view;
 
-@property (strong, nonatomic) UICollectionView *collectionView;
+@property (strong, nonatomic) UITableView *tableView;
 
-@property (strong, nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
-
-@property (weak, nonatomic) id<CPIAPViewManagerDelegate> delegate;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 
 @property (strong, nonatomic) NSArray *products;
 
 @property (strong, nonatomic) SKProductsRequest *productsRequest;
-
-@property (strong, nonatomic) UIRefreshControl *refreshControl;
 
 @end
 
@@ -41,12 +72,10 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
         self.delegate = delegate;
         [self loadViewInSuperview:superview];
         
+        [self.refreshControl beginRefreshing];
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
         self.productsRequest.delegate = self;
         [self.productsRequest start];
-        self.refreshControl = [[UIRefreshControl alloc] init];
-        [self.collectionView addSubview:self.refreshControl];
-        [self.refreshControl beginRefreshing];
     }
     return self;
 }
@@ -57,34 +86,18 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
 }
 
 - (void)loadViewInSuperview:(UIView *)superview {
-    self.view = [[UIView alloc] init];
-    self.view.translatesAutoresizingMaskIntoConstraints = NO;
     [superview addSubview:self.view];
     [superview addConstraints:[CPUtility constraintsWithView:self.view edgesAlignToView:superview]];
     
-    UIView *mask = [[UIView alloc] init];
-    mask.backgroundColor = [UIColor blackColor];
-    mask.alpha = 0.6;
-    mask.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:mask];
-    [self.view addConstraints:[CPUtility constraintsWithView:mask edgesAlignToView:self.view]];
+    CPMaskView *maskView = [[CPMaskView alloc] initWithTarget:self action:@selector(unloadView)];
+    [self.view addSubview:maskView];
+    [self.view addConstraints:[CPUtility constraintsWithView:maskView edgesAlignToView:self.view]];
     
-    [mask addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)]];
-    
-    self.collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:[[UICollectionViewFlowLayout alloc] init]];
-    self.collectionView.alwaysBounceVertical = YES;
-    self.collectionView.backgroundColor = [UIColor whiteColor];
-    self.collectionView.dataSource = self;
-    self.collectionView.delegate = self;
-    self.collectionView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.collectionView registerClass:[CPIAPCell class] forCellWithReuseIdentifier:g_collectionViewCellIdentifier];
-    [self.view addSubview:self.collectionView];
-    [self.view addConstraints:[CPUtility constraintsWithView:self.collectionView alignToView:self.view attributes:NSLayoutAttributeLeft, NSLayoutAttributeRight, NSLayoutAttributeBottom, NSLayoutAttributeNotAnAttribute]];
-    [self.collectionView addConstraint:[CPUtility constraintWithView:self.collectionView height:100.0]];
-}
+    [self.view addSubview:self.tableView];
+    [self.view addConstraints:[CPUtility constraintsWithView:self.tableView alignToView:self.view attributes:NSLayoutAttributeLeft, NSLayoutAttributeRight, NSLayoutAttributeBottom, NSLayoutAttributeNotAnAttribute]];
+    [self.tableView addConstraint:[CPUtility constraintWithView:self.tableView height:self.tableView.rowHeight]];
 
-- (void)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
-    [self unloadView];
+    [self.tableView addSubview:self.refreshControl];
 }
 
 - (void)buyButtonTapped:(id)sender {
@@ -95,62 +108,6 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
 
-#pragma mark - UICollectionViewDataSource implement
-
-- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return self.products.count;
-}
-
-- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CPIAPCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:g_collectionViewCellIdentifier forIndexPath:indexPath];
-    SKProduct * product = (SKProduct *)self.products[indexPath.row];
-    cell.text = product.localizedTitle;
-    
-    NSNumberFormatter *priceFormatter = [[NSNumberFormatter alloc] init];
-    priceFormatter.formatterBehavior = NSNumberFormatterBehavior10_4;
-    priceFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
-    priceFormatter.locale = product.priceLocale;
-     //cell.detailTextLabel.text = [_priceFormatter stringFromNumber:product.price];*/
-     
-     /*if ([[RageIAPHelper sharedInstance] productPurchased:product.productIdentifier]) {
-     cell.accessoryType = UITableViewCellAccessoryCheckmark;
-     cell.accessoryView = nil;
-     } else {*/
-    UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    buyButton.translatesAutoresizingMaskIntoConstraints = NO;
-    buyButton.frame = CGRectMake(0, 0, 72, 37);
-    [buyButton setTitle:[priceFormatter stringFromNumber:product.price] forState:UIControlStateNormal];
-    [buyButton sizeToFit];
-    buyButton.tag = indexPath.row;
-    [buyButton addTarget:self action:@selector(buyButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-    [cell.contentView addSubview:buyButton];
-    [cell.contentView addConstraint:[CPUtility constraintWithView:buyButton alignToView:cell.contentView attribute:NSLayoutAttributeCenterY]];
-    [cell.contentView addConstraint:[CPUtility constraintWithView:buyButton alignToView:cell.contentView attribute:NSLayoutAttributeRight constant:-8.0]];
-    //cell.accessoryType = UITableViewCellAccessoryNone;
-    //cell.accessoryView = buyButton;
-     //}
-
-    return cell;
-}
-
-#pragma mark - UICollectionViewDelegateFlowLayout implement
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    return CGSizeMake(self.collectionView.bounds.size.width, 100.0);
-}
-
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(0.0, 0.0, 0.0, 0.0);
-}
-
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 0.0;
-}
-
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    return 0.0;
-}
-
 #pragma mark - SKPaymentTransactionObserver implement
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
@@ -158,13 +115,15 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
         switch (transaction.transactionState) {
             case SKPaymentTransactionStatePurchased:
             case SKPaymentTransactionStateRestored:
-                //[_purchasedProductIdentifiers addObject:productIdentifier];
-                //[[NSUserDefaults standardUserDefaults] setBool:YES forKey:productIdentifier];
+                [CPSettings removeWatermark];
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
-            case SKPaymentTransactionStateFailed:
+            case SKPaymentTransactionStateFailed: {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Erroe" message:transaction.error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+                [alertView show];
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
+            }
             default:
                 break;
         }
@@ -176,14 +135,84 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
     self.products = response.products;
     [self.refreshControl endRefreshing];
-    [self.collectionView reloadData];
+    [self.tableView reloadData];
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Erroe" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    [alertView show];
     [self.refreshControl endRefreshing];
 }
 
+#pragma mark - UITableViewDataSource implement
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return self.products.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *CellIdentifier = @"CPIAPTableViewCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+    }
+    SKProduct *product = (SKProduct *)self.products[indexPath.row];
+    cell.textLabel.text = product.localizedTitle;
+    cell.detailTextLabel.text = product.localizedDescription;
+
+    if ([CPSettings isWatermarkRemoved]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        cell.accessoryView = nil;
+    } else {
+        UIButton *buyButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        buyButton.tag = indexPath.row;
+        buyButton.layer.borderColor = buyButton.tintColor.CGColor;
+        buyButton.layer.borderWidth = 1.0;
+        buyButton.layer.cornerRadius = 2.0;
+
+        NSNumberFormatter *priceFormatter = [[NSNumberFormatter alloc] init];
+        priceFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
+        priceFormatter.locale = product.priceLocale;
+        [buyButton setTitle:[priceFormatter stringFromNumber:product.price] forState:UIControlStateNormal];
+        [buyButton sizeToFit];
+        CGRect frame = buyButton.frame;
+        frame.size.width += 16.0;
+        buyButton.frame = frame;
+        [buyButton addTarget:self action:@selector(buyButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.accessoryView = buyButton;
+    }
+    return cell;
+}
+
 #pragma mark - lazy init
+
+- (UIView *)view {
+    if (!_view) {
+        _view = [[UIView alloc] init];
+        _view.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _view;
+}
+
+- (UITableView *)tableView {
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+        _tableView.dataSource = self;
+        _tableView.rowHeight = 60.0;
+        _tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+        _tableView.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _tableView;
+}
+
+- (UIRefreshControl *)refreshControl {
+    if (!_refreshControl) {
+        _refreshControl = [[UIRefreshControl alloc] init];
+    }
+    return _refreshControl;
+}
 
 - (SKProductsRequest *)productsRequest {
     if (!_productsRequest) {

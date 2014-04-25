@@ -41,7 +41,6 @@
 		FC8BCA1618D42E4100748335 /* CPFace.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1518D42E4100748335 /* CPFace.m */; };
 		FC8BCA1918D42E4100748335 /* CPPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8BCA1818D42E4100748335 /* CPPhoto.m */; };
 		FC8FDFA019093F0900E42DE3 /* CPIAPViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8FDF9F19093F0900E42DE3 /* CPIAPViewManager.m */; };
-		FC8FDFA5190947F100E42DE3 /* CPIAPCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC8FDFA4190947F100E42DE3 /* CPIAPCell.m */; };
 		FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC92759B18F58CF700031FD0 /* ImageIO.framework */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
 		FC9DACBA1908043C004FFC54 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9DACB91908043C004FFC54 /* StoreKit.framework */; };
@@ -123,8 +122,6 @@
 		FC8BCA1818D42E4100748335 /* CPPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPhoto.m; sourceTree = "<group>"; };
 		FC8FDF9E19093F0900E42DE3 /* CPIAPViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPIAPViewManager.h; sourceTree = "<group>"; };
 		FC8FDF9F19093F0900E42DE3 /* CPIAPViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPIAPViewManager.m; sourceTree = "<group>"; };
-		FC8FDFA3190947F100E42DE3 /* CPIAPCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPIAPCell.h; sourceTree = "<group>"; };
-		FC8FDFA4190947F100E42DE3 /* CPIAPCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPIAPCell.m; sourceTree = "<group>"; };
 		FC92759B18F58CF700031FD0 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
@@ -314,8 +311,6 @@
 			children = (
 				FC61A46B18DD94A3009D9442 /* CPCollageCell.h */,
 				FC61A46C18DD94A3009D9442 /* CPCollageCell.m */,
-				FC8FDFA3190947F100E42DE3 /* CPIAPCell.h */,
-				FC8FDFA4190947F100E42DE3 /* CPIAPCell.m */,
 				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
 				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 			);
@@ -428,7 +423,6 @@
 				FCC2E59918F246EB00D7163F /* CPSettings.m in Sources */,
 				FC46714C18C2CAF600E472BF /* main.m in Sources */,
 				FC80A0C8190158D7003B278E /* CPHelpViewManager.m in Sources */,
-				FC8FDFA5190947F100E42DE3 /* CPIAPCell.m in Sources */,
 				FC8FDFA019093F0900E42DE3 /* CPIAPViewManager.m in Sources */,
 				FC80EC6418C9F5D2008E83B6 /* CPCollageViewController.m in Sources */,
 				FC8BCA1318D4256900748335 /* SmileyCollage.xcdatamodeld in Sources */,
