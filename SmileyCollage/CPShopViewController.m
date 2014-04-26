@@ -1,17 +1,16 @@
 //
-//  CPIAPViewManager.m
+//  CPIAPViewController.m
 //  SmileyCollage
 //
-//  Created by wangyw on 4/24/14.
+//  Created by wangyw on 4/26/14.
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import "CPIAPViewManager.h"
+#import "CPShopViewController.h"
 
 #import <StoreKit/StoreKit.h>
 
 #import "CPSettings.h"
-#import "CPUtility.h"
 
 @interface CPMaskView : UIView
 
@@ -46,15 +45,13 @@
 
 @end
 
-@interface CPIAPViewManager () <SKPaymentTransactionObserver, SKProductsRequestDelegate, UITableViewDataSource>
+@interface CPShopViewController () <SKPaymentTransactionObserver, SKProductsRequestDelegate, UITableViewDataSource>
 
-@property (weak, nonatomic) id<CPIAPViewManagerDelegate> delegate;
+@property (weak, nonatomic) IBOutlet UIView *panelView;
 
-@property (strong, nonatomic) UIView *view;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
-@property (strong, nonatomic) UITableView *tableView;
-
-@property (strong, nonatomic) UIRefreshControl *refreshControl;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicatorView;
 
 @property (strong, nonatomic) NSArray *products;
 
@@ -62,48 +59,34 @@
 
 @end
 
-@implementation CPIAPViewManager
+@implementation CPShopViewController
 
-static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    self.tableView.layer.cornerRadius = 2.0;
+    [self.activityIndicatorView startAnimating];
 
-- (id)initWithSuperview:(UIView *)superview delegate:(id<CPIAPViewManagerDelegate>)delegate {
-    self = [super init];
-    if (self) {
-        self.delegate = delegate;
-        [self loadViewInSuperview:superview];
-        
-        [self.refreshControl beginRefreshing];
-        [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
-        self.productsRequest.delegate = self;
-        [self.productsRequest start];
-    }
-    return self;
+    [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
+    self.productsRequest.delegate = self;
+    [self.productsRequest start];
 }
 
-- (void)unloadView {
-    [self.view removeFromSuperview];
-    [self.delegate iapViewManagerUnloaded:self];
+- (BOOL)shouldAutorotate {
+    return NO;
 }
 
-- (void)loadViewInSuperview:(UIView *)superview {
-    [superview addSubview:self.view];
-    [superview addConstraints:[CPUtility constraintsWithView:self.view edgesAlignToView:superview]];
-    
-    CPMaskView *maskView = [[CPMaskView alloc] initWithTarget:self action:@selector(unloadView)];
-    [self.view addSubview:maskView];
-    [self.view addConstraints:[CPUtility constraintsWithView:maskView edgesAlignToView:self.view]];
-    
-    [self.view addSubview:self.tableView];
-    [self.view addConstraints:[CPUtility constraintsWithView:self.tableView alignToView:self.view attributes:NSLayoutAttributeLeft, NSLayoutAttributeRight, NSLayoutAttributeBottom, NSLayoutAttributeNotAnAttribute]];
-    [self.tableView addConstraint:[CPUtility constraintWithView:self.tableView height:self.tableView.rowHeight]];
-
-    [self.tableView addSubview:self.refreshControl];
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
 }
 
 - (void)buyButtonTapped:(id)sender {
-    UIButton *buyButton = (UIButton *)sender;
-    SKProduct *product = self.products[buyButton.tag];
+    NSUInteger index = ((UIButton *)sender).tag;
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    cell.accessoryView = self.activityIndicatorView;
+    [self.activityIndicatorView startAnimating];
     
+    SKProduct *product = self.products[index];
     SKPayment * payment = [SKPayment paymentWithProduct:product];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
@@ -114,12 +97,17 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
     for (SKPaymentTransaction * transaction in transactions) {
         switch (transaction.transactionState) {
             case SKPaymentTransactionStatePurchased:
-            case SKPaymentTransactionStateRestored:
+            case SKPaymentTransactionStateRestored: {
                 [CPSettings removeWatermark];
+                // TODO: need change row:0 in the future
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                cell.accessoryView = nil;
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
+            }
             case SKPaymentTransactionStateFailed: {
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Erroe" message:transaction.error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:transaction.error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
                 [alertView show];
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
@@ -133,15 +121,17 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
 #pragma mark - SKProductsRequestDelegate implement
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
+    [self.activityIndicatorView stopAnimating];
+    [self.activityIndicatorView removeFromSuperview];
     self.products = response.products;
-    [self.refreshControl endRefreshing];
     [self.tableView reloadData];
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Erroe" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    [self.activityIndicatorView stopAnimating];
+    [self.activityIndicatorView removeFromSuperview];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
     [alertView show];
-    [self.refreshControl endRefreshing];
 }
 
 #pragma mark - UITableViewDataSource implement
@@ -156,10 +146,11 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
+    
     SKProduct *product = (SKProduct *)self.products[indexPath.row];
     cell.textLabel.text = product.localizedTitle;
     cell.detailTextLabel.text = product.localizedDescription;
-
+    
     if ([CPSettings isWatermarkRemoved]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         cell.accessoryView = nil;
@@ -169,7 +160,7 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
         buyButton.layer.borderColor = buyButton.tintColor.CGColor;
         buyButton.layer.borderWidth = 1.0;
         buyButton.layer.cornerRadius = 2.0;
-
+        
         NSNumberFormatter *priceFormatter = [[NSNumberFormatter alloc] init];
         priceFormatter.numberStyle = NSNumberFormatterCurrencyStyle;
         priceFormatter.locale = product.priceLocale;
@@ -183,36 +174,11 @@ static NSString *g_collectionViewCellIdentifier = @"IAPCollectionViewCell";
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.accessoryView = buyButton;
     }
+
     return cell;
 }
 
 #pragma mark - lazy init
-
-- (UIView *)view {
-    if (!_view) {
-        _view = [[UIView alloc] init];
-        _view.translatesAutoresizingMaskIntoConstraints = NO;
-    }
-    return _view;
-}
-
-- (UITableView *)tableView {
-    if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
-        _tableView.dataSource = self;
-        _tableView.rowHeight = 60.0;
-        _tableView.separatorStyle = UITableViewCellSelectionStyleNone;
-        _tableView.translatesAutoresizingMaskIntoConstraints = NO;
-    }
-    return _tableView;
-}
-
-- (UIRefreshControl *)refreshControl {
-    if (!_refreshControl) {
-        _refreshControl = [[UIRefreshControl alloc] init];
-    }
-    return _refreshControl;
-}
 
 - (SKProductsRequest *)productsRequest {
     if (!_productsRequest) {

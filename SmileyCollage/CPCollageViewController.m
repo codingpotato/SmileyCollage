@@ -14,18 +14,16 @@
 #import "CPCollageCell.h"
 #import "CPEditViewController.h"
 #import "CPHelpViewManager.h"
-#import "CPIAPViewManager.h"
+#import "CPShopViewController.h"
 
 #import "CPFaceEditInformation.h"
 #import "CPFacesManager.h"
 #import "CPFace.h"
 #import "CPPhoto.h"
 
-@interface CPCollageViewController () <CPIAPViewManagerDelegate, UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface CPCollageViewController () <UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (strong, nonatomic) CPHelpViewManager *helpViewManager;
-
-@property (strong, nonatomic) CPIAPViewManager *iapViewManager;
 
 @property (strong, nonatomic) UIBarButtonItem *actionBarButtonItem;
 
@@ -50,6 +48,9 @@
 @end
 
 @implementation CPCollageViewController
+
+static NSString * g_editViewControllerSegueName = @"CPEditViewControllerSegue";
+static NSString * g_iapViewControllerSegueName = @"CPIAPViewControllerSegue";
 
 static NSUInteger g_numberOfColumnsInRows[] = {
     1, 11, 21, 22, 32, 222, 322, 332, 333, 442,
@@ -101,11 +102,16 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"CPEditViewControllerSegue"]) {
+    if ([segue.identifier isEqualToString:g_editViewControllerSegueName]) {
         NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.collagedFaces.count, @"");
         
         CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
         editViewController.faceEditInformation = [self.collagedFaces objectAtIndex:self.selectedIndex];
+    } else if ([segue.identifier isEqualToString:g_iapViewControllerSegueName]) {
+        CPShopViewController *iapViewController = (CPShopViewController *)segue.destinationViewController;
+
+        UIView *viewSnapshot = [self.view snapshotViewAfterScreenUpdates:NO];
+        [iapViewController.view insertSubview:viewSnapshot atIndex:0];
     }
 }
 
@@ -128,15 +134,14 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)shopBarButtonPressed:(id)sender {
-    /*[self dismissCurrentActionSheet];
-    self.isShopActionSheet = YES;
-    self.currentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Purchase Remove Watermark", @"Re-download purchased items", nil];
-    [self.currentActionSheet showFromBarButtonItem:sender animated:YES];*/
-    if (self.iapViewManager) {
+    [self performSegueWithIdentifier:g_iapViewControllerSegueName sender:nil];
+    /*if (self.iapViewManager) {
         [self.iapViewManager unloadView];
     } else {
+        CPNavigationBar *navigationBar = (CPNavigationBar *)self.navigationController.navigationBar;
+        [navigationBar setTouchTarget:self action:@selector(navigationBarTouched)];
         self.iapViewManager = [[CPIAPViewManager alloc] initWithSuperview:self.view delegate:self];
-    }
+    }*/
 }
 
 - (void)actionBarButtonPressed:(id)sender {
@@ -299,23 +304,27 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     self.sizeOfFaces = [sizeOfFaces copy];
 }
 
+- (CGSize)contentSizeOfCollectionView {
+    return CGSizeMake(self.collectionView.bounds.size.width, self.collectionView.bounds.size.height);
+}
+
 - (CGFloat)widthHeightRatioOfCollectionView {
-    return self.collectionView.bounds.size.width / self.collectionView.bounds.size.height;
+    return [self contentSizeOfCollectionView].width / [self contentSizeOfCollectionView].height;
 }
 
 - (NSUInteger)widthOfCollagedImage {
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
         return roundf(self.collectionView.bounds.size.width);
     } else {
-        return self.collectionView.bounds.size.height * self.widthHeightRatioOfImage;
+        return roundf([self contentSizeOfCollectionView].height * self.widthHeightRatioOfImage);
     }
 }
 
 - (NSUInteger)heightOfCollagedImage {
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        return roundf(self.collectionView.bounds.size.width / self.widthHeightRatioOfImage);
+        return roundf([self contentSizeOfCollectionView].width / self.widthHeightRatioOfImage);
     } else {
-        return roundf(self.collectionView.bounds.size.height);
+        return roundf([self contentSizeOfCollectionView].height);
     }
 }
 
@@ -330,10 +339,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (self.watermarkImageView) {
         CGRect frame = CGRectZero;
         if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-            NSUInteger inset = roundf((self.collectionView.bounds.size.height - [self heightOfCollagedImage]) / 2);
+            NSUInteger inset = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
             frame = [self.view convertRect:CGRectMake(0.0, inset, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
         } else {
-            NSUInteger inset = roundf((self.collectionView.bounds.size.width - [self widthOfCollagedImage]) / 2);
+            NSUInteger inset = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
             frame = [self.view convertRect:CGRectMake(inset, 0.0, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
         }
         CGFloat height = [self widthOfCollagedImage] / self.watermarkImage.size.width * self.watermarkImage.size.height;
@@ -355,12 +364,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         }
     }
     return YES;
-}
-
-#pragma mark - CPIAPViewManagerDelegate implement
-
-- (void)iapViewManagerUnloaded:(CPIAPViewManager *)iapViewManager {
-    self.iapViewManager = nil;
 }
 
 #pragma mark - UIActionSheetDelegate implement
@@ -452,12 +455,12 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        NSUInteger insetTop = roundf((collectionView.bounds.size.height - [self heightOfCollagedImage]) / 2);
-        NSUInteger insetBottom = self.collectionView.bounds.size.height - insetTop - [self heightOfCollagedImage];
+        NSUInteger insetTop = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
+        NSUInteger insetBottom = [self contentSizeOfCollectionView].height - insetTop - [self heightOfCollagedImage];
         return UIEdgeInsetsMake(insetTop, 0.0, insetBottom, 0.0);
     } else {
-        NSUInteger insetLeft = roundf((collectionView.bounds.size.width - [self widthOfCollagedImage]) / 2);
-        NSUInteger insetRight = self.collectionView.bounds.size.width - insetLeft - [self widthOfCollagedImage];
+        NSUInteger insetLeft = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
+        NSUInteger insetRight = [self contentSizeOfCollectionView].width - insetLeft - [self widthOfCollagedImage];
         return UIEdgeInsetsMake(0.0, insetLeft, 0.0, insetRight);
     }
 }
