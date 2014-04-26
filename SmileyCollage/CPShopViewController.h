@@ -8,4 +8,8 @@
 
 @interface CPShopViewController : UIViewController
 
+@property (weak, nonatomic) IBOutlet UIView *panelView;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *panelViewBottomLayoutConstraint;
+
 @end

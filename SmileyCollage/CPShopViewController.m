@@ -47,8 +47,6 @@
 
 @interface CPShopViewController () <SKPaymentTransactionObserver, SKProductsRequestDelegate, UITableViewDataSource>
 
-@property (weak, nonatomic) IBOutlet UIView *panelView;
-
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicatorView;
@@ -57,6 +55,8 @@
 
 @property (strong, nonatomic) SKProductsRequest *productsRequest;
 
+- (IBAction)doneBarButtonPressed:(id)sender;
+
 @end
 
 @implementation CPShopViewController
@@ -64,12 +64,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.navigationItem.hidesBackButton = YES;
     self.tableView.layer.cornerRadius = 2.0;
     [self.activityIndicatorView startAnimating];
 
     [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
     self.productsRequest.delegate = self;
     [self.productsRequest start];
+
+    [UIView animateWithDuration:5.0 animations:^{
+        self.panelViewBottomLayoutConstraint.constant = 0.0;
+    }];
 }
 
 - (BOOL)shouldAutorotate {
@@ -78,6 +83,10 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (IBAction)doneBarButtonPressed:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)buyButtonTapped:(id)sender {

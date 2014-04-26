@@ -107,11 +107,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         
         CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
         editViewController.faceEditInformation = [self.collagedFaces objectAtIndex:self.selectedIndex];
-    } else if ([segue.identifier isEqualToString:g_iapViewControllerSegueName]) {
-        CPShopViewController *iapViewController = (CPShopViewController *)segue.destinationViewController;
-
-        UIView *viewSnapshot = [self.view snapshotViewAfterScreenUpdates:NO];
-        [iapViewController.view insertSubview:viewSnapshot atIndex:0];
     }
 }
 
@@ -135,13 +130,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)shopBarButtonPressed:(id)sender {
     [self performSegueWithIdentifier:g_iapViewControllerSegueName sender:nil];
-    /*if (self.iapViewManager) {
-        [self.iapViewManager unloadView];
-    } else {
-        CPNavigationBar *navigationBar = (CPNavigationBar *)self.navigationController.navigationBar;
-        [navigationBar setTouchTarget:self action:@selector(navigationBarTouched)];
-        self.iapViewManager = [[CPIAPViewManager alloc] initWithSuperview:self.view delegate:self];
-    }*/
 }
 
 - (void)actionBarButtonPressed:(id)sender {

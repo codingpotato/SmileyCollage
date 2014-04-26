@@ -10,10 +10,12 @@
 
 #import "CPCollageViewController.h"
 #import "CPEditViewController.h"
+#import "CPShopViewController.h"
 #import "CPSmileyViewController.h"
 
 #import "CPCollageToEditTransition.h"
 #import "CPPortalTransition.h"
+#import "CPShopViewControllerTransition.h"
 
 @implementation CPTransitionManager
 
@@ -28,6 +30,10 @@
         return [[CPCollageToEditTransition alloc] initWithReverse:NO];
     } else if ([fromVC isMemberOfClass:[CPEditViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
         return [[CPCollageToEditTransition alloc] initWithReverse:YES];
+    } else if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPShopViewController class]]) {
+        return [[CPShopViewControllerTransition alloc] initWithReverse:NO];
+    } else if ([fromVC isMemberOfClass:[CPShopViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
+        return [[CPShopViewControllerTransition alloc] initWithReverse:YES];
     } else {
         return nil;
     }
