@@ -16,8 +16,6 @@
 
 @implementation CPReversableTransition
 
-static NSTimeInterval g_transitionDuration = 0.3;
-
 - (id)initWithReverse:(BOOL)reverse {
     self = [super init];
     if (self) {
@@ -27,7 +25,7 @@ static NSTimeInterval g_transitionDuration = 0.3;
 }
 
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext {
-    return g_transitionDuration;
+    return 0.3;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {

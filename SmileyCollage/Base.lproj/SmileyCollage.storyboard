@@ -251,20 +251,25 @@
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ral-gH-sis" userLabel="Panel View">
-                                <rect key="frame" x="0.0" y="392" width="320" height="112"/>
+                                <rect key="frame" x="0.0" y="504" width="320" height="164"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <view alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7SD-eW-rwZ" userLabel="Table View Mask">
+                                    <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7SD-eW-rwZ" userLabel="Table View Mask">
                                         <rect key="frame" x="9" y="8" width="303" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                     </view>
-                                    <view alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ed9-mL-wVH" userLabel="Button Mask">
+                                    <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ed9-mL-wVH" userLabel="Restore Button Mask">
                                         <rect key="frame" x="9" y="60" width="303" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                     </view>
-                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="cqj-jg-HWC">
+                                    <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z06-ME-1jX" userLabel="Cancel Button Mask">
+                                        <rect key="frame" x="9" y="112" width="303" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                    </view>
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="cqj-jg-HWC">
                                         <rect key="frame" x="9" y="8" width="303" height="44"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -303,13 +308,14 @@
                                             <outlet property="dataSource" destination="bWO-ZQ-Rov" id="H0r-VC-Vab"/>
                                         </connections>
                                     </tableView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sw7-Dv-7Dv">
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sw7-Dv-7Dv">
                                         <rect key="frame" x="9" y="60" width="303" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="44" id="cjE-8q-Euj"/>
                                         </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                         <state key="normal" title="Restore Purchased Items">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -317,51 +323,67 @@
                                             <action selector="restoreButtonPressed:" destination="bWO-ZQ-Rov" eventType="touchUpInside" id="IWR-lz-gj5"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rOa-H3-DJ8">
+                                        <rect key="frame" x="9" y="112" width="303" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
+                                        <state key="normal" title="Cancel">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="cancelBarButtonPressed:" destination="bWO-ZQ-Rov" eventType="touchUpInside" id="a64-zb-0zi"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="top" secondItem="ral-gH-sis" secondAttribute="top" constant="8" id="2Dh-rs-xhA"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="trailing" secondItem="Sw7-Dv-7Dv" secondAttribute="trailing" id="3X2-5G-nbz"/>
-                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="trailing" secondItem="Sw7-Dv-7Dv" secondAttribute="trailing" id="43i-mF-JLN"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="bottom" constant="8" symbolic="YES" id="4SC-km-cNo"/>
-                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="cqj-jg-HWC" secondAttribute="leading" id="9h0-pB-dbK"/>
-                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="leading" secondItem="cqj-jg-HWC" secondAttribute="leading" id="QEl-La-l2a"/>
-                                    <constraint firstAttribute="bottom" secondItem="Sw7-Dv-7Dv" secondAttribute="bottom" constant="8" id="QxY-Ek-IrR"/>
-                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="trailing" secondItem="cqj-jg-HWC" secondAttribute="trailing" id="RNc-6q-itt"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="leading" secondItem="Sw7-Dv-7Dv" secondAttribute="leading" id="Y8C-PI-hSS"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="bottom" secondItem="Sw7-Dv-7Dv" secondAttribute="bottom" id="ZLL-h7-EzR"/>
-                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="bottom" constant="8" symbolic="YES" id="bFt-kw-0FD"/>
-                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="top" id="c91-Wf-cP6"/>
-                                    <constraint firstAttribute="trailing" secondItem="cqj-jg-HWC" secondAttribute="trailing" constant="8" id="ca6-ti-kv9"/>
-                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="centerX" secondItem="ral-gH-sis" secondAttribute="centerX" id="heN-vG-eyb"/>
-                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="top" secondItem="7SD-eW-rwZ" secondAttribute="bottom" constant="8" symbolic="YES" id="iO9-9C-EG7"/>
-                                    <constraint firstAttribute="trailing" secondItem="cqj-jg-HWC" secondAttribute="trailing" constant="8" id="m6a-fG-BoZ"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="leading" secondItem="Sw7-Dv-7Dv" secondAttribute="leading" id="0Ci-CB-Sxl"/>
+                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="top" secondItem="7SD-eW-rwZ" secondAttribute="top" id="7sC-C1-3pv"/>
+                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="bottom" constant="8" symbolic="YES" id="960-jz-ADN"/>
+                                    <constraint firstAttribute="height" constant="164" id="AIu-PU-kUt"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="top" secondItem="7SD-eW-rwZ" secondAttribute="bottom" constant="8" symbolic="YES" id="D62-ZH-poU"/>
+                                    <constraint firstItem="z06-ME-1jX" firstAttribute="trailing" secondItem="rOa-H3-DJ8" secondAttribute="trailing" id="G4m-8P-LN0"/>
+                                    <constraint firstAttribute="bottom" secondItem="z06-ME-1jX" secondAttribute="bottom" constant="8" id="IGx-Uq-rHS"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="leading" secondItem="rOa-H3-DJ8" secondAttribute="leading" id="KK1-UZ-ThF"/>
+                                    <constraint firstItem="z06-ME-1jX" firstAttribute="bottom" secondItem="rOa-H3-DJ8" secondAttribute="bottom" id="Pz0-8j-7aZ"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="bottom" constant="8" symbolic="YES" id="SLr-2y-ENA"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="trailing" secondItem="Sw7-Dv-7Dv" secondAttribute="trailing" id="Wjo-xH-JHc"/>
+                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="centerX" secondItem="ral-gH-sis" secondAttribute="centerX" id="XEe-kq-Oci"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="trailing" secondItem="rOa-H3-DJ8" secondAttribute="trailing" id="ay4-do-3UN"/>
+                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="ral-gH-sis" secondAttribute="leading" constant="9" id="cxo-PK-bq5"/>
+                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="trailing" secondItem="7SD-eW-rwZ" secondAttribute="trailing" id="dcw-dS-dL2"/>
+                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="leading" secondItem="z06-ME-1jX" secondAttribute="leading" id="eO5-uo-n76"/>
+                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="top" secondItem="Ed9-mL-wVH" secondAttribute="bottom" constant="8" symbolic="YES" id="fm0-Y6-aBU"/>
+                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="Ed9-mL-wVH" secondAttribute="leading" id="izC-nH-JEo"/>
+                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="centerY" secondItem="ral-gH-sis" secondAttribute="centerY" id="jFg-mU-j1I"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="trailing" secondItem="7SD-eW-rwZ" secondAttribute="trailing" id="p2X-WN-LpL"/>
+                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="top" secondItem="Sw7-Dv-7Dv" secondAttribute="bottom" constant="8" symbolic="YES" id="qbv-AV-452"/>
+                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="cqj-jg-HWC" secondAttribute="leading" id="vpE-vo-kMS"/>
+                                    <constraint firstItem="z06-ME-1jX" firstAttribute="top" secondItem="Ed9-mL-wVH" secondAttribute="bottom" constant="8" symbolic="YES" id="ylJ-za-plZ"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="top" secondItem="gcP-9x-o5i" secondAttribute="top" id="87u-vj-N3N"/>
-                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="leading" secondItem="gcP-9x-o5i" secondAttribute="leading" id="I0B-VA-P1h"/>
-                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="bottom" secondItem="ral-gH-sis" secondAttribute="bottom" id="eoP-59-nQd"/>
-                            <constraint firstItem="ral-gH-sis" firstAttribute="trailing" secondItem="UUu-vY-Hrb" secondAttribute="trailing" id="ey1-LV-6Py"/>
-                            <constraint firstAttribute="bottom" secondItem="UUu-vY-Hrb" secondAttribute="bottom" id="i2h-oh-otK"/>
-                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="leading" secondItem="ral-gH-sis" secondAttribute="leading" id="ofD-i3-vJn"/>
-                            <constraint firstAttribute="trailing" secondItem="UUu-vY-Hrb" secondAttribute="trailing" id="xnd-D2-fjR"/>
+                            <constraint firstAttribute="trailing" secondItem="UUu-vY-Hrb" secondAttribute="trailing" id="IYB-WX-4eL"/>
+                            <constraint firstItem="ral-gH-sis" firstAttribute="leading" secondItem="UUu-vY-Hrb" secondAttribute="leading" id="WLa-fU-62I"/>
+                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="trailing" secondItem="ral-gH-sis" secondAttribute="trailing" id="Ygk-4e-TcD"/>
+                            <constraint firstItem="ral-gH-sis" firstAttribute="bottom" secondItem="UUu-vY-Hrb" secondAttribute="bottom" constant="164" id="ban-wF-tZY"/>
+                            <constraint firstAttribute="bottom" secondItem="UUu-vY-Hrb" secondAttribute="bottom" id="cGw-a1-rxv"/>
+                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="leading" secondItem="gcP-9x-o5i" secondAttribute="leading" id="dpI-UK-qqu"/>
+                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="top" secondItem="gcP-9x-o5i" secondAttribute="top" id="sc0-O9-AGM"/>
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" title="Shop" id="aez-4G-VzJ">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="VFs-1O-wIM">
-                            <connections>
-                                <action selector="doneBarButtonPressed:" destination="bWO-ZQ-Rov" id="BE1-3q-Xli"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Shop" id="aez-4G-VzJ"/>
                     <connections>
+                        <outlet property="cancelButton" destination="rOa-H3-DJ8" id="lBZ-wg-u1u"/>
+                        <outlet property="maskOfCancelButton" destination="z06-ME-1jX" id="xta-7b-YwE"/>
                         <outlet property="maskOfRestoreButton" destination="Ed9-mL-wVH" id="PYy-6Q-K6y"/>
                         <outlet property="maskOfTableView" destination="7SD-eW-rwZ" id="9B3-MR-Xlh"/>
                         <outlet property="panelView" destination="ral-gH-sis" id="7b8-0U-jRN"/>
+                        <outlet property="panelViewBottomLayoutConstraint" destination="ban-wF-tZY" id="ptm-tq-G89"/>
                         <outlet property="restoreButton" destination="Sw7-Dv-7Dv" id="B45-98-LRc"/>
                         <outlet property="tableView" destination="cqj-jg-HWC" id="E0b-Vp-Yj6"/>
                     </connections>

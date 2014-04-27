@@ -44,9 +44,13 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *restoreButton;
 
+@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+
 @property (weak, nonatomic) IBOutlet UIView *maskOfTableView;
 
 @property (weak, nonatomic) IBOutlet UIView *maskOfRestoreButton;
+
+@property (weak, nonatomic) IBOutlet UIView *maskOfCancelButton;
 
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView;
 
@@ -56,7 +60,7 @@
 
 @property (strong, nonatomic) UIButton *currentBuyButton;
 
-- (IBAction)doneBarButtonPressed:(id)sender;
+- (IBAction)cancelBarButtonPressed:(id)sender;
 
 - (IBAction)restoreButtonPressed:(id)sender;
 
@@ -68,16 +72,20 @@
     [super viewDidLoad];
     
     self.navigationItem.hidesBackButton = YES;
+    
+    static const CGFloat alpha = 0.92;
+    self.maskOfTableView.alpha = alpha;
+    self.maskOfRestoreButton.alpha = alpha;
+    self.maskOfCancelButton.alpha = alpha;
+    
     static const CGFloat cornerRadius = 3.0;
-    //self.tableView.layer.cornerRadius = cornerRadius;
-    // self.restoreButton.layer.cornerRadius = cornerRadius;
     self.maskOfTableView.layer.cornerRadius = cornerRadius;
     self.maskOfRestoreButton.layer.cornerRadius = cornerRadius;
+    self.maskOfCancelButton.layer.cornerRadius = cornerRadius;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [CPSettings purchaseRemoveWatermark];
     
     [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
 
@@ -108,7 +116,7 @@
     [super didReceiveMemoryWarning];
 }
 
-- (IBAction)doneBarButtonPressed:(id)sender {
+- (IBAction)cancelBarButtonPressed:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -155,6 +163,7 @@
 
 - (void)setButtonsEnable:(BOOL)enable {
     self.restoreButton.enabled = enable;
+    self.cancelButton.enabled = enable;
 
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if (cell) {
