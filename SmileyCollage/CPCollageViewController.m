@@ -260,9 +260,11 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         }
     }
     
-    CGFloat watermarkHeight = width / self.watermarkImage.size.width * self.watermarkImage.size.height;
-    CGRect watermarkFrame = CGRectMake(0.0, height - watermarkHeight, width, watermarkHeight);
-    [self.watermarkImage drawInRect:watermarkFrame blendMode:kCGBlendModeNormal alpha:1.0];
+    if (![CPSettings isWatermarkRemovePurchased]) {
+        CGFloat watermarkHeight = width / self.watermarkImage.size.width * self.watermarkImage.size.height;
+        CGRect watermarkFrame = CGRectMake(0.0, height - watermarkHeight, width, watermarkHeight);
+        [self.watermarkImage drawInRect:watermarkFrame blendMode:kCGBlendModeNormal alpha:1.0];
+    }
     
     UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
