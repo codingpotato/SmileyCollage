@@ -10,8 +10,6 @@
 
 @implementation CPSettings
 
-static NSString *g_isWatermarkRemoved = @"IsWatermarkRemoved";
-
 static NSString *g_isSmileyTapAcknowledged = @"IsSmileyTapAcknowledged";
 
 static NSString *g_isCollageTapAcknowledge = @"IsCollageTapAcknowledge";
@@ -23,11 +21,11 @@ static NSString *g_isEditDragAcknowledged = @"IsEditDragAcknowledged";
 static NSString *g_isEditZoomHelpAcknowledged = @"IsEditZoomHelpAcknowledged";
 
 + (void)registerDefaults {
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{g_isWatermarkRemoved: @(NO), g_isSmileyTapAcknowledged: @(NO), g_isCollageTapAcknowledge: @(NO), g_isCollageDragAcknowledged: @(NO), g_isEditDragAcknowledged: @(NO), g_isEditZoomHelpAcknowledged: @(NO)}];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{[self productNameRemoveWatermark]: @(NO), g_isSmileyTapAcknowledged: @(NO), g_isCollageTapAcknowledge: @(NO), g_isCollageDragAcknowledged: @(NO), g_isEditDragAcknowledged: @(NO), g_isEditZoomHelpAcknowledged: @(NO)}];
 }
 
 + (void)reset {
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isWatermarkRemoved];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self productNameRemoveWatermark]];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isSmileyTapAcknowledged];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isCollageTapAcknowledge];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isCollageDragAcknowledged];
@@ -35,12 +33,20 @@ static NSString *g_isEditZoomHelpAcknowledged = @"IsEditZoomHelpAcknowledged";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isEditZoomHelpAcknowledged];
 }
 
-+ (void)removeWatermark {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isWatermarkRemoved];
++ (NSSet *)productsIdentifiers {
+    return [[NSSet alloc] initWithObjects:[self productNameRemoveWatermark], nil];
 }
 
-+ (BOOL)isWatermarkRemoved {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isWatermarkRemoved];
++ (NSString *)productNameRemoveWatermark {
+    return @"codingpotato.SmileyCollage.RemoveWatermark";
+}
+
++ (void)purchaseRemoveWatermark {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[self productNameRemoveWatermark]];
+}
+
++ (BOOL)isWatermarkRemovePurchased {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:[self productNameRemoveWatermark]];
 }
 
 + (void)acknowledgeSmileyTapHelp {

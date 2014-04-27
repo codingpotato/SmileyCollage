@@ -11,51 +11,54 @@
 #import <StoreKit/StoreKit.h>
 
 #import "CPSettings.h"
+#import "CPUtility.h"
+
+@class CPMaskView;
+
+@protocol CPMaskViewDelegate <NSObject>
+
+- (void)maskViewTouched:(CPMaskView *)maskView;
+
+@end
 
 @interface CPMaskView : UIView
 
-@property (weak, nonatomic) NSObject *target;
-
-@property (nonatomic) SEL action;
-
-- (id)initWithTarget:(NSObject *)target action:(SEL)action;
+@property (weak, nonatomic) IBOutlet id<CPMaskViewDelegate> delegate;
 
 @end
 
 @implementation CPMaskView
 
-- (id)initWithTarget:(NSObject *)target action:(SEL)action {
-    self = [super init];
-    if (self) {
-        self.alpha = 0.8;
-        self.backgroundColor = [UIColor blackColor];
-        self.translatesAutoresizingMaskIntoConstraints = NO;
-        self.target = target;
-        self.action = action;
-    }
-    return self;
-}
-
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    // remove warning by add after delay parameter
-    // because ARC doesn't know if the returned id has a +1 retain count or not
-    // and therefore can't properly manage the memory of the returned object.
-    [self.target performSelector:self.action withObject:nil afterDelay:0];
+    [self.delegate maskViewTouched:self];
 }
 
 @end
 
-@interface CPShopViewController () <SKPaymentTransactionObserver, SKProductsRequestDelegate, UITableViewDataSource>
+/*
+ * only support one product "Remove Watermark" now
+ */
+@interface CPShopViewController () <CPMaskViewDelegate, SKPaymentTransactionObserver, SKProductsRequestDelegate, UIAlertViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
-@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicatorView;
+@property (weak, nonatomic) IBOutlet UIButton *restoreButton;
+
+@property (weak, nonatomic) IBOutlet UIView *maskOfTableView;
+
+@property (weak, nonatomic) IBOutlet UIView *maskOfRestoreButton;
+
+@property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView;
 
 @property (strong, nonatomic) NSArray *products;
 
 @property (strong, nonatomic) SKProductsRequest *productsRequest;
 
+@property (strong, nonatomic) UIButton *currentBuyButton;
+
 - (IBAction)doneBarButtonPressed:(id)sender;
+
+- (IBAction)restoreButtonPressed:(id)sender;
 
 @end
 
@@ -65,16 +68,36 @@
     [super viewDidLoad];
     
     self.navigationItem.hidesBackButton = YES;
-    self.tableView.layer.cornerRadius = 2.0;
-    [self.activityIndicatorView startAnimating];
+    static const CGFloat cornerRadius = 3.0;
+    //self.tableView.layer.cornerRadius = cornerRadius;
+    // self.restoreButton.layer.cornerRadius = cornerRadius;
+    self.maskOfTableView.layer.cornerRadius = cornerRadius;
+    self.maskOfRestoreButton.layer.cornerRadius = cornerRadius;
+}
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [CPSettings purchaseRemoveWatermark];
+    
     [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
+
+    self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[CPSettings productsIdentifiers]];
     self.productsRequest.delegate = self;
     [self.productsRequest start];
 
-    [UIView animateWithDuration:5.0 animations:^{
-        self.panelViewBottomLayoutConstraint.constant = 0.0;
-    }];
+    [self showActivityIndicatorViewOnView:self.tableView];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    if (self.productsRequest) {
+        [self.productsRequest cancel];
+        self.productsRequest.delegate = nil;
+        self.productsRequest = nil;
+    }
+    
+    [[SKPaymentQueue defaultQueue] removeTransactionObserver:self];
+    
+    [self hideActivityIndicatorView];
 }
 
 - (BOOL)shouldAutorotate {
@@ -89,36 +112,100 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)buyButtonTapped:(id)sender {
-    NSUInteger index = ((UIButton *)sender).tag;
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
-    cell.accessoryView = self.activityIndicatorView;
-    [self.activityIndicatorView startAnimating];
+- (IBAction)restoreButtonPressed:(id)sender {
+    [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+    
+    [self showActivityIndicatorViewOnView:self.restoreButton];
+}
+
+- (void)buyButtonPressed:(id)sender {
+    self.currentBuyButton = sender;
+    NSUInteger index = self.currentBuyButton.tag;
+    NSAssert(index < self.products.count, @"");
     
     SKProduct *product = self.products[index];
-    SKPayment * payment = [SKPayment paymentWithProduct:product];
+    SKPayment *payment = [SKPayment paymentWithProduct:product];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
+
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    NSAssert(cell, @"");
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    cell.accessoryView = activityIndicatorView;
+    [activityIndicatorView startAnimating];
+    
+    [self setButtonsEnable:NO];
+}
+
+- (void)showActivityIndicatorViewOnView:(UIView *)view {
+    [self setButtonsEnable:NO];
+    
+    self.activityIndicatorView.center = view.center;
+    [self.panelView addSubview:self.activityIndicatorView];
+    [self.activityIndicatorView startAnimating];
+}
+
+- (void)hideActivityIndicatorView {
+    [self setButtonsEnable:YES];
+    
+    if (self.activityIndicatorView.isAnimating) {
+        [self.activityIndicatorView stopAnimating];
+        [self.activityIndicatorView removeFromSuperview];
+    }
+}
+
+- (void)setButtonsEnable:(BOOL)enable {
+    self.restoreButton.enabled = enable;
+
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    if (cell) {
+        UIView *view = cell.accessoryView;
+        if ([view isMemberOfClass:[UIButton class]]) {
+            ((UIButton *)view).enabled = enable;
+        }
+    }
+}
+
+#pragma mark - CPMaskViewDelegate implement
+
+- (void)maskViewTouched:(CPMaskView *)maskView {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - SKPaymentTransactionObserver implement
 
 - (void)paymentQueue:(SKPaymentQueue *)queue updatedTransactions:(NSArray *)transactions {
-    for (SKPaymentTransaction * transaction in transactions) {
+    for (SKPaymentTransaction *transaction in transactions) {
         switch (transaction.transactionState) {
             case SKPaymentTransactionStatePurchased:
             case SKPaymentTransactionStateRestored: {
-                [CPSettings removeWatermark];
-                // TODO: need change row:0 in the future
-                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-                cell.accessoryType = UITableViewCellAccessoryCheckmark;
-                cell.accessoryView = nil;
-                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                if ([transaction.payment.productIdentifier isEqualToString:[CPSettings productNameRemoveWatermark]]) {
+                    [CPSettings purchaseRemoveWatermark];
+                    
+                    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+                    cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                    cell.accessoryView = nil;
+                    
+                    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                    
+                    [self hideActivityIndicatorView];
+                }
                 break;
             }
             case SKPaymentTransactionStateFailed: {
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:transaction.error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
-                [alertView show];
-                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                if ([transaction.payment.productIdentifier isEqualToString:[CPSettings productNameRemoveWatermark]]) {
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Issue" message:transaction.error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+                    [alertView show];
+                    
+                    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+                    cell.accessoryType = UITableViewCellAccessoryNone;
+                    NSAssert(self.currentBuyButton, @"");
+                    cell.accessoryView = self.currentBuyButton;
+                    self.currentBuyButton = nil;
+                    
+                    [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                    
+                    [self hideActivityIndicatorView];
+                }
                 break;
             }
             default:
@@ -130,17 +217,26 @@
 #pragma mark - SKProductsRequestDelegate implement
 
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response {
-    [self.activityIndicatorView stopAnimating];
-    [self.activityIndicatorView removeFromSuperview];
     self.products = response.products;
     [self.tableView reloadData];
+    
+    self.productsRequest.delegate = nil;
+    self.productsRequest = nil;
+    
+    [self hideActivityIndicatorView];
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
-    [self.activityIndicatorView stopAnimating];
-    [self.activityIndicatorView removeFromSuperview];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Issue" message:error.localizedDescription delegate:self cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
     [alertView show];
+    
+    [self hideActivityIndicatorView];
+}
+
+#pragma mark - UIAlertViewDelegate implement
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - UITableViewDataSource implement
@@ -156,11 +252,14 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
     
+    NSAssert(self.products, @"");
+    NSAssert(indexPath.row >= 0 && indexPath.row < self.products.count, @"");
+    
     SKProduct *product = (SKProduct *)self.products[indexPath.row];
     cell.textLabel.text = product.localizedTitle;
     cell.detailTextLabel.text = product.localizedDescription;
     
-    if ([CPSettings isWatermarkRemoved]) {
+    if ([CPSettings isWatermarkRemovePurchased]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         cell.accessoryView = nil;
     } else {
@@ -178,23 +277,21 @@
         CGRect frame = buyButton.frame;
         frame.size.width += 16.0;
         buyButton.frame = frame;
-        [buyButton addTarget:self action:@selector(buyButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+        [buyButton addTarget:self action:@selector(buyButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
         
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.accessoryView = buyButton;
     }
-
     return cell;
 }
 
 #pragma mark - lazy init
 
-- (SKProductsRequest *)productsRequest {
-    if (!_productsRequest) {
-        NSSet *productIdentifiers = [[NSSet alloc] initWithObjects: @"codingpotato.SmileyCollage.RemoveWatermark", nil];
-        _productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:productIdentifiers];
+- (UIActivityIndicatorView *)activityIndicatorView {
+    if (!_activityIndicatorView) {
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     }
-    return _productsRequest;
+    return _activityIndicatorView;
 }
 
 @end

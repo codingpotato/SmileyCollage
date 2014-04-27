@@ -12,9 +12,13 @@
 
 + (void)reset;
 
-+ (void)removeWatermark;
++ (NSSet *)productsIdentifiers;
 
-+ (BOOL)isWatermarkRemoved;
++ (NSString *)productNameRemoveWatermark;
+
++ (void)purchaseRemoveWatermark;
+
++ (BOOL)isWatermarkRemovePurchased;
 
 + (void)acknowledgeSmileyTapHelp;
 

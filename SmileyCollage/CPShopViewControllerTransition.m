@@ -40,7 +40,7 @@
     UIView *containerView = [transitionContext containerView];
     CGRect finalFrame  = [transitionContext finalFrameForViewController:toViewController];
 
-    shopViewController.panelViewBottomLayoutConstraint.constant = 0.0;
+    shopViewController.panelViewBottomLayoutConstraint.constant = -shopViewController.panelView.bounds.size.height;
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
         [shopViewController.view layoutIfNeeded];
     } completion:^(BOOL finished) {

@@ -66,6 +66,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
+    
     self.selectedIndex = -1;
     UIBarButtonItem *shop = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
     self.actionBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
@@ -74,7 +76,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     [self calculateImageWidthHeightRatio];
     
-    if (![CPSettings isWatermarkRemoved]) {
+    if (![CPSettings isWatermarkRemovePurchased]) {
         [self showWatermarkImageView];
     }
     
@@ -83,6 +85,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    
     self.helpViewManager = nil;
     [self dismissCurrentActionSheet];
 }
@@ -92,9 +95,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     [self calculateSizeOfFaces];
     [self.collectionView.collectionViewLayout invalidateLayout];
-    if (![CPSettings isWatermarkRemoved]) {
+    if (![CPSettings isWatermarkRemovePurchased]) {
         [self alignWatermarkImageView];
     }
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -142,6 +149,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (self.currentActionSheet) {
         [self.currentActionSheet dismissWithClickedButtonIndex:-1 animated:NO];
         self.currentActionSheet = nil;
+    }
+}
+
+- (void)userDefaultsChanged:(NSNotification *)notification {
+    if ([CPSettings isWatermarkRemovePurchased] && self.watermarkImageView) {
+        [self.watermarkImageView removeFromSuperview];
+        self.watermarkImageView = nil;
     }
 }
 
@@ -357,37 +371,26 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - UIActionSheetDelegate implement
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    /*if (self.isShopActionSheet) {
-        switch (buttonIndex) {
-            case 0:
-                // Purchase Remove Watermark
-                [CPSettings removeWatermark];
-                break;
-            default:
-                break;
+    switch (buttonIndex) {
+        case 0: {
+            // Save
+            NSAssert(self.facesManager, @"");
+            NSAssert(self.collagedFaces, @"");
+            [self.facesManager saveStitchedImage:[self collagedImage]];
+            break;
         }
-    } else {*/
-        switch (buttonIndex) {
-            case 0: {
-                // Save
-                NSAssert(self.facesManager, @"");
-                NSAssert(self.collagedFaces, @"");
-                [self.facesManager saveStitchedImage:[self collagedImage]];
-                break;
-            }
-            case 1: {
-                // share
-                NSString *sharedText = @"Shared from Smiley app";
-                NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
-                UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
-                activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll];
-                [self presentViewController:activityViewController animated:YES completion:nil];
-                break;
-            }
-            default:
-                break;
+        case 1: {
+            // share
+            NSString *sharedText = @"Shared from Smiley app";
+            NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
+            UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
+            activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll];
+            [self presentViewController:activityViewController animated:YES completion:nil];
+            break;
         }
-    //}
+        default:
+            break;
+    }
 }
 
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
