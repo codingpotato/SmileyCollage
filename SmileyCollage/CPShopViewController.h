@@ -10,6 +10,10 @@
 
 @property (weak, nonatomic) IBOutlet UIView *panelView;
 
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *panelViewBottomLayoutConstraint;
+@property (weak, nonatomic) IBOutlet UIView *maskOfTableView;
+
+@property (weak, nonatomic) IBOutlet UIView *maskOfRestoreButton;
+
+@property (weak, nonatomic) IBOutlet UIView *maskOfCancelButton;
 
 @end

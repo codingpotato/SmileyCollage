@@ -46,12 +46,6 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 
-@property (weak, nonatomic) IBOutlet UIView *maskOfTableView;
-
-@property (weak, nonatomic) IBOutlet UIView *maskOfRestoreButton;
-
-@property (weak, nonatomic) IBOutlet UIView *maskOfCancelButton;
-
 @property (strong, nonatomic) UIActivityIndicatorView *activityIndicatorView;
 
 @property (strong, nonatomic) NSArray *products;
@@ -73,7 +67,7 @@
     
     self.navigationItem.hidesBackButton = YES;
     
-    static const CGFloat alpha = 0.92;
+    static const CGFloat alpha = 0.6;
     self.maskOfTableView.alpha = alpha;
     self.maskOfRestoreButton.alpha = alpha;
     self.maskOfCancelButton.alpha = alpha;
@@ -147,7 +141,7 @@
 - (void)showActivityIndicatorViewOnView:(UIView *)view {
     [self setButtonsEnable:NO];
     
-    self.activityIndicatorView.center = view.center;
+    self.activityIndicatorView.center = [self.panelView convertPoint:view.center fromView:view.superview];
     [self.panelView addSubview:self.activityIndicatorView];
     [self.activityIndicatorView startAnimating];
 }

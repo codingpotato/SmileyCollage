@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC11BBFA190E8C9000C2D7CF /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC11BBF9190E8C9000C2D7CF /* Accelerate.framework */; };
 		FC1A3A3618DB2875004E4C38 /* CPCollageViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */; };
 		FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287418CC6A960050AD08 /* CPTransitionManager.m */; };
 		FC2B287818CC6C300050AD08 /* CPCollageToEditTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287718CC6C300050AD08 /* CPCollageToEditTransition.m */; };
@@ -70,6 +71,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FC11BBF9190E8C9000C2D7CF /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageViewControllerTests.m; sourceTree = "<group>"; };
 		FC2B287318CC6A960050AD08 /* CPTransitionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTransitionManager.h; sourceTree = "<group>"; };
 		FC2B287418CC6A960050AD08 /* CPTransitionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTransitionManager.m; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC11BBFA190E8C9000C2D7CF /* Accelerate.framework in Frameworks */,
 				FC9DACBA1908043C004FFC54 /* StoreKit.framework in Frameworks */,
 				FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */,
 				FC8BCA1018D424F000748335 /* CoreData.framework in Frameworks */,
@@ -214,6 +217,7 @@
 		FC46713E18C2CAF600E472BF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FC11BBF9190E8C9000C2D7CF /* Accelerate.framework */,
 				FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */,
 				FC8BCA0F18D424F000748335 /* CoreData.framework */,
 				FC46714118C2CAF600E472BF /* CoreGraphics.framework */,

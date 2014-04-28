@@ -25,4 +25,6 @@
 + (NSLayoutConstraint *)constraintWithView:(id)view width:(CGFloat)width;
 + (NSLayoutConstraint *)constraintWithView:(id)view height:(CGFloat)height;
 
++ (UIImage *)bluredSnapshotForView:(UIView *)view  inRect:(CGRect)rect;
+
 @end

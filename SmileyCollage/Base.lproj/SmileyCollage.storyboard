@@ -242,40 +242,22 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UUu-vY-Hrb" customClass="CPMaskView">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                <connections>
-                                    <outlet property="delegate" destination="bWO-ZQ-Rov" id="cLL-I6-ZlX"/>
-                                </connections>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ral-gH-sis" userLabel="Panel View">
-                                <rect key="frame" x="0.0" y="504" width="320" height="164"/>
+                                <rect key="frame" x="0.0" y="340" width="320" height="164"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7SD-eW-rwZ" userLabel="Table View Mask">
                                         <rect key="frame" x="9" y="8" width="302" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ed9-mL-wVH" userLabel="Restore Button Mask">
-                                        <rect key="frame" x="9" y="60" width="302" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z06-ME-1jX" userLabel="Cancel Button Mask">
-                                        <rect key="frame" x="9" y="112" width="302" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="mlz-aa-WWf"/>
+                                        </constraints>
                                     </view>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="cqj-jg-HWC">
                                         <rect key="frame" x="9" y="8" width="302" height="44"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="Rnf-tC-Dom"/>
-                                        </constraints>
                                         <prototypes>
                                             <tableViewCell contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CPIAPTableViewCell" textLabel="1IB-dB-TlQ" detailTextLabel="CcR-QH-csy" style="IBUITableViewCellStyleSubtitle" id="B0r-6E-Whj">
                                                 <rect key="frame" x="0.0" y="22" width="302" height="44"/>
@@ -308,13 +290,18 @@
                                             <outlet property="dataSource" destination="bWO-ZQ-Rov" id="H0r-VC-Vab"/>
                                         </connections>
                                     </tableView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ed9-mL-wVH" userLabel="Restore Button Mask">
+                                        <rect key="frame" x="9" y="60" width="302" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="ial-Eg-wgL"/>
+                                        </constraints>
+                                    </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sw7-Dv-7Dv">
                                         <rect key="frame" x="9" y="60" width="302" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="44" id="cjE-8q-Euj"/>
-                                        </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                         <state key="normal" title="Restore Purchased Items">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -323,6 +310,11 @@
                                             <action selector="restoreButtonPressed:" destination="bWO-ZQ-Rov" eventType="touchUpInside" id="IWR-lz-gj5"/>
                                         </connections>
                                     </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z06-ME-1jX" userLabel="Cancel Button Mask">
+                                        <rect key="frame" x="9" y="112" width="302" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                    </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rOa-H3-DJ8">
                                         <rect key="frame" x="9" y="112" width="302" height="44"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -338,41 +330,37 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="leading" secondItem="Sw7-Dv-7Dv" secondAttribute="leading" id="0Ci-CB-Sxl"/>
-                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="top" secondItem="7SD-eW-rwZ" secondAttribute="top" id="7sC-C1-3pv"/>
-                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="bottom" constant="8" symbolic="YES" id="960-jz-ADN"/>
-                                    <constraint firstAttribute="height" constant="164" id="AIu-PU-kUt"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="top" secondItem="7SD-eW-rwZ" secondAttribute="bottom" constant="8" symbolic="YES" id="D62-ZH-poU"/>
-                                    <constraint firstItem="z06-ME-1jX" firstAttribute="trailing" secondItem="rOa-H3-DJ8" secondAttribute="trailing" id="G4m-8P-LN0"/>
-                                    <constraint firstAttribute="bottom" secondItem="z06-ME-1jX" secondAttribute="bottom" constant="8" id="IGx-Uq-rHS"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="leading" secondItem="rOa-H3-DJ8" secondAttribute="leading" id="KK1-UZ-ThF"/>
-                                    <constraint firstItem="z06-ME-1jX" firstAttribute="bottom" secondItem="rOa-H3-DJ8" secondAttribute="bottom" id="Pz0-8j-7aZ"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="bottom" constant="8" symbolic="YES" id="SLr-2y-ENA"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="trailing" secondItem="Sw7-Dv-7Dv" secondAttribute="trailing" id="Wjo-xH-JHc"/>
-                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="centerX" secondItem="ral-gH-sis" secondAttribute="centerX" id="XEe-kq-Oci"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="trailing" secondItem="rOa-H3-DJ8" secondAttribute="trailing" id="ay4-do-3UN"/>
-                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="ral-gH-sis" secondAttribute="leading" constant="9" id="cxo-PK-bq5"/>
-                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="trailing" secondItem="7SD-eW-rwZ" secondAttribute="trailing" id="dcw-dS-dL2"/>
-                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="leading" secondItem="z06-ME-1jX" secondAttribute="leading" id="eO5-uo-n76"/>
-                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="top" secondItem="Ed9-mL-wVH" secondAttribute="bottom" constant="8" symbolic="YES" id="fm0-Y6-aBU"/>
-                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="Ed9-mL-wVH" secondAttribute="leading" id="izC-nH-JEo"/>
-                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="centerY" secondItem="ral-gH-sis" secondAttribute="centerY" id="jFg-mU-j1I"/>
-                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="trailing" secondItem="7SD-eW-rwZ" secondAttribute="trailing" id="p2X-WN-LpL"/>
-                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="top" secondItem="Sw7-Dv-7Dv" secondAttribute="bottom" constant="8" symbolic="YES" id="qbv-AV-452"/>
-                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="cqj-jg-HWC" secondAttribute="leading" id="vpE-vo-kMS"/>
-                                    <constraint firstItem="z06-ME-1jX" firstAttribute="top" secondItem="Ed9-mL-wVH" secondAttribute="bottom" constant="8" symbolic="YES" id="ylJ-za-plZ"/>
+                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="bottom" secondItem="z06-ME-1jX" secondAttribute="bottom" id="0rV-Ob-iux"/>
+                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="Sw7-Dv-7Dv" secondAttribute="leading" id="1HW-86-KLS"/>
+                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="leading" secondItem="cqj-jg-HWC" secondAttribute="leading" id="4LR-yr-oIy"/>
+                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="centerY" secondItem="ral-gH-sis" secondAttribute="centerY" id="5QF-k5-L6t"/>
+                                    <constraint firstItem="Sw7-Dv-7Dv" firstAttribute="top" secondItem="7SD-eW-rwZ" secondAttribute="bottom" constant="8" symbolic="YES" id="5wy-hO-F5E"/>
+                                    <constraint firstAttribute="height" constant="164" id="7o5-hq-ooI"/>
+                                    <constraint firstAttribute="bottom" secondItem="z06-ME-1jX" secondAttribute="bottom" constant="8" id="F7T-z6-k0c"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="trailing" secondItem="Sw7-Dv-7Dv" secondAttribute="trailing" id="LAa-hT-BLa"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="bottom" constant="8" symbolic="YES" id="LNE-32-7LC"/>
+                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="centerX" secondItem="ral-gH-sis" secondAttribute="centerX" id="NCq-Be-G2M"/>
+                                    <constraint firstItem="z06-ME-1jX" firstAttribute="leading" secondItem="Ed9-mL-wVH" secondAttribute="leading" id="RiA-9K-WfD"/>
+                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="trailing" secondItem="Sw7-Dv-7Dv" secondAttribute="trailing" id="Rvg-r8-sGi"/>
+                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="top" secondItem="Ed9-mL-wVH" secondAttribute="bottom" constant="8" symbolic="YES" id="RxC-9M-AWY"/>
+                                    <constraint firstItem="z06-ME-1jX" firstAttribute="top" secondItem="Ed9-mL-wVH" secondAttribute="bottom" constant="8" symbolic="YES" id="SiW-lO-7bc"/>
+                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="leading" secondItem="ral-gH-sis" secondAttribute="leading" constant="9" id="aQF-HW-GDU"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="leading" secondItem="Sw7-Dv-7Dv" secondAttribute="leading" id="b7b-SR-FhR"/>
+                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="trailing" secondItem="z06-ME-1jX" secondAttribute="trailing" id="dAy-A4-T2A"/>
+                                    <constraint firstItem="rOa-H3-DJ8" firstAttribute="leading" secondItem="z06-ME-1jX" secondAttribute="leading" id="go2-Gc-lBO"/>
+                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="trailing" secondItem="Sw7-Dv-7Dv" secondAttribute="trailing" id="hCZ-s7-TgG"/>
+                                    <constraint firstItem="7SD-eW-rwZ" firstAttribute="top" secondItem="cqj-jg-HWC" secondAttribute="top" id="kR9-BM-xX2"/>
+                                    <constraint firstItem="z06-ME-1jX" firstAttribute="top" secondItem="Sw7-Dv-7Dv" secondAttribute="bottom" constant="8" symbolic="YES" id="m7e-1t-hnB"/>
+                                    <constraint firstItem="Ed9-mL-wVH" firstAttribute="top" secondItem="7SD-eW-rwZ" secondAttribute="bottom" constant="8" symbolic="YES" id="pfr-Jh-cs8"/>
+                                    <constraint firstItem="cqj-jg-HWC" firstAttribute="trailing" secondItem="7SD-eW-rwZ" secondAttribute="trailing" id="usw-w6-ugp"/>
                                 </constraints>
                             </view>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="UUu-vY-Hrb" secondAttribute="trailing" id="IYB-WX-4eL"/>
-                            <constraint firstItem="ral-gH-sis" firstAttribute="leading" secondItem="UUu-vY-Hrb" secondAttribute="leading" id="WLa-fU-62I"/>
-                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="trailing" secondItem="ral-gH-sis" secondAttribute="trailing" id="Ygk-4e-TcD"/>
-                            <constraint firstItem="ral-gH-sis" firstAttribute="bottom" secondItem="UUu-vY-Hrb" secondAttribute="bottom" constant="164" id="ban-wF-tZY"/>
-                            <constraint firstAttribute="bottom" secondItem="UUu-vY-Hrb" secondAttribute="bottom" id="cGw-a1-rxv"/>
-                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="leading" secondItem="gcP-9x-o5i" secondAttribute="leading" id="dpI-UK-qqu"/>
-                            <constraint firstItem="UUu-vY-Hrb" firstAttribute="top" secondItem="gcP-9x-o5i" secondAttribute="top" id="sc0-O9-AGM"/>
+                            <constraint firstAttribute="bottom" secondItem="ral-gH-sis" secondAttribute="bottom" id="0Io-VD-TlX"/>
+                            <constraint firstItem="ral-gH-sis" firstAttribute="leading" secondItem="gcP-9x-o5i" secondAttribute="leading" id="8Cg-Ad-LH3"/>
+                            <constraint firstAttribute="trailing" secondItem="ral-gH-sis" secondAttribute="trailing" id="ux3-oH-Nwa"/>
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
@@ -383,7 +371,6 @@
                         <outlet property="maskOfRestoreButton" destination="Ed9-mL-wVH" id="PYy-6Q-K6y"/>
                         <outlet property="maskOfTableView" destination="7SD-eW-rwZ" id="9B3-MR-Xlh"/>
                         <outlet property="panelView" destination="ral-gH-sis" id="7b8-0U-jRN"/>
-                        <outlet property="panelViewBottomLayoutConstraint" destination="ban-wF-tZY" id="ptm-tq-G89"/>
                         <outlet property="restoreButton" destination="Sw7-Dv-7Dv" id="B45-98-LRc"/>
                         <outlet property="tableView" destination="cqj-jg-HWC" id="E0b-Vp-Yj6"/>
                     </connections>
