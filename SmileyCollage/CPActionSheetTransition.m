@@ -17,7 +17,6 @@ static const CGFloat g_cornerRadius = 3.0;
 
 static const NSInteger g_snapshotViewTag = 100;
 static const NSInteger g_maskViewTag = 200;
-static const NSInteger g_firstGlassViewTag = 300;
 
 - (void)animateForwardTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
@@ -62,26 +61,24 @@ static const NSInteger g_firstGlassViewTag = 300;
     // remove fromViewController
     [fromViewController.view removeFromSuperview];
     
+    // add glass effect for glass views
+    for (UIView *glassView in glassViews) {
+        UIView *panelView = [[UIView alloc] init];
+        panelView.clipsToBounds = YES;
+        panelView.layer.cornerRadius = g_cornerRadius;
+        panelView.frame = [toViewController.view convertRect:glassView.bounds fromView:glassView];
+        [toViewController.view insertSubview:panelView atIndex:0];
+        
+        UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:bluredImage];
+        bluredImageView.center = [glassView convertPoint:CGPointMake(rectOfGlassViews.origin.x + rectOfGlassViews.size.width / 2, rectOfGlassViews.origin.y + rectOfGlassViews.size.height / 2) fromView:toViewController.view];
+        [panelView addSubview:bluredImageView];
+    }
+    
     toViewController.view.transform = CGAffineTransformMakeTranslation(0.0, rectOfGlassViews.size.height);
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
         maskView.alpha = 0.2;
         toViewController.view.transform = CGAffineTransformMakeTranslation(0.0, 0.0);
     } completion:^(BOOL finished) {
-        // add glass effect for glass views
-        NSInteger tag = g_firstGlassViewTag;
-        for (UIView *glassView in glassViews) {
-            UIView *panelView = [[UIView alloc] init];
-            panelView.clipsToBounds = YES;
-            panelView.layer.cornerRadius = g_cornerRadius;
-            panelView.frame = [containerView convertRect:glassView.bounds fromView:glassView];
-            panelView.tag = tag;
-            [containerView insertSubview:panelView aboveSubview:snapshotView];
-            
-            UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:bluredImage];
-            bluredImageView.center = [glassView convertPoint:CGPointMake(rectOfGlassViews.origin.x + rectOfGlassViews.size.width / 2, rectOfGlassViews.origin.y + rectOfGlassViews.size.height / 2) fromView:toViewController.view];
-            [panelView addSubview:bluredImageView];
-            tag++;
-        }
         [transitionContext completeTransition:YES];
     }];
 }
@@ -97,16 +94,12 @@ static const NSInteger g_firstGlassViewTag = 300;
     
     // calculate rect of galss views and remove glass effect for glass views
     CGRect rectOfGlassViews = CGRectZero;
-    NSInteger tag = g_firstGlassViewTag;
     for (UIView *glassView in glassViews) {
         if (CGRectEqualToRect(rectOfGlassViews, CGRectZero)) {
             rectOfGlassViews = glassView.frame;
         } else {
             rectOfGlassViews = CGRectUnion(rectOfGlassViews, glassView.frame);
         }
-        
-        [[containerView viewWithTag:tag] removeFromSuperview];
-        tag++;
     }
 
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{

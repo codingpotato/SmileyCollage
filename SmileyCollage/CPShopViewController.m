@@ -12,34 +12,13 @@
 
 #import "CPActionSheetViewController.h"
 #import "CPSettings.h"
+#import "CPTouchableView.h"
 #import "CPUtility.h"
-
-@class CPMaskView;
-
-@protocol CPMaskViewDelegate <NSObject>
-
-- (void)maskViewTouched:(CPMaskView *)maskView;
-
-@end
-
-@interface CPMaskView : UIView
-
-@property (weak, nonatomic) IBOutlet id<CPMaskViewDelegate> delegate;
-
-@end
-
-@implementation CPMaskView
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self.delegate maskViewTouched:self];
-}
-
-@end
 
 /*
  * only support one product "Remove Watermark" now
  */
-@interface CPShopViewController () <CPActionSheetViewController, CPMaskViewDelegate, SKPaymentTransactionObserver, SKProductsRequestDelegate, UIAlertViewDelegate, UITableViewDataSource>
+@interface CPShopViewController () <CPActionSheetViewController, CPTouchableViewDelegate, SKPaymentTransactionObserver, SKProductsRequestDelegate, UIAlertViewDelegate, UITableViewDataSource>
 
 @property (weak, nonatomic) IBOutlet UIView *maskOfTableView;
 
@@ -60,8 +39,6 @@
 @property (strong, nonatomic) SKProductsRequest *productsRequest;
 
 @property (strong, nonatomic) UIButton *currentBuyButton;
-
-- (IBAction)cancelBarButtonPressed:(id)sender;
 
 - (IBAction)restoreButtonPressed:(id)sender;
 
@@ -117,10 +94,6 @@
     [super didReceiveMemoryWarning];
 }
 
-- (IBAction)cancelBarButtonPressed:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
 - (IBAction)restoreButtonPressed:(id)sender {
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
     
@@ -164,7 +137,6 @@
 
 - (void)setButtonsEnable:(BOOL)enable {
     self.restoreButton.enabled = enable;
-    self.cancelButton.enabled = enable;
 
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if (cell) {
@@ -181,10 +153,10 @@
     return @[self.maskOfTableView, self.maskOfRestoreButton, self.maskOfCancelButton];
 }
 
-#pragma mark - CPMaskViewDelegate implement
+#pragma mark - CPTouchableViewDelegate implement
 
-- (void)maskViewTouched:(CPMaskView *)maskView {
-    [self.navigationController popViewControllerAnimated:YES];
+- (void)viewIsTouched:(CPTouchableView *)view {
+    [self performSegueWithIdentifier:@"CPShopViewControlerUnwindSegue" sender:nil];
 }
 
 #pragma mark - SKPaymentTransactionObserver implement
@@ -252,7 +224,7 @@
 #pragma mark - UIAlertViewDelegate implement
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    [self.navigationController popViewControllerAnimated:YES];
+    [self performSegueWithIdentifier:@"CPShopViewControlerUnwindSegue" sender:nil];
 }
 
 #pragma mark - UITableViewDataSource implement

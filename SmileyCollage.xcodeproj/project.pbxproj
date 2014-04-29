@@ -46,6 +46,8 @@
 		FC91B5B8190BB55900FD8D05 /* CPNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC91B5B7190BB55900FD8D05 /* CPNavigationController.m */; };
 		FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC92759B18F58CF700031FD0 /* ImageIO.framework */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
+		FC94BD39190FDCC500E46629 /* CPActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC94BD38190FDCC500E46629 /* CPActionViewController.m */; };
+		FC94BD3C190FDD8900E46629 /* CPTouchableView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC94BD3B190FDD8900E46629 /* CPTouchableView.m */; };
 		FC9DACBA1908043C004FFC54 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9DACB91908043C004FFC54 /* StoreKit.framework */; };
 		FCA292E718FD64AB0029583E /* CPCoreDataTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */; };
 		FCA292E918FD664A0029583E /* CPFaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E818FD664A0029583E /* CPFaceTests.m */; };
@@ -134,6 +136,10 @@
 		FC92759B18F58CF700031FD0 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		FC93443718C363F500657BBC /* CPFacesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFacesManager.h; sourceTree = "<group>"; };
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
+		FC94BD37190FDCC500E46629 /* CPActionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPActionViewController.h; sourceTree = "<group>"; };
+		FC94BD38190FDCC500E46629 /* CPActionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPActionViewController.m; sourceTree = "<group>"; };
+		FC94BD3A190FDD8900E46629 /* CPTouchableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTouchableView.h; sourceTree = "<group>"; };
+		FC94BD3B190FDD8900E46629 /* CPTouchableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTouchableView.m; sourceTree = "<group>"; };
 		FC9DACB91908043C004FFC54 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		FCA292E518FD64AB0029583E /* CPCoreDataTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCoreDataTestHelper.h; sourceTree = "<group>"; };
 		FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataTestHelper.m; sourceTree = "<group>"; };
@@ -235,26 +241,18 @@
 		FC46714518C2CAF600E472BF /* SmileyCollage */ = {
 			isa = PBXGroup;
 			children = (
-				FC61A46718DD9390009D9442 /* Cells */,
+				FC61A46718DD9390009D9442 /* Collection View Cells */,
 				FC68AE19190F2E8F00D4DA1B /* CPActionSheetViewController.h */,
 				FC46714E18C2CAF600E472BF /* CPAppDelegate.h */,
 				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
-				FC80EC6218C9F5D2008E83B6 /* CPCollageViewController.h */,
-				FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */,
 				FC56ED3718E6C49700DFE80C /* CPConfig.h */,
 				FC56ED3818E6C49700DFE80C /* CPConfig.m */,
-				FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */,
-				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
 				FC80A0C6190158D7003B278E /* CPHelpViewManager.h */,
 				FC80A0C7190158D7003B278E /* CPHelpViewManager.m */,
-				FC91B5B6190BB55900FD8D05 /* CPNavigationController.h */,
-				FC91B5B7190BB55900FD8D05 /* CPNavigationController.m */,
 				FCC2E59718F246EB00D7163F /* CPSettings.h */,
 				FCC2E59818F246EB00D7163F /* CPSettings.m */,
-				FC91B5B3190B7BB000FD8D05 /* CPShopViewController.h */,
-				FC91B5B4190B7BB000FD8D05 /* CPShopViewController.m */,
-				FCF8FE9418C2D016007FA358 /* CPSmileyViewController.h */,
-				FCF8FE9518C2D016007FA358 /* CPSmileyViewController.m */,
+				FC94BD3A190FDD8900E46629 /* CPTouchableView.h */,
+				FC94BD3B190FDD8900E46629 /* CPTouchableView.m */,
 				FC782A8A18E304B10024C477 /* CPUtility.h */,
 				FC782A8B18E304B10024C477 /* CPUtility.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
@@ -263,6 +261,7 @@
 				FC8BCA1118D4256900748335 /* SmileyCollage.xcdatamodeld */,
 				FC46714618C2CAF600E472BF /* Supporting Files */,
 				FC2B287218CC69F50050AD08 /* Transitions */,
+				FC94BD3D190FDFC100E46629 /* View Controllers */,
 			);
 			path = SmileyCollage;
 			sourceTree = "<group>";
@@ -322,7 +321,7 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		FC61A46718DD9390009D9442 /* Cells */ = {
+		FC61A46718DD9390009D9442 /* Collection View Cells */ = {
 			isa = PBXGroup;
 			children = (
 				FC61A46B18DD94A3009D9442 /* CPCollageCell.h */,
@@ -330,7 +329,26 @@
 				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
 				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 			);
-			name = Cells;
+			name = "Collection View Cells";
+			sourceTree = "<group>";
+		};
+		FC94BD3D190FDFC100E46629 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				FC94BD37190FDCC500E46629 /* CPActionViewController.h */,
+				FC94BD38190FDCC500E46629 /* CPActionViewController.m */,
+				FC80EC6218C9F5D2008E83B6 /* CPCollageViewController.h */,
+				FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */,
+				FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */,
+				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
+				FC91B5B6190BB55900FD8D05 /* CPNavigationController.h */,
+				FC91B5B7190BB55900FD8D05 /* CPNavigationController.m */,
+				FC91B5B3190B7BB000FD8D05 /* CPShopViewController.h */,
+				FC91B5B4190B7BB000FD8D05 /* CPShopViewController.m */,
+				FCF8FE9418C2D016007FA358 /* CPSmileyViewController.h */,
+				FCF8FE9518C2D016007FA358 /* CPSmileyViewController.m */,
+			);
+			name = "View Controllers";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -456,7 +474,9 @@
 				FC8BCA1618D42E4100748335 /* CPFace.m in Sources */,
 				FCF8FE9618C2D016007FA358 /* CPSmileyViewController.m in Sources */,
 				FC56ED3918E6C49700DFE80C /* CPConfig.m in Sources */,
+				FC94BD3C190FDD8900E46629 /* CPTouchableView.m in Sources */,
 				FC93443918C363F500657BBC /* CPFacesManager.m in Sources */,
+				FC94BD39190FDCC500E46629 /* CPActionViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -21,7 +21,7 @@
 #import "CPFace.h"
 #import "CPPhoto.h"
 
-@interface CPCollageViewController () <UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface CPCollageViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
@@ -39,18 +39,23 @@
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
-@property (strong, nonatomic) UIActionSheet *currentActionSheet;
-
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
+
+- (IBAction)cancelFromActionSheet:(UIStoryboardSegue *)segue;
+
+- (IBAction)saveFromActionSheet:(UIStoryboardSegue *)segue;
+
+- (IBAction)shareFromActionSheet:(UIStoryboardSegue *)segue;
 
 @end
 
 @implementation CPCollageViewController
 
 static NSString * g_editViewControllerSegueName = @"CPEditViewControllerSegue";
-static NSString * g_iapViewControllerSegueName = @"CPIAPViewControllerSegue";
+static NSString * g_shopViewControllerSegueName = @"CPShopViewControllerSegue";
+static NSString * g_actionViewControllerSegueName = @"CPActionViewControllerSegue";
 
 static NSUInteger g_numberOfColumnsInRows[] = {
     1, 11, 21, 22, 32, 222, 322, 332, 333, 442,
@@ -87,7 +92,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [super viewWillDisappear:animated];
     
     self.helpViewManager = nil;
-    [self dismissCurrentActionSheet];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -136,20 +140,11 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)shopBarButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:g_iapViewControllerSegueName sender:nil];
+    [self performSegueWithIdentifier:g_shopViewControllerSegueName sender:nil];
 }
 
 - (void)actionBarButtonPressed:(id)sender {
-    [self dismissCurrentActionSheet];
-    self.currentActionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
-    [self.currentActionSheet showFromBarButtonItem:sender animated:YES];
-}
-
-- (void)dismissCurrentActionSheet {
-    if (self.currentActionSheet) {
-        [self.currentActionSheet dismissWithClickedButtonIndex:-1 animated:NO];
-        self.currentActionSheet = nil;
-    }
+    [self performSegueWithIdentifier:g_actionViewControllerSegueName sender:nil];
 }
 
 - (void)userDefaultsChanged:(NSNotification *)notification {
@@ -227,6 +222,23 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             }];
         }
     }
+}
+
+- (void)cancelFromActionSheet:(UIStoryboardSegue *)segue {
+}
+
+- (void)saveFromActionSheet:(UIStoryboardSegue *)segue {
+    NSAssert(self.facesManager, @"");
+    NSAssert(self.collagedFaces, @"");
+    [self.facesManager saveStitchedImage:[self collagedImage]];
+}
+
+- (void)shareFromActionSheet:(UIStoryboardSegue *)segue {
+    NSString *sharedText = @"Shared from Smiley app";
+    NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
+    activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll, UIActivityTypeAddToReadingList];
+    [self presentViewController:activityViewController animated:YES completion:nil];
 }
 
 - (UIImage *)collagedImage {
@@ -368,31 +380,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         }
     }
     return YES;
-}
-
-#pragma mark - UIActionSheetDelegate implement
-
-- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    switch (buttonIndex) {
-        case 0: {
-            // Save
-            NSAssert(self.facesManager, @"");
-            NSAssert(self.collagedFaces, @"");
-            [self.facesManager saveStitchedImage:[self collagedImage]];
-            break;
-        }
-        case 1: {
-            // share
-            NSString *sharedText = @"Shared from Smiley app";
-            NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
-            UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
-            activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll];
-            [self presentViewController:activityViewController animated:YES completion:nil];
-            break;
-        }
-        default:
-            break;
-    }
 }
 
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement

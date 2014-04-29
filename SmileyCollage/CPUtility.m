@@ -74,7 +74,7 @@
     [view drawViewHierarchyInRect:CGRectMake(-rect.origin.x, -rect.origin.y, view.bounds.size.width, view.bounds.size.height) afterScreenUpdates:NO];
     UIImage *snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    return [self applyBlurWithRadius:5.0 tintColor:[UIColor colorWithWhite:1.0 alpha:0.3] saturationDeltaFactor:1.8 toImage:snapshotImage];
+    return [self applyBlurWithRadius:8.0 tintColor:[UIColor colorWithWhite:1.0 alpha:0.3] saturationDeltaFactor:1.8 toImage:snapshotImage];
 }
 
 + (UIImage *)applyBlurWithRadius:(CGFloat)blurRadius tintColor:(UIColor *)tintColor saturationDeltaFactor:(CGFloat)saturationDeltaFactor toImage:(UIImage *)image {
