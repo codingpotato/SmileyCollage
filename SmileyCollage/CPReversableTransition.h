@@ -8,7 +8,7 @@
 
 @interface CPReversableTransition : NSObject <UIViewControllerAnimatedTransitioning>
 
-- (id)initWithReverse:(BOOL)reverse;
+- (id)initWithReverseFlag:(BOOL)reverse;
 
 - (void)animateForwardTransition:(id<UIViewControllerContextTransitioning>)transitionContext;
 

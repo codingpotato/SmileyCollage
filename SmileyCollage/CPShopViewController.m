@@ -10,6 +10,7 @@
 
 #import <StoreKit/StoreKit.h>
 
+#import "CPActionSheetViewController.h"
 #import "CPSettings.h"
 #import "CPUtility.h"
 
@@ -38,7 +39,13 @@
 /*
  * only support one product "Remove Watermark" now
  */
-@interface CPShopViewController () <CPMaskViewDelegate, SKPaymentTransactionObserver, SKProductsRequestDelegate, UIAlertViewDelegate, UITableViewDataSource>
+@interface CPShopViewController () <CPActionSheetViewController, CPMaskViewDelegate, SKPaymentTransactionObserver, SKProductsRequestDelegate, UIAlertViewDelegate, UITableViewDataSource>
+
+@property (weak, nonatomic) IBOutlet UIView *maskOfTableView;
+
+@property (weak, nonatomic) IBOutlet UIView *maskOfRestoreButton;
+
+@property (weak, nonatomic) IBOutlet UIView *maskOfCancelButton;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
@@ -141,8 +148,8 @@
 - (void)showActivityIndicatorViewOnView:(UIView *)view {
     [self setButtonsEnable:NO];
     
-    self.activityIndicatorView.center = [self.panelView convertPoint:view.center fromView:view.superview];
-    [self.panelView addSubview:self.activityIndicatorView];
+    self.activityIndicatorView.center = view.center;
+    [self.view addSubview:self.activityIndicatorView];
     [self.activityIndicatorView startAnimating];
 }
 
@@ -166,6 +173,12 @@
             ((UIButton *)view).enabled = enable;
         }
     }
+}
+
+#pragma mark - CPActionSheetViewController implement
+
+- (NSArray *)glassViews {
+    return @[self.maskOfTableView, self.maskOfRestoreButton, self.maskOfCancelButton];
 }
 
 #pragma mark - CPMaskViewDelegate implement

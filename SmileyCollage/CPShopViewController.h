@@ -6,14 +6,8 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
+#import "CPActionSheetViewController.h"
+
 @interface CPShopViewController : UIViewController
-
-@property (weak, nonatomic) IBOutlet UIView *panelView;
-
-@property (weak, nonatomic) IBOutlet UIView *maskOfTableView;
-
-@property (weak, nonatomic) IBOutlet UIView *maskOfRestoreButton;
-
-@property (weak, nonatomic) IBOutlet UIView *maskOfCancelButton;
 
 @end

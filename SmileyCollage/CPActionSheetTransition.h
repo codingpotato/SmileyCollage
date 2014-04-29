@@ -8,6 +8,6 @@
 
 #import "CPReversableTransition.h"
 
-@interface CPShopViewControllerTransition : CPReversableTransition
+@interface CPActionSheetTransition : CPReversableTransition
 
 @end

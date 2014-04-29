@@ -16,7 +16,7 @@
 
 @implementation CPReversableTransition
 
-- (id)initWithReverse:(BOOL)reverse {
+- (id)initWithReverseFlag:(BOOL)reverse {
     self = [super init];
     if (self) {
         self.reverse = reverse;

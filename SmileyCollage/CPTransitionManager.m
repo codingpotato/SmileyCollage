@@ -15,7 +15,7 @@
 
 #import "CPCollageToEditTransition.h"
 #import "CPPortalTransition.h"
-#import "CPShopViewControllerTransition.h"
+#import "CPActionSheetTransition.h"
 
 @implementation CPTransitionManager
 
@@ -23,17 +23,17 @@
 
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC {
     if ([fromVC isMemberOfClass:[CPSmileyViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
-        return [[CPPortalTransition alloc] initWithReverse:NO];
+        return [[CPPortalTransition alloc] initWithReverseFlag:NO];
     } else if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPSmileyViewController class]]) {
-        return [[CPPortalTransition alloc] initWithReverse:YES];
+        return [[CPPortalTransition alloc] initWithReverseFlag:YES];
     } else if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPEditViewController class]]) {
-        return [[CPCollageToEditTransition alloc] initWithReverse:NO];
+        return [[CPCollageToEditTransition alloc] initWithReverseFlag:NO];
     } else if ([fromVC isMemberOfClass:[CPEditViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
-        return [[CPCollageToEditTransition alloc] initWithReverse:YES];
+        return [[CPCollageToEditTransition alloc] initWithReverseFlag:YES];
     } else if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPShopViewController class]]) {
-        return [[CPShopViewControllerTransition alloc] initWithReverse:NO];
+        return [[CPActionSheetTransition alloc] initWithReverseFlag:NO];
     } else if ([fromVC isMemberOfClass:[CPShopViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
-        return [[CPShopViewControllerTransition alloc] initWithReverse:YES];
+        return [[CPActionSheetTransition alloc] initWithReverseFlag:YES];
     } else {
         return nil;
     }
