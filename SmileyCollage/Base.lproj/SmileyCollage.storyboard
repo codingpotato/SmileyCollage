@@ -62,63 +62,62 @@
                                     <outlet property="delegate" destination="QFy-Gf-6GD" id="eiZ-SV-gMd"/>
                                 </connections>
                             </collectionView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6bY-zF-vA6" userLabel="Notification View">
-                                <rect key="frame" x="0.0" y="568" width="320" height="71"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <view alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fb8-7f-hOJ" userLabel="Mask">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="71"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </view>
-                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zM3-wD-T4H">
-                                        <rect key="frame" x="20" y="49" width="280" height="2"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    </progressView>
-                                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iga-In-oLd">
-                                        <rect key="frame" x="20" y="20" width="280" height="21"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="21" id="edB-Uf-Acy"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstItem="fb8-7f-hOJ" firstAttribute="leading" secondItem="6bY-zF-vA6" secondAttribute="leading" id="5On-A7-kL7"/>
-                                    <constraint firstItem="iga-In-oLd" firstAttribute="leading" secondItem="zM3-wD-T4H" secondAttribute="leading" id="8Bd-tu-wWN"/>
-                                    <constraint firstItem="fb8-7f-hOJ" firstAttribute="top" secondItem="6bY-zF-vA6" secondAttribute="top" id="Ab5-Wm-oeZ"/>
-                                    <constraint firstItem="iga-In-oLd" firstAttribute="top" secondItem="6bY-zF-vA6" secondAttribute="top" constant="20" symbolic="YES" id="BIB-mc-M2o"/>
-                                    <constraint firstAttribute="bottom" secondItem="fb8-7f-hOJ" secondAttribute="bottom" id="CMh-Po-Ect"/>
-                                    <constraint firstItem="fb8-7f-hOJ" firstAttribute="centerX" secondItem="zM3-wD-T4H" secondAttribute="centerX" id="DZo-ec-WHA"/>
-                                    <constraint firstItem="zM3-wD-T4H" firstAttribute="top" secondItem="iga-In-oLd" secondAttribute="bottom" constant="8" symbolic="YES" id="Idb-ik-hrG"/>
-                                    <constraint firstAttribute="bottom" secondItem="zM3-wD-T4H" secondAttribute="bottom" constant="20" symbolic="YES" id="MwX-qQ-rGr"/>
-                                    <constraint firstItem="zM3-wD-T4H" firstAttribute="leading" secondItem="6bY-zF-vA6" secondAttribute="leading" constant="20" symbolic="YES" id="hGO-Wd-gio"/>
-                                    <constraint firstItem="iga-In-oLd" firstAttribute="trailing" secondItem="zM3-wD-T4H" secondAttribute="trailing" id="nWu-T5-dB3"/>
-                                    <constraint firstAttribute="trailing" secondItem="zM3-wD-T4H" secondAttribute="trailing" constant="20" symbolic="YES" id="nj7-pP-lVM"/>
-                                </constraints>
-                            </view>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Z6S-eU-NFu">
+                                <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="kcI-YS-huH"/>
+                                    <barButtonItem style="plain" id="h4a-QN-Fyd">
+                                        <view key="customView" contentMode="scaleToFill" id="3uG-fO-pqr">
+                                            <rect key="frame" x="16" y="6" width="288" height="33"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q07-4O-rk6">
+                                                    <rect key="frame" x="0.0" y="2" width="288" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="EBG-9U-1y5">
+                                                    <rect key="frame" x="0.0" y="26" width="288" height="2"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </progressView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstItem="q07-4O-rk6" firstAttribute="top" secondItem="3uG-fO-pqr" secondAttribute="top" constant="2" id="6d3-Ae-ofI"/>
+                                                <constraint firstAttribute="trailing" secondItem="EBG-9U-1y5" secondAttribute="trailing" id="7iG-hG-ujX"/>
+                                                <constraint firstItem="q07-4O-rk6" firstAttribute="leading" secondItem="EBG-9U-1y5" secondAttribute="leading" id="JGe-wX-Q31"/>
+                                                <constraint firstAttribute="bottom" secondItem="EBG-9U-1y5" secondAttribute="bottom" constant="5" id="ewk-NC-6d8"/>
+                                                <constraint firstItem="EBG-9U-1y5" firstAttribute="trailing" secondItem="q07-4O-rk6" secondAttribute="trailing" id="jlO-1q-u63"/>
+                                                <constraint firstItem="EBG-9U-1y5" firstAttribute="top" secondItem="q07-4O-rk6" secondAttribute="bottom" constant="3" id="s56-nn-Rox"/>
+                                                <constraint firstItem="EBG-9U-1y5" firstAttribute="leading" secondItem="3uG-fO-pqr" secondAttribute="leading" id="thr-Bk-COR"/>
+                                            </constraints>
+                                        </view>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Wpm-Zs-VCm"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="6bY-zF-vA6" firstAttribute="bottom" secondItem="n4W-2L-vQ1" secondAttribute="bottom" constant="71" id="04Q-JA-WJC"/>
+                            <constraint firstItem="Z6S-eU-NFu" firstAttribute="trailing" secondItem="Teu-QR-r64" secondAttribute="trailing" id="KMt-RX-sJy"/>
                             <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="n4W-2L-vQ1" secondAttribute="leading" id="NqD-xZ-Dd0"/>
                             <constraint firstAttribute="trailing" secondItem="Teu-QR-r64" secondAttribute="trailing" id="R9F-Cb-5WW"/>
-                            <constraint firstItem="Teu-QR-r64" firstAttribute="trailing" secondItem="6bY-zF-vA6" secondAttribute="trailing" id="fQx-1I-ZXC"/>
-                            <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="6bY-zF-vA6" secondAttribute="leading" id="gdn-3J-GrU"/>
                             <constraint firstAttribute="bottom" secondItem="Teu-QR-r64" secondAttribute="bottom" id="k8g-8S-ay4"/>
+                            <constraint firstItem="Z6S-eU-NFu" firstAttribute="leading" secondItem="Teu-QR-r64" secondAttribute="leading" id="quz-et-GLu"/>
                             <constraint firstItem="Teu-QR-r64" firstAttribute="top" secondItem="n4W-2L-vQ1" secondAttribute="top" id="rli-T1-kg0"/>
+                            <constraint firstItem="Z6S-eU-NFu" firstAttribute="bottom" secondItem="Teu-QR-r64" secondAttribute="bottom" id="zc8-Ej-nxv"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="LiH-Uw-Urq"/>
                     <connections>
                         <outlet property="collectionView" destination="Teu-QR-r64" id="n8K-sr-K5o"/>
-                        <outlet property="message" destination="iga-In-oLd" id="MiX-1o-SnP"/>
-                        <outlet property="notificationView" destination="6bY-zF-vA6" id="Azw-3S-Hgn"/>
-                        <outlet property="notificationViewBottomConstraint" destination="04Q-JA-WJC" id="MwE-Sa-w7S"/>
-                        <outlet property="progressView" destination="zM3-wD-T4H" id="BFH-Vk-vGU"/>
+                        <outlet property="informationLabel" destination="q07-4O-rk6" id="oKw-nE-s2G"/>
+                        <outlet property="progressView" destination="EBG-9U-1y5" id="VcA-aQ-VJi"/>
+                        <outlet property="toolbar" destination="Z6S-eU-NFu" id="l4d-li-PCX"/>
+                        <outlet property="toolbarBottomConstraint" destination="zc8-Ej-nxv" id="GgL-oW-cT1"/>
                         <segue destination="RNr-7G-8mP" kind="push" identifier="CPCollageViewControllerSegue" id="Sug-tn-HGf"/>
                     </connections>
                 </viewController>
@@ -267,7 +266,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="zcn-Tg-Thq" kind="unwind" identifier="CPActionViewControlerUnwindSegue" unwindAction="exitBySegue:" id="oaK-9a-K6K"/>
+                                    <segue destination="zcn-Tg-Thq" kind="unwind" identifier="CPShopViewControllerUnwindSegue" unwindAction="cancelFromActionSheet:" id="loT-B0-nvw"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -441,7 +440,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="InO-MV-Pgx" kind="unwind" identifier="CPShopViewControlerUnwindSegue" unwindAction="exitBySegue:" id="Hxb-Tb-FET"/>
+                                    <segue destination="InO-MV-Pgx" kind="unwind" identifier="CPShopViewControllerUnwindSegue" unwindAction="cancelFromActionSheet:" id="Xce-kA-IHF"/>
                                 </connections>
                             </button>
                         </subviews>

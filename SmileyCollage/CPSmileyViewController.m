@@ -37,10 +37,10 @@
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
-@property (weak, nonatomic) IBOutlet UILabel *message;
+@property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
+@property (weak, nonatomic) IBOutlet UILabel *informationLabel;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
-@property (weak, nonatomic) IBOutlet UIView *notificationView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *notificationViewBottomConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *toolbarBottomConstraint;
 
 @end
 
@@ -54,9 +54,11 @@
 
     self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %lu", (unsigned long)self.facesManager.facesController.fetchedObjects.count];
     
+    self.toolbarBottomConstraint.constant = self.toolbar.bounds.size.height;
+    
     self.isScanCancelled = NO;
     self.facesManager.facesController.delegate = self;
-    [self showNotificationViewWithAnimation];
+    [self showToolbarWithAnimation];
     [self.facesManager scanFaces];
     
     if (self.facesManager.facesController.fetchedObjects.count > 0) {
@@ -107,7 +109,7 @@
     [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning)) options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
     
     if (self.isScanCancelled) {
-        [self showNotificationViewWithAnimation];
+        [self showToolbarWithAnimation];
         [self.facesManager scanFaces];
         self.isScanCancelled = NO;
     }
@@ -131,7 +133,7 @@
         NSNumber *newValue = change[NSKeyValueChangeNewKey];
         if (![oldValue isEqual:newValue]) {
             self.progressView.progress = newValue.floatValue / self.facesManager.numberOfTotalPhotos;
-            self.message.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
+            self.informationLabel.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
         }
     } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(isScanning))]) {
         NSNumber *oldValue = change[NSKeyValueChangeOldKey];
@@ -142,27 +144,25 @@
     }
 }
 
-- (void)showNotificationViewWithAnimation {
+- (void)showToolbarWithAnimation {
     self.progressView.progress = 0.0;
-    self.message.text = @"Scanning photos......";
-    self.notificationViewBottomConstraint.constant = 0.0;
-    [UIView animateWithDuration:0.5 animations:^{
+    self.informationLabel.text = @"Scanning photos......";
+    self.toolbarBottomConstraint.constant = 0.0;
+    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
         [self.view layoutIfNeeded];
-    }];
+    } completion:nil];
 }
 
 - (void)hideNotificationView {
-    self.notificationViewBottomConstraint.constant = self.notificationView.bounds.size.height;
+    self.toolbarBottomConstraint.constant = self.toolbar.bounds.size.height;
     [self.view layoutIfNeeded];
 }
 
 - (void)hideNotificationViewWithAnimation {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 2.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void) {
-        self.notificationViewBottomConstraint.constant = self.notificationView.bounds.size.height;
-        [UIView animateWithDuration:0.5 animations:^{
-            [self.view layoutIfNeeded];
-        }];
-    });
+    self.toolbarBottomConstraint.constant = self.toolbar.bounds.size.height;
+    [UIView animateWithDuration:0.3 delay:5.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+        [self.view layoutIfNeeded];
+    } completion:nil];
 }
 
 - (void)showSelectedFacesNumber {
