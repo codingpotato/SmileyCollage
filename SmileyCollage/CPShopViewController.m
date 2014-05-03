@@ -64,8 +64,8 @@ static NSString * g_shopViewControllerUnwindSegueName = @"CPShopViewControllerUn
     self.maskOfCancelButton.layer.cornerRadius = cornerRadius;
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     
     [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
 
@@ -236,11 +236,13 @@ static NSString * g_shopViewControllerUnwindSegueName = @"CPShopViewControllerUn
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"CPIAPTableViewCell";
+    static NSString *CellIdentifier = @"CPShopTableViewCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
+    cell.backgroundColor = [UIColor clearColor];
+    cell.contentView.backgroundColor = [UIColor clearColor];
     
     NSAssert(self.products, @"");
     NSAssert(indexPath.row >= 0 && indexPath.row < self.products.count, @"");

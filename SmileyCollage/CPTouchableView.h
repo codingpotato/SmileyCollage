@@ -16,4 +16,6 @@
 
 @interface CPTouchableView : UIView
 
+@property (weak, nonatomic) IBOutlet id<CPTouchableViewDelegate> delegate;
+
 @end

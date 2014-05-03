@@ -9,36 +9,14 @@
 #import "CPHelpViewManager.h"
 
 #import "CPSettings.h"
+#import "CPTouchableView.h"
 #import "CPUtility.h"
 
-@class CPMaskView;
-
-@protocol CPMaskViewDelegate <NSObject>
-
-- (void)maskViewIsTouched:(CPMaskView *)maskView;
-
-@end
-
-@interface CPMaskView : UIView
-
-@property (weak, nonatomic) id<CPMaskViewDelegate> delegate;
-
-@end
-
-@implementation CPMaskView
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self.delegate maskViewIsTouched:self];
-}
-
-@end
-
-
-@interface CPHelpViewManager () <CPMaskViewDelegate>
+@interface CPHelpViewManager () <CPTouchableViewDelegate>
 
 @property (strong, nonatomic) UIView *helpView;
 
-@property (strong, nonatomic) CPMaskView *maskView;
+@property (strong, nonatomic) CPTouchableView *maskView;
 
 @property (strong, nonatomic) UIView *panelView;
 
@@ -138,7 +116,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
     [view addSubview:self.helpView];
     [view addConstraints:[CPUtility constraintsWithView:self.helpView edgesAlignToView:view]];
     
-    self.maskView = [[CPMaskView alloc] init];
+    self.maskView = [[CPTouchableView alloc] init];
     self.maskView.alpha = 0.0;
     self.maskView.backgroundColor = [UIColor blackColor];
     self.maskView.delegate = self;
@@ -225,9 +203,9 @@ static const NSTimeInterval g_animationDuration = 0.5;
     }
 }
 
-#pragma maek - CPMaskViewDelegate implement
+#pragma maek - CPTouchableViewDelegate implement
 
-- (void)maskViewIsTouched:(CPMaskView *)maskView {
+- (void)viewIsTouched:(CPTouchableView *)view {
     [self removeHelpViewWithAnimation];
 }
 

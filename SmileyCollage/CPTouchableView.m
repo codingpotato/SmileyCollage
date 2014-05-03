@@ -8,12 +8,6 @@
 
 #import "CPTouchableView.h"
 
-@interface CPTouchableView ()
-
-@property (weak, nonatomic) IBOutlet id<CPTouchableViewDelegate> delegate;
-
-@end
-
 @implementation CPTouchableView
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {

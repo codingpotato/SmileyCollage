@@ -396,9 +396,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)showHelpView {
     NSAssert([self.collectionView numberOfItemsInSection:0] > 0, @"");
     
-    NSUInteger row = arc4random_uniform([self.collectionView numberOfItemsInSection:0]);
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+    NSUInteger row = arc4random_uniform((u_int32_t)[self.collectionView numberOfItemsInSection:0]);
+    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
     NSAssert(cell, @"");
     CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
     

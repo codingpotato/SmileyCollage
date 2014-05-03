@@ -39,6 +39,10 @@
     self.maskOfCancelButton.layer.cornerRadius = cornerRadius;
 }
 
+- (BOOL)shouldAutorotate {
+    return NO;
+}
+
 #pragma mark - CPActionSheetViewController implement
 
 - (NSArray *)glassViews {
@@ -48,7 +52,7 @@
 #pragma mark - CPTouchableViewDelegate implement
 
 - (void)viewIsTouched:(CPTouchableView *)view {
-    [self performSegueWithIdentifier:@"CPActionViewControlerUnwindSegue" sender:nil];
+    [self performSegueWithIdentifier:@"CPActionViewControllerUnwindSegue" sender:nil];
 }
 
 @end

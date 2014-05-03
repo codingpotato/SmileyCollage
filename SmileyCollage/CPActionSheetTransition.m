@@ -28,7 +28,7 @@ static const NSInteger g_maskViewTag = 200;
     NSArray *glassViews = ((id<CPActionSheetViewController>)toViewController).glassViews;
     
     // create snapshot view
-    UIView *snapshotView = [fromViewController.view snapshotViewAfterScreenUpdates:NO];
+    UIView *snapshotView = [fromViewController.view snapshotViewAfterScreenUpdates:YES];
     snapshotView.frame = finalFrame;
     snapshotView.tag = g_snapshotViewTag;
     [containerView addSubview:snapshotView];
@@ -58,9 +58,6 @@ static const NSInteger g_maskViewTag = 200;
     rectOfGlassViews = [fromViewController.view convertRect:rectOfGlassViews fromView:toViewController.view];
     UIImage *bluredImage = [CPUtility bluredSnapshotForView:fromViewController.view inRect:rectOfGlassViews];
     
-    // remove fromViewController
-    [fromViewController.view removeFromSuperview];
-    
     // add glass effect for glass views
     for (UIView *glassView in glassViews) {
         UIView *panelView = [[UIView alloc] init];
@@ -75,10 +72,15 @@ static const NSInteger g_maskViewTag = 200;
     }
     
     toViewController.view.transform = CGAffineTransformMakeTranslation(0.0, rectOfGlassViews.size.height);
+    
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
         maskView.alpha = 0.2;
+    }];
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0 usingSpringWithDamping:0.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         toViewController.view.transform = CGAffineTransformMakeTranslation(0.0, 0.0);
     } completion:^(BOOL finished) {
+        // remove fromViewController
+        [fromViewController.view removeFromSuperview];
         [transitionContext completeTransition:YES];
     }];
 }
