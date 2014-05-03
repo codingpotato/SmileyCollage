@@ -194,7 +194,7 @@
     if (!_faceIndicator) {
         _faceIndicator = [[UIView alloc] init];
         _faceIndicator.layer.borderColor = [UIColor redColor].CGColor;
-        _faceIndicator.layer.borderWidth = 1.0;
+        _faceIndicator.layer.borderWidth = 2.0;
     }
     return _faceIndicator;
 }

@@ -11,7 +11,11 @@
 @implementation CPConfig
 
 + (float)thumbnailSize {
-    return 64.0;
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        return 64.0;
+    } else {
+        return 128.0;
+    }
 }
 
 @end

@@ -27,7 +27,7 @@
 @implementation CPHelpViewManager
 
 static const NSTimeInterval g_minDelayTimeInterval = 5.0;
-static const NSTimeInterval g_maxDelayTimeInterval = 30.0;
+static const NSTimeInterval g_maxDelayTimeInterval = 10.0;
 static const NSTimeInterval g_helpShownTimeInterval = 10.0;
 static const NSTimeInterval g_animationDuration = 0.5;
 
