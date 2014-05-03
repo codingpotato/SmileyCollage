@@ -11,161 +11,224 @@
 #import "CPSettings.h"
 #import "CPUtility.h"
 
-@interface CPHelpViewManager ()
+@class CPMaskView;
 
-@property (strong, nonatomic) NSMutableArray *helpViews;
+@protocol CPMaskViewDelegate <NSObject>
 
-@property (strong, nonatomic) UIView *smileyNotFoundHelpView;
+- (void)maskViewIsTouched:(CPMaskView *)maskView;
+
+@end
+
+@interface CPMaskView : UIView
+
+@property (weak, nonatomic) id<CPMaskViewDelegate> delegate;
+
+@end
+
+@implementation CPMaskView
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.delegate maskViewIsTouched:self];
+}
+
+@end
+
+
+@interface CPHelpViewManager () <CPMaskViewDelegate>
+
+@property (strong, nonatomic) UIView *helpView;
+
+@property (strong, nonatomic) CPMaskView *maskView;
+
+@property (strong, nonatomic) UIView *panelView;
+
+@property (nonatomic) BOOL helpShown;
 
 @end
 
 @implementation CPHelpViewManager
 
-static const NSUInteger g_maxHelpViews = 2;
+static const NSTimeInterval g_minDelayTimeInterval = 5.0;
+static const NSTimeInterval g_maxDelayTimeInterval = 30.0;
+static const NSTimeInterval g_helpShownTimeInterval = 10.0;
+static const NSTimeInterval g_animationDuration = 0.5;
 
-static const NSTimeInterval g_delayTimeInterval = 5.0;
-static const NSTimeInterval g_animationDuration = 0.3;
-
-- (void)showSmileyNotFoundHelpWithDelayInView:(UIView *)view {
-    if (!self.smileyNotFoundHelpView) {
-        self.smileyNotFoundHelpView = [[UIView alloc] init];
-        self.smileyNotFoundHelpView.backgroundColor = [UIColor yellowColor];
-        self.smileyNotFoundHelpView.layer.cornerRadius = 2.0;
-        self.smileyNotFoundHelpView.layer.shadowColor = [UIColor blackColor].CGColor;
-        self.smileyNotFoundHelpView.layer.shadowOffset = CGSizeMake(2.0, 2.0);
-        self.smileyNotFoundHelpView.layer.shadowOpacity = 0.8;
-        self.smileyNotFoundHelpView.translatesAutoresizingMaskIntoConstraints = NO;
-        
-        UILabel *label = [[UILabel alloc] init];
-        label.translatesAutoresizingMaskIntoConstraints = NO;
-        label.numberOfLines = 0;
-        label.textAlignment = NSTextAlignmentCenter;
-        label.text = @"Take photos with smiley faces everyday.\n\nCollage them with Smiley Collage";
-        [label sizeToFit];
-        [self.smileyNotFoundHelpView addSubview:label];
-        
-        static const CGFloat labelInset = 5.0;
-        [self.smileyNotFoundHelpView addConstraints:@[[CPUtility constraintWithView:label alignToView:self.smileyNotFoundHelpView attribute:NSLayoutAttributeLeft constant:labelInset], [CPUtility constraintWithView:label alignToView:self.smileyNotFoundHelpView attribute:NSLayoutAttributeTop constant:labelInset], [CPUtility constraintWithView:label alignToView:self.smileyNotFoundHelpView attribute:NSLayoutAttributeRight constant:-labelInset], [CPUtility constraintWithView:label alignToView:self.smileyNotFoundHelpView attribute:NSLayoutAttributeBottom constant:-labelInset]]];
-        
-        [view addSubview:self.smileyNotFoundHelpView];
-        [view addConstraints:[CPUtility constraintsWithView:self.smileyNotFoundHelpView centerAlignToView:view]];
-    }
-}
-
-- (void)removeSmileyNotFoundHelp {
-    if (self.smileyNotFoundHelpView) {
-        [self.smileyNotFoundHelpView removeFromSuperview];
-        self.smileyNotFoundHelpView = nil;
-    }
-}
-
-- (void)showSmileyHelpWithDelayInView:(UIView *)view {
+- (void)showSmileyHelpInView:(UIView *)view rect:(CGRect)rect {
     if (![CPSettings isSmileyTapAcknowledged]) {
-        [self performSelector:@selector(showSmileyHelpInView:) withObject:view afterDelay:g_delayTimeInterval];
+        static dispatch_once_t once;
+        dispatch_once(&once, ^{
+            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
+            dispatch_after(time, dispatch_get_main_queue(), ^{
+                [self showHelpViewInView:view];
+                [self showHelpMessage:@"Tap to select smiley" inView:view rect:rect];
+                [self performSelector:@selector(removeHelpViewWithAnimation) withObject:nil afterDelay:g_helpShownTimeInterval];
+            });
+        });
     }
 }
 
-- (void)showCollageHelpWithDelayInView:(UIView *)view {
+- (void)showCollageHelpInView:(UIView *)view rect:(CGRect)rect {
     if (![CPSettings isCollageTapAcknowledged] || ![CPSettings isCollageDragAcknowledged]) {
-        [self performSelector:@selector(showCollageHelpInView:) withObject:view afterDelay:g_delayTimeInterval];
+        static dispatch_once_t once;
+        dispatch_once(&once, ^{
+            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
+            dispatch_after(time, dispatch_get_main_queue(), ^{
+                [self showHelpViewInView:view];
+                
+                NSString *helpMessage = nil;
+                if (![CPSettings isCollageTapAcknowledged]) {
+                    helpMessage = @"Tap to edit photo";
+                }
+                if (![CPSettings isCollageDragAcknowledged]) {
+                    NSString *dragHelpMessage = @"Drag to exchange position";
+                    helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
+                }
+                [self showHelpMessage:helpMessage inView:view rect:rect];
+                
+                [self performSelector:@selector(removeHelpViewWithAnimation) withObject:nil afterDelay:g_helpShownTimeInterval];
+            });
+        });
     }
 }
 
-- (void)showEditHelpWithDelayInView:(UIView *)view {
+- (void)showEditHelpInView:(UIView *)view rect:(CGRect)rect {
     if (![CPSettings isEditDragAcknowledged] || ![CPSettings isEditZoomHelpAcknowledged]) {
-        [self performSelector:@selector(showEditHelpInView:) withObject:view afterDelay:g_delayTimeInterval];
+        static dispatch_once_t once;
+        dispatch_once(&once, ^{
+            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
+            dispatch_after(time, dispatch_get_main_queue(), ^{
+                [self showHelpViewInView:view];
+                
+                NSString *helpMessage = nil;
+                if (![CPSettings isEditDragAcknowledged]) {
+                    helpMessage = @"Drag to move photo";
+                }
+                if (![CPSettings isEditZoomHelpAcknowledged]) {
+                    NSString *dragHelpMessage = @"Pinch to zoom in/out";
+                    helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
+                }
+                [self showHelpMessage:helpMessage inView:view rect:rect];
+                
+                [self performSelector:@selector(removeHelpViewWithAnimation) withObject:nil afterDelay:g_helpShownTimeInterval];
+            });
+        });
+    }
+}
+
+- (void)removeHelpView {
+    if (self.helpShown) {
+        self.helpShown = NO;
+        [self.helpView removeFromSuperview];
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
     }
 }
 
 - (void)dealloc {
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-    [self removeSmileyNotFoundHelp];
-    for (UIView *helpView in self.helpViews) {
-        [helpView removeFromSuperview];
-    }
+    [self removeHelpView];
 }
 
-- (void)showSmileyHelpInView:(UIView *)view {
-    if (![CPSettings isSmileyTapAcknowledged]) {
-        [self showHelp:@"Tap to select smiley" inView:view];
-    }
-    [self performSelector:@selector(removeHelpViewsWithAnimation) withObject:nil afterDelay:g_delayTimeInterval];
-}
-
-
-- (void)showCollageHelpInView:(UIView *)view {
-    if (![CPSettings isCollageTapAcknowledged]) {
-        [self showHelp:@"Tap to edit photo" inView:view];
-    }
-    if (![CPSettings isCollageDragAcknowledged]) {
-        [self showHelp:@"Drag to exchange position" inView:view];
-    }
-    [self performSelector:@selector(removeHelpViewsWithAnimation) withObject:nil afterDelay:g_delayTimeInterval];
-}
-
-- (void)showEditHelpInView:(UIView *)view {
-    if (![CPSettings isEditDragAcknowledged]) {
-        [self showHelp:@"Drag to move photo" inView:view];
-    }
-    if (![CPSettings isEditZoomHelpAcknowledged]) {
-        [self showHelp:@"Pinch to zoom in / out" inView:view];
-    }
-    [self performSelector:@selector(removeHelpViewsWithAnimation) withObject:nil afterDelay:g_delayTimeInterval];
-}
-
-- (void)showHelp:(NSString *)helpMessage inView:(UIView *)view {
-    UIView *helpView = [[UIView alloc] init];
-    helpView.backgroundColor = [UIColor yellowColor];
-    helpView.layer.cornerRadius = 2.0;
-    helpView.layer.shadowColor = [UIColor blackColor].CGColor;
-    helpView.layer.shadowOffset = CGSizeMake(2.0, 2.0);
-    helpView.layer.shadowOpacity = 0.8;
-    helpView.translatesAutoresizingMaskIntoConstraints = NO;
+- (void)showHelpViewInView:(UIView *)view {
+    NSAssert(!self.helpView, @"");
+    NSAssert(!self.maskView, @"");
     
-    UILabel *label = [[UILabel alloc] init];
-    label.translatesAutoresizingMaskIntoConstraints = NO;
-    label.textAlignment = NSTextAlignmentCenter;
-    label.text = helpMessage;
-    [label sizeToFit];
-    [helpView addSubview:label];
+    self.helpShown = YES;
     
-    static const CGFloat labelInset = 5.0;
-    [helpView addConstraints:@[[CPUtility constraintWithView:label alignToView:helpView attribute:NSLayoutAttributeLeft constant:labelInset], [CPUtility constraintWithView:label alignToView:helpView attribute:NSLayoutAttributeTop constant:labelInset], [CPUtility constraintWithView:label alignToView:helpView attribute:NSLayoutAttributeRight constant:-labelInset], [CPUtility constraintWithView:label alignToView:helpView attribute:NSLayoutAttributeBottom constant:-labelInset]]];
+    self.helpView = [[UIView alloc] init];
+    self.helpView.translatesAutoresizingMaskIntoConstraints = NO;
+    [view addSubview:self.helpView];
+    [view addConstraints:[CPUtility constraintsWithView:self.helpView edgesAlignToView:view]];
     
-    [view addSubview:helpView];
-    static const CGFloat helpViewInset = 10.0;
-    [view addConstraint:[CPUtility constraintWithView:helpView attribute:NSLayoutAttributeCenterX alignToView:view attribute:NSLayoutAttributeRight constant:-(label.bounds.size.width / 2 + labelInset + helpViewInset)]];
-    if (self.helpViews.count > 0) {
-        [view addConstraint:[CPUtility constraintWithView:helpView attribute:NSLayoutAttributeTop alignToView:self.helpViews.lastObject attribute:NSLayoutAttributeBottom constant:helpViewInset]];
-    } else {
-        [view addConstraint:[CPUtility constraintWithView:helpView alignToView:view attribute:NSLayoutAttributeCenterY]];
-    }
-    [self.helpViews addObject:helpView];
-
-    helpView.transform = CGAffineTransformMakeScale(0.0, 1.0);
+    self.maskView = [[CPMaskView alloc] init];
+    self.maskView.alpha = 0.0;
+    self.maskView.backgroundColor = [UIColor blackColor];
+    self.maskView.delegate = self;
+    self.maskView.frame = self.helpView.bounds;
+    self.maskView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.helpView addSubview:self.maskView];
+    [self.helpView addConstraints:[CPUtility constraintsWithView:self.maskView edgesAlignToView:self.helpView]];
+    
     [UIView animateWithDuration:g_animationDuration animations:^{
-        helpView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+        self.maskView.alpha = 0.2;
     }];
 }
 
-- (void)removeHelpViewsWithAnimation {
-    for (UIView *helpView in self.helpViews) {
-        [UIView animateWithDuration:g_animationDuration animations:^{
-            helpView.transform = CGAffineTransformMakeScale(0.0, 1.0);
-        } completion:^(BOOL finished) {
-            [helpView removeFromSuperview];
-        }];
+- (void)showHelpMessage:(NSString *)helpMessage inView:(UIView *)view rect:(CGRect)rect {
+    NSAssert(!self.panelView, @"");
+    
+    self.panelView = [[UIView alloc] init];
+    self.panelView.backgroundColor = [UIColor whiteColor];
+    self.panelView.clipsToBounds = YES;
+    self.panelView.layer.cornerRadius = 3.0;
+    [self.helpView addSubview:self.panelView];
+    
+    UIView *maskView = [[UIView alloc] init];
+    maskView.alpha = 0.4;
+    maskView.backgroundColor = [UIColor whiteColor];
+    [self.panelView addSubview:maskView];
+    
+    UILabel *label = [[UILabel alloc] init];
+    label.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:18.0];
+    label.numberOfLines = 0;
+    label.text = helpMessage;
+    label.textAlignment = NSTextAlignmentCenter;
+    label.textColor = [UIColor darkGrayColor];
+    [label sizeToFit];
+    [self.panelView addSubview:label];
+    
+    static const CGFloat inset = 8.0;
+    CGFloat left = rect.origin.x + arc4random_uniform(rect.size.width);
+    CGFloat top = rect.origin.y + arc4random_uniform(rect.size.height);
+    CGFloat width = label.bounds.size.width + inset * 2;
+    CGFloat height = label.bounds.size.height + inset * 2;
+    
+    if (left < inset) {
+        left = inset;
     }
-    self.helpViews = nil;
+    if (top < inset) {
+        top = inset;
+    }
+    if (left + width > view.bounds.origin.x + view.bounds.size.width - inset) {
+        left = view.bounds.origin.x + view.bounds.size.width - width - inset;
+    }
+    if (top + height > view.bounds.origin.y + view.bounds.size.height - inset) {
+        top = view.bounds.origin.y + view.bounds.size.height - height - inset;
+    }
+    
+    self.panelView.frame = CGRectMake(left, top, width, height);
+    maskView.frame = self.panelView.bounds;
+    label.frame = self.panelView.bounds;
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[CPUtility bluredSnapshotForView:view inRect:self.panelView.frame]];
+    imageView.frame = self.panelView.bounds;
+    [self.panelView insertSubview:imageView belowSubview:maskView];
+    
+    self.panelView.transform = CGAffineTransformMakeScale(0.0, 0.0);
+    [UIView animateWithDuration:g_animationDuration delay:0.0 usingSpringWithDamping:0.5 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        self.panelView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+    } completion:nil];
 }
 
-#pragma mark - lazy init
-
-- (NSMutableArray *)helpViews {
-    if (!_helpViews) {
-        _helpViews = [[NSMutableArray alloc] initWithCapacity:g_maxHelpViews];
+- (void)removeHelpViewWithAnimation {
+    if (self.helpShown) {
+        self.helpShown = NO;
+        
+        [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        [UIView animateWithDuration:g_animationDuration animations:^{
+            self.maskView.alpha = 0.0;
+            self.panelView.transform = CGAffineTransformMakeScale(0.0, 0.0);
+        } completion:^(BOOL finished) {
+            [self.helpView removeFromSuperview];
+            self.helpView = nil;
+            self.maskView = nil;
+            self.panelView = nil;
+        }];
     }
-    return _helpViews;
+}
+
+#pragma maek - CPMaskViewDelegate implement
+
+- (void)maskViewIsTouched:(CPMaskView *)maskView {
+    [self removeHelpViewWithAnimation];
 }
 
 @end

@@ -46,6 +46,8 @@
 
 @implementation CPShopViewController
 
+static NSString * g_shopViewControllerUnwindSegueName = @"CPShopViewControllerUnwindSegue";
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -156,7 +158,7 @@
 #pragma mark - CPTouchableViewDelegate implement
 
 - (void)viewIsTouched:(CPTouchableView *)view {
-    [self performSegueWithIdentifier:@"CPShopViewControlerUnwindSegue" sender:nil];
+    [self performSegueWithIdentifier:g_shopViewControllerUnwindSegueName sender:nil];
 }
 
 #pragma mark - SKPaymentTransactionObserver implement
@@ -224,7 +226,7 @@
 #pragma mark - UIAlertViewDelegate implement
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
-    [self performSegueWithIdentifier:@"CPShopViewControlerUnwindSegue" sender:nil];
+    [self performSegueWithIdentifier:g_shopViewControllerUnwindSegueName sender:nil];
 }
 
 #pragma mark - UITableViewDataSource implement

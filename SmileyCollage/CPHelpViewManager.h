@@ -8,14 +8,12 @@
 
 @interface CPHelpViewManager : NSObject
 
-- (void)showSmileyNotFoundHelpWithDelayInView:(UIView *)view;
+- (void)showSmileyHelpInView:(UIView *)view rect:(CGRect)rect;
 
-- (void)removeSmileyNotFoundHelp;
+- (void)showCollageHelpInView:(UIView *)view rect:(CGRect)rect;
 
-- (void)showSmileyHelpWithDelayInView:(UIView *)view;
+- (void)showEditHelpInView:(UIView *)view rect:(CGRect)rect;
 
-- (void)showCollageHelpWithDelayInView:(UIView *)view;
-
-- (void)showEditHelpWithDelayInView:(UIView *)view;
+- (void)removeHelpView;
 
 @end

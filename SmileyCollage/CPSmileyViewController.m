@@ -35,6 +35,8 @@
 @property (strong, nonatomic) UIBarButtonItem *confirmBarButtonItem;
 @property (strong, nonatomic) UIButton *confirmButton;
 
+@property (strong, nonatomic) UILabel *noSmileyLabel;
+
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
 @property (weak, nonatomic) IBOutlet UIToolbar *toolbar;
@@ -45,6 +47,8 @@
 @end
 
 @implementation CPSmileyViewController
+
+static const CGFloat g_animationDuration = 0.3;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -60,26 +64,35 @@
     self.facesManager.facesController.delegate = self;
     [self showToolbarWithAnimation];
     [self.facesManager scanFaces];
-    
-    if (self.facesManager.facesController.fetchedObjects.count > 0) {
-        [self.helpViewManager showSmileyHelpWithDelayInView:self.view];
-    } else {
-        [self.helpViewManager showSmileyNotFoundHelpWithDelayInView:self.view];
-    }
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
     [self showSelectedFacesNumber];
+    
+    if (self.facesManager.facesController.fetchedObjects.count > 0) {
+        [self showHelpView];
+    } else {
+        [self showNoSmileyLabel];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    self.helpViewManager = nil;
+    
+    [self hideHelpView];
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    [self hideHelpView];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
+    
     [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
@@ -199,16 +212,50 @@
     [self performSegueWithIdentifier:@"CPCollageViewControllerSegue" sender:nil];
 }
 
+- (void)showNoSmileyLabel {
+    self.noSmileyLabel.alpha = 0.0;
+    [self.view addSubview:self.noSmileyLabel];
+    [self.view addConstraints:[CPUtility constraintsWithView:self.noSmileyLabel centerAlignToView:self.view]];
+    [self.view addConstraint:[CPUtility constraintWithView:self.noSmileyLabel alignToView:self.view attribute:NSLayoutAttributeWidth]];
+
+    [UIView animateWithDuration:g_animationDuration animations:^{
+        self.noSmileyLabel.alpha = 1.0;
+    }];
+}
+
+- (void)hideNoSmileyLabel {
+    [UIView animateWithDuration:g_animationDuration animations:^{
+        self.noSmileyLabel.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        [self.noSmileyLabel removeFromSuperview];
+    }];
+}
+
+- (void)showHelpView {
+    NSAssert([self.collectionView numberOfItemsInSection:0] > 0, @"");
+    
+    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:arc4random_uniform([self.collectionView numberOfItemsInSection:0]) inSection:0]];
+    NSAssert(cell, @"");
+    CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
+    
+    self.helpViewManager = [[CPHelpViewManager alloc] init];
+    [self.helpViewManager showSmileyHelpInView:self.view rect:rect];
+}
+
+- (void)hideHelpView {
+    [self.helpViewManager removeHelpView];
+}
+
 #pragma mark - NSFetchedResultsControllerDelegate implement
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
     self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)controller.fetchedObjects.count];
     [self.collectionView reloadData];
     
-    if (controller.fetchedObjects.count > 0) {
-        [self.helpViewManager removeSmileyNotFoundHelp];
+    if (controller.fetchedObjects.count == 0) {
+        [self showNoSmileyLabel];
     } else {
-        [self.helpViewManager showSmileyNotFoundHelpWithDelayInView:self.view];
+        [self hideNoSmileyLabel];
     }
 }
 
@@ -284,13 +331,6 @@
 
 #pragma mark - lazy init
 
-- (CPHelpViewManager *)helpViewManager {
-    if (!_helpViewManager) {
-        _helpViewManager = [[CPHelpViewManager alloc] init];
-    }
-    return _helpViewManager;
-}
-
 - (CPFacesManager *)facesManager {
     if (!_facesManager) {
         _facesManager = [[CPFacesManager alloc] init];
@@ -329,6 +369,20 @@
 		[_confirmButton addTarget:self action:@selector(confirmButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 	}
 	return _confirmButton;
+}
+
+- (UILabel *)noSmileyLabel {
+    if (!_noSmileyLabel) {
+        _noSmileyLabel = [[UILabel alloc] init];
+        _noSmileyLabel.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:18.0];
+        _noSmileyLabel.numberOfLines = 0;
+        _noSmileyLabel.text = @"No Smiley Face in your Album\n\nTake photos for your Smiley Faces\nor\nimport photos from itunes";
+        _noSmileyLabel.textAlignment = NSTextAlignmentCenter;
+        _noSmileyLabel.textColor = [UIColor lightGrayColor];
+        _noSmileyLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [_noSmileyLabel sizeToFit];
+    }
+    return _noSmileyLabel;
 }
 
 @end

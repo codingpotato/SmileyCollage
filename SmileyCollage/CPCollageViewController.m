@@ -84,14 +84,25 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (![CPSettings isWatermarkRemovePurchased]) {
         [self showWatermarkImageView];
     }
+    [self.collectionView reloadData];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     
-    [self.helpViewManager showCollageHelpWithDelayInView:self.view];
+    [self showHelpView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    self.helpViewManager = nil;
+    [self hideHelpView];
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    [self hideHelpView];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -382,6 +393,23 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return YES;
 }
 
+- (void)showHelpView {
+    NSAssert([self.collectionView numberOfItemsInSection:0] > 0, @"");
+    
+    NSUInteger row = arc4random_uniform([self.collectionView numberOfItemsInSection:0]);
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+    UICollectionViewCell *cell = [self.collectionView cellForItemAtIndexPath:indexPath];
+    NSAssert(cell, @"");
+    CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
+    
+    self.helpViewManager = [[CPHelpViewManager alloc] init];
+    [self.helpViewManager showCollageHelpInView:self.view rect:rect];
+}
+
+- (void)hideHelpView {
+    [self.helpViewManager removeHelpView];
+}
+
 #pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -454,13 +482,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 #pragma mark - lazy init
-
-- (CPHelpViewManager *)helpViewManager {
-    if (!_helpViewManager) {
-        _helpViewManager = [[CPHelpViewManager alloc] init];
-    }
-    return _helpViewManager;
-}
 
 - (NSArray *)numberOfColumnsInRows {
     if (!_numberOfColumnsInRows) {

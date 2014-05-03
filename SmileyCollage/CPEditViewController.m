@@ -35,12 +35,24 @@
 
     [self showImageView];
     [self showFaceIndicator];
-    [self.helpViewManager showEditHelpWithDelayInView:self.view];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self showHelpView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    self.helpViewManager = nil;
+    
+    [self hideHelpView];
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    
+    [self hideHelpView];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -151,6 +163,15 @@
     [UIView animateWithDuration:0.1 animations:^{
         self.imageView.frame = frame;
     }];
+}
+
+- (void)showHelpView {
+    self.helpViewManager = [[CPHelpViewManager alloc] init];
+    [self.helpViewManager showEditHelpInView:self.view rect:self.faceIndicator.frame];
+}
+
+- (void)hideHelpView {
+    [self.helpViewManager removeHelpView];
 }
 
 #pragma mark - lazy init
