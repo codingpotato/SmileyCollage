@@ -10,11 +10,19 @@
 
 @implementation CPConfig
 
-+ (float)thumbnailSize {
++ (CGFloat)thumbnailSize {
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
         return 64.0;
     } else {
-        return 128.0;
+        return 100.0;
+    }
+}
+
++ (CGFloat)noSmileyLabelFontSize {
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone) {
+        return 18.0;
+    } else {
+        return 22.0;
     }
 }
 

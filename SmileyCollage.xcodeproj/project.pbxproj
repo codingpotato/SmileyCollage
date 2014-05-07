@@ -23,6 +23,8 @@
 		FC46716318C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
 		FC46716418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
 		FC46716C18C2CAF600E472BF /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FC46716A18C2CAF600E472BF /* InfoPlist.strings */; };
+		FC56D67B1917C4B700E4AC15 /* SmileyCollage-ipad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC56D67A1917C4B700E4AC15 /* SmileyCollage-ipad.storyboard */; };
+		FC56D67D1917C55100E4AC15 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC56D67C1917C55100E4AC15 /* StoreKit.framework */; };
 		FC56ED3918E6C49700DFE80C /* CPConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = FC56ED3818E6C49700DFE80C /* CPConfig.m */; };
 		FC5704C518F42C6900E373C6 /* CPPortalTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5704C418F42C6900E373C6 /* CPPortalTransition.m */; };
 		FC5704C818F42CE600E373C6 /* CPReversableTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5704C718F42CE600E373C6 /* CPReversableTransition.m */; };
@@ -48,7 +50,6 @@
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
 		FC94BD39190FDCC500E46629 /* CPActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC94BD38190FDCC500E46629 /* CPActionViewController.m */; };
 		FC94BD3C190FDD8900E46629 /* CPTouchableView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC94BD3B190FDD8900E46629 /* CPTouchableView.m */; };
-		FC9DACBA1908043C004FFC54 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC9DACB91908043C004FFC54 /* StoreKit.framework */; };
 		FCA292E718FD64AB0029583E /* CPCoreDataTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */; };
 		FCA292E918FD664A0029583E /* CPFaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E818FD664A0029583E /* CPFaceTests.m */; };
 		FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
@@ -95,6 +96,8 @@
 		FC46716118C2CAF600E472BF /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		FC46716918C2CAF600E472BF /* SmileyCollageTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SmileyCollageTests-Info.plist"; sourceTree = "<group>"; };
 		FC46716B18C2CAF600E472BF /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FC56D67A1917C4B700E4AC15 /* SmileyCollage-ipad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "SmileyCollage-ipad.storyboard"; sourceTree = "<group>"; };
+		FC56D67C1917C55100E4AC15 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		FC56ED3718E6C49700DFE80C /* CPConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConfig.h; sourceTree = "<group>"; };
 		FC56ED3818E6C49700DFE80C /* CPConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConfig.m; sourceTree = "<group>"; };
 		FC5704C318F42C6900E373C6 /* CPPortalTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPortalTransition.h; sourceTree = "<group>"; };
@@ -140,7 +143,6 @@
 		FC94BD38190FDCC500E46629 /* CPActionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPActionViewController.m; sourceTree = "<group>"; };
 		FC94BD3A190FDD8900E46629 /* CPTouchableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTouchableView.h; sourceTree = "<group>"; };
 		FC94BD3B190FDD8900E46629 /* CPTouchableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTouchableView.m; sourceTree = "<group>"; };
-		FC9DACB91908043C004FFC54 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		FCA292E518FD64AB0029583E /* CPCoreDataTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCoreDataTestHelper.h; sourceTree = "<group>"; };
 		FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataTestHelper.m; sourceTree = "<group>"; };
 		FCA292E818FD664A0029583E /* CPFaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceTests.m; sourceTree = "<group>"; };
@@ -160,8 +162,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC56D67D1917C55100E4AC15 /* StoreKit.framework in Frameworks */,
 				FC11BBFA190E8C9000C2D7CF /* Accelerate.framework in Frameworks */,
-				FC9DACBA1908043C004FFC54 /* StoreKit.framework in Frameworks */,
 				FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */,
 				FC8BCA1018D424F000748335 /* CoreData.framework in Frameworks */,
 				FCD844C418C761C3003BA834 /* CoreImage.framework in Frameworks */,
@@ -224,6 +226,7 @@
 		FC46713E18C2CAF600E472BF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FC56D67C1917C55100E4AC15 /* StoreKit.framework */,
 				FC11BBF9190E8C9000C2D7CF /* Accelerate.framework */,
 				FCF8FE9718C2D542007FA358 /* AssetsLibrary.framework */,
 				FC8BCA0F18D424F000748335 /* CoreData.framework */,
@@ -231,7 +234,6 @@
 				FCD844C318C761C3003BA834 /* CoreImage.framework */,
 				FC46713F18C2CAF600E472BF /* Foundation.framework */,
 				FC92759B18F58CF700031FD0 /* ImageIO.framework */,
-				FC9DACB91908043C004FFC54 /* StoreKit.framework */,
 				FC46714318C2CAF600E472BF /* UIKit.framework */,
 				FC46716118C2CAF600E472BF /* XCTest.framework */,
 			);
@@ -257,6 +259,7 @@
 				FC782A8B18E304B10024C477 /* CPUtility.m */,
 				FC46715A18C2CAF600E472BF /* Images.xcassets */,
 				FC60EBC918E1B9C200AD74FB /* Models */,
+				FC56D67A1917C4B700E4AC15 /* SmileyCollage-ipad.storyboard */,
 				FC46715118C2CAF600E472BF /* SmileyCollage.storyboard */,
 				FC8BCA1118D4256900748335 /* SmileyCollage.xcdatamodeld */,
 				FC46714618C2CAF600E472BF /* Supporting Files */,
@@ -401,6 +404,11 @@
 				TargetAttributes = {
 					FC46713B18C2CAF600E472BF = {
 						DevelopmentTeam = FY635R7KCK;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -429,6 +437,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC46715B18C2CAF600E472BF /* Images.xcassets in Resources */,
+				FC56D67B1917C4B700E4AC15 /* SmileyCollage-ipad.storyboard in Resources */,
 				FC46715318C2CAF600E472BF /* SmileyCollage.storyboard in Resources */,
 				FC46714A18C2CAF600E472BF /* InfoPlist.strings in Resources */,
 			);

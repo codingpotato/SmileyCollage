@@ -26,6 +26,8 @@
 	<true/>
 	<key>UIMainStoryboardFile</key>
 	<string>SmileyCollage</string>
+	<key>UIMainStoryboardFile~ipad</key>
+	<string>SmileyCollage-ipad</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

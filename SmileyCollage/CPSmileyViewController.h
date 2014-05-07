@@ -6,6 +6,6 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@interface CPSmileyViewController : UIViewController <NSFetchedResultsControllerDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface CPSmileyViewController : UIViewController
 
 @end

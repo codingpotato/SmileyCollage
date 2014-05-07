@@ -417,7 +417,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    CPCollageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPStitchCell" forIndexPath:indexPath];
+    CPCollageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPCollageCell" forIndexPath:indexPath];
     [cell initCell];
     
     CPFaceEditInformation *faceEditInformation = [self.collagedFaces objectAtIndex:indexPath.row];

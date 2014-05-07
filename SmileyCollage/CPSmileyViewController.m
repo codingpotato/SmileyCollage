@@ -21,11 +21,13 @@
 #import "CPFacesManager.h"
 #import "CPPhoto.h"
 
-@interface CPSmileyViewController ()
+@interface CPSmileyViewController () <NSFetchedResultsControllerDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
 @property (strong, nonatomic) CPFacesManager *facesManager;
+
+@property (strong, nonatomic) NSMutableArray *fetchedResultsChangedObjects;
 
 @property (strong, nonatomic) NSMutableDictionary *selectedFaces;
 
@@ -50,6 +52,8 @@
 
 static const CGFloat g_animationDuration = 0.3;
 
+static const CGFloat g_collectionViewSpacing = 1.0;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -71,7 +75,7 @@ static const CGFloat g_animationDuration = 0.3;
     
     [self showSelectedFacesNumber];
     
-    if (self.facesManager.facesController.fetchedObjects.count > 0) {
+    if (self.collectionView.visibleCells.count > 0) {
         [self showHelpView];
     } else {
         [self showNoSmileyLabel];
@@ -250,9 +254,64 @@ static const CGFloat g_animationDuration = 0.3;
 #pragma mark - NSFetchedResultsControllerDelegate implement
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath {
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)controller.fetchedObjects.count];
-    [self.collectionView reloadData];
+    switch(type) {
+        case NSFetchedResultsChangeInsert:
+            NSAssert(newIndexPath, @"");
+            [self.fetchedResultsChangedObjects addObject:@{@(type): newIndexPath}];
+            break;
+        case NSFetchedResultsChangeDelete:
+            NSAssert(indexPath, @"");
+            [self.fetchedResultsChangedObjects addObject:@{@(type): indexPath}];
+            break;
+        case NSFetchedResultsChangeUpdate:
+            NSAssert(indexPath, @"");
+            [self.fetchedResultsChangedObjects addObject:@{@(type): indexPath}];
+            break;
+        case NSFetchedResultsChangeMove:
+            NSAssert(indexPath, @"");
+            NSAssert(newIndexPath, @"");
+            [self.fetchedResultsChangedObjects addObject:@{@(type): @[indexPath, newIndexPath]}];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)controllerDidChangeContent:(NSFetchedResultsController *)controller {
+    [self.collectionView performBatchUpdates:^{
+        for (NSDictionary *change in self.fetchedResultsChangedObjects) {
+            [change enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+                NSFetchedResultsChangeType type = ((NSNumber *)key).integerValue;
+                switch (type) {
+                    case NSFetchedResultsChangeInsert:
+                        NSAssert([obj isMemberOfClass:[NSIndexPath class]], @"");
+                        [self.collectionView insertItemsAtIndexPaths:@[obj]];
+                        break;
+                    case NSFetchedResultsChangeDelete:
+                        NSAssert([obj isMemberOfClass:[NSIndexPath class]], @"");
+                        [self.collectionView deleteItemsAtIndexPaths:@[obj]];
+                        break;
+                    case NSFetchedResultsChangeUpdate:
+                        NSAssert([obj isMemberOfClass:[NSIndexPath class]], @"");
+                        [self.collectionView reloadItemsAtIndexPaths:@[obj]];
+                        break;
+                    case NSFetchedResultsChangeMove: {
+                        NSAssert([obj isMemberOfClass:[NSArray class]], @"");
+                        NSArray *parameters = (NSArray *)obj;
+                        NSAssert(parameters.count == 2, @"");
+                        [self.collectionView moveItemAtIndexPath:[parameters objectAtIndex:0] toIndexPath:[parameters objectAtIndex:1]];
+                        break;
+                    }
+                    default:
+                        NSAssert(NO, @"");
+                        break;
+                }
+            }];
+        }
+    } completion:nil];
+    [self.fetchedResultsChangedObjects removeAllObjects];
     
+    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)controller.fetchedObjects.count];
     if (controller.fetchedObjects.count == 0) {
         [self showNoSmileyLabel];
     } else {
@@ -314,20 +373,20 @@ static const CGFloat g_animationDuration = 0.3;
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     int number = collectionView.bounds.size.width / [CPConfig thumbnailSize];
-    CGFloat width = (collectionView.bounds.size.width - (number + 1) * 1.0) / number;
+    CGFloat width = (collectionView.bounds.size.width - (number + 1) * g_collectionViewSpacing) / number;
     return CGSizeMake(width, width);
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(1.0, 1.0, 1.0, 1.0);
+    return UIEdgeInsetsMake(g_collectionViewSpacing, g_collectionViewSpacing, g_collectionViewSpacing, g_collectionViewSpacing);
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 1.0;
+    return g_collectionViewSpacing;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    return 1.0;
+    return g_collectionViewSpacing;
 }
 
 #pragma mark - lazy init
@@ -337,6 +396,13 @@ static const CGFloat g_animationDuration = 0.3;
         _facesManager = [[CPFacesManager alloc] init];
     }
     return _facesManager;
+}
+
+- (NSMutableArray *)fetchedResultsChangedObjects {
+    if (!_fetchedResultsChangedObjects) {
+        _fetchedResultsChangedObjects = [[NSMutableArray alloc] init];
+    }
+    return _fetchedResultsChangedObjects;
 }
 
 - (NSMutableDictionary *)selectedFaces {
@@ -375,7 +441,7 @@ static const CGFloat g_animationDuration = 0.3;
 - (UILabel *)noSmileyLabel {
     if (!_noSmileyLabel) {
         _noSmileyLabel = [[UILabel alloc] init];
-        _noSmileyLabel.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:18.0];
+        _noSmileyLabel.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:[CPConfig noSmileyLabelFontSize]];
         _noSmileyLabel.numberOfLines = 0;
         _noSmileyLabel.text = @"No Smiley Face in your Album\n\nTake photos for your Smiley Faces\nor\nimport photos from itunes";
         _noSmileyLabel.textAlignment = NSTextAlignmentCenter;

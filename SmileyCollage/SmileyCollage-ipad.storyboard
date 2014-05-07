@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="3h9-bE-efv">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <scenes>
+        <!--Smiley View Controller-->
+        <scene sceneID="t5X-4N-pbj">
+            <objects>
+                <viewController id="4hy-Xh-45A" customClass="CPSmileyViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="kJc-RF-H4C"/>
+                        <viewControllerLayoutGuide type="bottom" id="sX0-au-hrt"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="dqU-Dg-z36">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="70V-MR-g1j">
+                                <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="5RU-Gk-DGI">
+                                    <size key="itemSize" width="96" height="96"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPPhotoCell" id="m8y-84-eu8" customClass="CPPhotoCell">
+                                        <rect key="frame" x="0.0" y="64" width="96" height="96"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="96" height="96"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="4hy-Xh-45A" id="WdG-rS-eAf"/>
+                                    <outlet property="delegate" destination="4hy-Xh-45A" id="b8I-I5-bNA"/>
+                                </connections>
+                            </collectionView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Tyx-g1-ar6">
+                                <rect key="frame" x="0.0" y="980" width="768" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="x2y-nI-c6f"/>
+                                    <barButtonItem style="plain" id="VlH-mm-QYc">
+                                        <view key="customView" contentMode="scaleToFill" id="WiX-Qv-Z05">
+                                            <rect key="frame" x="11" y="6" width="746" height="33"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Uah-jC-tNw">
+                                                    <rect key="frame" x="0.0" y="2" width="746" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="hpM-IP-Dqs">
+                                                    <rect key="frame" x="0.0" y="26" width="746" height="2"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </progressView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="4E8-KD-eLj"/>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="Tyx-g1-ar6" secondAttribute="bottom" id="4HC-tk-vT1"/>
+                            <constraint firstAttribute="trailing" secondItem="Tyx-g1-ar6" secondAttribute="trailing" id="IOw-7d-EMD"/>
+                            <constraint firstItem="70V-MR-g1j" firstAttribute="leading" secondItem="dqU-Dg-z36" secondAttribute="leading" id="dze-hC-Qwk"/>
+                            <constraint firstItem="70V-MR-g1j" firstAttribute="top" secondItem="dqU-Dg-z36" secondAttribute="top" id="hGi-Zs-LXF"/>
+                            <constraint firstItem="Tyx-g1-ar6" firstAttribute="leading" secondItem="70V-MR-g1j" secondAttribute="leading" id="pss-Nc-ZvQ"/>
+                            <constraint firstItem="Tyx-g1-ar6" firstAttribute="bottom" secondItem="70V-MR-g1j" secondAttribute="bottom" id="rMT-Vn-npg"/>
+                            <constraint firstItem="70V-MR-g1j" firstAttribute="trailing" secondItem="Tyx-g1-ar6" secondAttribute="trailing" id="wZt-Mg-LsV"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Sz6-u1-wrr"/>
+                    <connections>
+                        <outlet property="collectionView" destination="70V-MR-g1j" id="XNe-8h-LrC"/>
+                        <outlet property="informationLabel" destination="Uah-jC-tNw" id="YLU-Ic-dgj"/>
+                        <outlet property="progressView" destination="hpM-IP-Dqs" id="LKV-T8-Qml"/>
+                        <outlet property="toolbar" destination="Tyx-g1-ar6" id="cfh-jw-cB5"/>
+                        <outlet property="toolbarBottomConstraint" destination="rMT-Vn-npg" id="2QA-LP-TMF"/>
+                        <segue destination="ESP-tx-gw5" kind="push" identifier="CPCollageViewControllerSegue" id="cfa-UK-2Ok"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nCy-2K-Xhf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1245" y="41"/>
+        </scene>
+        <!--Collage View Controller - Smiley Collage-->
+        <scene sceneID="Ip9-QI-28j">
+            <objects>
+                <viewController id="ESP-tx-gw5" customClass="CPCollageViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Zse-6i-eTP"/>
+                        <viewControllerLayoutGuide type="bottom" id="Se3-cj-IjO"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="eWw-61-Bp0">
+                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="g95-4L-AbE">
+                                <rect key="frame" x="0.0" y="0.0" width="768" height="960"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="ptZ-CU-Rew">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPCollageCell" id="Iwc-7G-N0S">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="ESP-tx-gw5" id="moV-tB-ohE"/>
+                                    <outlet property="delegate" destination="ESP-tx-gw5" id="al9-yf-dMq"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" title="Smiley Collage" id="K0z-kU-uvt"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OUU-er-oVo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2229" y="41"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="A7h-3s-rmJ">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="3h9-bE-efv" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="dfK-ir-UYv">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="4hy-Xh-45A" kind="relationship" relationship="rootViewController" id="4xv-uu-4Z6"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="O2n-iw-bPT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="271" y="41"/>
+        </scene>
+    </scenes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
+</document>

@@ -8,6 +8,8 @@
 
 @interface CPConfig : NSObject
 
-+ (float)thumbnailSize;
++ (CGFloat)thumbnailSize;
+
++ (CGFloat)noSmileyLabelFontSize;
 
 @end
