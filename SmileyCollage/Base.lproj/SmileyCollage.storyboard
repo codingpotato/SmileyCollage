@@ -315,7 +315,6 @@
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="4tI-KM-L7w" appends="YES" id="i9B-GZ-bTN"/>
                             <outletCollection property="gestureRecognizers" destination="flv-O0-2Hb" appends="YES" id="cm7-KA-E6L"/>
-                            <outletCollection property="gestureRecognizers" destination="flv-O0-2Hb" appends="YES" id="J13-Ei-dHd"/>
                         </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>

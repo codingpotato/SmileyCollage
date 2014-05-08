@@ -136,16 +136,61 @@
                             </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="YU4-9w-G8r" appends="YES" id="ygK-nM-3Xc"/>
+                        </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" title="Smiley Collage" id="K0z-kU-uvt"/>
                     <connections>
                         <outlet property="collectionView" destination="g95-4L-AbE" id="nNH-Xg-4CS"/>
+                        <segue destination="B8E-DM-B5w" kind="push" identifier="CPEditViewControllerSegue" id="BOY-82-td7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OUU-er-oVo" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="YU4-9w-G8r">
+                    <connections>
+                        <action selector="handlePanGesture:" destination="ESP-tx-gw5" id="UbS-Jp-f3Y"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="2229" y="41"/>
+            <point key="canvasLocation" x="2236" y="41"/>
+        </scene>
+        <!--Edit View Controller - Smiley Edit-->
+        <scene sceneID="lCI-Df-9l9">
+            <objects>
+                <viewController id="B8E-DM-B5w" customClass="CPEditViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="f3N-0e-kRr"/>
+                        <viewControllerLayoutGuide type="bottom" id="qLt-n5-xy3"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kac-h8-clc">
+                        <rect key="frame" x="0.0" y="64" width="768" height="960"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="zQo-s3-X5g" appends="YES" id="NgQ-eR-QLW"/>
+                            <outletCollection property="gestureRecognizers" destination="6YE-df-YyV" appends="YES" id="OiJ-w2-r5E"/>
+                        </connections>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <navigationItem key="navigationItem" title="Smiley Edit" id="2eF-Jd-5Pw"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GQ6-uX-aW0" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="zQo-s3-X5g">
+                    <connections>
+                        <action selector="handlePanGesture:" destination="B8E-DM-B5w" id="XSf-bi-u1t"/>
+                    </connections>
+                </panGestureRecognizer>
+                <pinchGestureRecognizer id="6YE-df-YyV">
+                    <connections>
+                        <action selector="handlePinchGesture:" destination="B8E-DM-B5w" id="Q5E-yn-8qb"/>
+                    </connections>
+                </pinchGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="3221" y="41"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="A7h-3s-rmJ">
