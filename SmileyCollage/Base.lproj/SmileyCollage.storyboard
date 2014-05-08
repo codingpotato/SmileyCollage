@@ -93,13 +93,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Z6S-eU-NFu" firstAttribute="trailing" secondItem="Teu-QR-r64" secondAttribute="trailing" id="KMt-RX-sJy"/>
-                            <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="n4W-2L-vQ1" secondAttribute="leading" id="NqD-xZ-Dd0"/>
-                            <constraint firstAttribute="trailing" secondItem="Teu-QR-r64" secondAttribute="trailing" id="R9F-Cb-5WW"/>
-                            <constraint firstAttribute="bottom" secondItem="Teu-QR-r64" secondAttribute="bottom" id="k8g-8S-ay4"/>
-                            <constraint firstItem="Z6S-eU-NFu" firstAttribute="leading" secondItem="Teu-QR-r64" secondAttribute="leading" id="quz-et-GLu"/>
-                            <constraint firstItem="Teu-QR-r64" firstAttribute="top" secondItem="n4W-2L-vQ1" secondAttribute="top" id="rli-T1-kg0"/>
-                            <constraint firstItem="Z6S-eU-NFu" firstAttribute="bottom" secondItem="Teu-QR-r64" secondAttribute="bottom" id="zc8-Ej-nxv"/>
+                            <constraint firstItem="Z6S-eU-NFu" firstAttribute="bottom" secondItem="n4W-2L-vQ1" secondAttribute="bottom" id="3xt-ow-ooI"/>
+                            <constraint firstItem="Teu-QR-r64" firstAttribute="top" secondItem="n4W-2L-vQ1" secondAttribute="top" id="8hA-FW-W3y"/>
+                            <constraint firstItem="Z6S-eU-NFu" firstAttribute="leading" secondItem="n4W-2L-vQ1" secondAttribute="leading" id="DbX-Fi-9m4"/>
+                            <constraint firstAttribute="bottom" secondItem="Teu-QR-r64" secondAttribute="bottom" id="Ll2-Dr-fKH"/>
+                            <constraint firstItem="Teu-QR-r64" firstAttribute="leading" secondItem="n4W-2L-vQ1" secondAttribute="leading" id="YvT-bn-zf8"/>
+                            <constraint firstAttribute="trailing" secondItem="Teu-QR-r64" secondAttribute="trailing" id="c0M-Ob-fvn"/>
+                            <constraint firstAttribute="trailing" secondItem="Z6S-eU-NFu" secondAttribute="trailing" id="ul7-YR-2yR"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="LiH-Uw-Urq"/>
@@ -108,7 +108,7 @@
                         <outlet property="informationLabel" destination="q07-4O-rk6" id="oKw-nE-s2G"/>
                         <outlet property="progressView" destination="EBG-9U-1y5" id="VcA-aQ-VJi"/>
                         <outlet property="toolbar" destination="Z6S-eU-NFu" id="l4d-li-PCX"/>
-                        <outlet property="toolbarBottomConstraint" destination="zc8-Ej-nxv" id="GgL-oW-cT1"/>
+                        <outlet property="toolbarBottomConstraint" destination="3xt-ow-ooI" id="PwK-Gy-iar"/>
                         <segue destination="RNr-7G-8mP" kind="push" identifier="CPCollageViewControllerSegue" id="Sug-tn-HGf"/>
                     </connections>
                 </viewController>

@@ -73,13 +73,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="Tyx-g1-ar6" secondAttribute="bottom" id="4HC-tk-vT1"/>
-                            <constraint firstAttribute="trailing" secondItem="Tyx-g1-ar6" secondAttribute="trailing" id="IOw-7d-EMD"/>
-                            <constraint firstItem="70V-MR-g1j" firstAttribute="leading" secondItem="dqU-Dg-z36" secondAttribute="leading" id="dze-hC-Qwk"/>
-                            <constraint firstItem="70V-MR-g1j" firstAttribute="top" secondItem="dqU-Dg-z36" secondAttribute="top" id="hGi-Zs-LXF"/>
-                            <constraint firstItem="Tyx-g1-ar6" firstAttribute="leading" secondItem="70V-MR-g1j" secondAttribute="leading" id="pss-Nc-ZvQ"/>
-                            <constraint firstItem="Tyx-g1-ar6" firstAttribute="bottom" secondItem="70V-MR-g1j" secondAttribute="bottom" id="rMT-Vn-npg"/>
-                            <constraint firstItem="70V-MR-g1j" firstAttribute="trailing" secondItem="Tyx-g1-ar6" secondAttribute="trailing" id="wZt-Mg-LsV"/>
+                            <constraint firstAttribute="bottom" secondItem="70V-MR-g1j" secondAttribute="bottom" id="4gp-wn-Oxz"/>
+                            <constraint firstItem="Tyx-g1-ar6" firstAttribute="bottom" secondItem="dqU-Dg-z36" secondAttribute="bottom" id="Az9-ZA-sSg"/>
+                            <constraint firstItem="70V-MR-g1j" firstAttribute="top" secondItem="dqU-Dg-z36" secondAttribute="top" id="Ch9-JH-Ha6"/>
+                            <constraint firstAttribute="trailing" secondItem="70V-MR-g1j" secondAttribute="trailing" id="CqK-DO-lrE"/>
+                            <constraint firstAttribute="trailing" secondItem="Tyx-g1-ar6" secondAttribute="trailing" id="ewM-Y8-EHA"/>
+                            <constraint firstItem="Tyx-g1-ar6" firstAttribute="leading" secondItem="dqU-Dg-z36" secondAttribute="leading" id="hnV-SD-obw"/>
+                            <constraint firstItem="70V-MR-g1j" firstAttribute="leading" secondItem="dqU-Dg-z36" secondAttribute="leading" id="rs1-eR-zzt"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Sz6-u1-wrr"/>
@@ -88,7 +88,7 @@
                         <outlet property="informationLabel" destination="Uah-jC-tNw" id="YLU-Ic-dgj"/>
                         <outlet property="progressView" destination="hpM-IP-Dqs" id="LKV-T8-Qml"/>
                         <outlet property="toolbar" destination="Tyx-g1-ar6" id="cfh-jw-cB5"/>
-                        <outlet property="toolbarBottomConstraint" destination="rMT-Vn-npg" id="2QA-LP-TMF"/>
+                        <outlet property="toolbarBottomConstraint" destination="Az9-ZA-sSg" id="iBz-qF-yhj"/>
                         <segue destination="ESP-tx-gw5" kind="push" identifier="CPCollageViewControllerSegue" id="cfa-UK-2Ok"/>
                     </connections>
                 </viewController>
@@ -119,7 +119,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPCollageCell" id="Iwc-7G-N0S">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CPCollageCell" id="Iwc-7G-N0S" customClass="CPCollageCell">
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -139,6 +139,9 @@
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" title="Smiley Collage" id="K0z-kU-uvt"/>
+                    <connections>
+                        <outlet property="collectionView" destination="g95-4L-AbE" id="nNH-Xg-4CS"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OUU-er-oVo" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -155,10 +158,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
+                        <outlet property="delegate" destination="nFV-r3-0dc" id="rfK-MC-LKj"/>
                         <segue destination="4hy-Xh-45A" kind="relationship" relationship="rootViewController" id="4xv-uu-4Z6"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O2n-iw-bPT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <customObject id="nFV-r3-0dc" customClass="CPTransitionManager"/>
             </objects>
             <point key="canvasLocation" x="271" y="41"/>
         </scene>

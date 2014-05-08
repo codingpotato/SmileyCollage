@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-@class CPCollageCell;
 @class CPFacesManager;
 
 @interface CPCollageViewController : UIViewController

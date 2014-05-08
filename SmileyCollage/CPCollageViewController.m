@@ -84,13 +84,14 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (![CPSettings isWatermarkRemovePurchased]) {
         [self showWatermarkImageView];
     }
-    [self.collectionView reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    
-    [self showHelpView];
+
+    if (self.collectionView.visibleCells.count > 0) {
+        [self showHelpView];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

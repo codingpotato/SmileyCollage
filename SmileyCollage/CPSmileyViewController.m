@@ -61,18 +61,17 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackgroundNotification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 
     self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %lu", (unsigned long)self.facesManager.facesController.fetchedObjects.count];
-    
-    self.toolbarBottomConstraint.constant = self.toolbar.bounds.size.height;
-    
+
     self.isScanCancelled = NO;
     self.facesManager.facesController.delegate = self;
-    [self showToolbarWithAnimation];
+    [self hideToolbar];
     [self.facesManager scanFaces];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    [self showToolbarWithAnimation];
     [self showSelectedFacesNumber];
     
     if (self.collectionView.visibleCells.count > 0) {
@@ -84,7 +83,8 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
+
+    [self hideToolbar];
     [self hideHelpView];
 }
 
@@ -136,7 +136,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     [self.facesManager removeObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos))];
     [self.facesManager removeObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning))];
     
-    [self hideNotificationView];
+    [self hideToolbar];
     
     if (self.facesManager.isScanning) {
         [self.facesManager stopScan];
@@ -156,7 +156,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
         NSNumber *oldValue = change[NSKeyValueChangeOldKey];
         NSNumber *newValue = change[NSKeyValueChangeNewKey];
         if (oldValue.boolValue && !newValue.boolValue) {
-            [self hideNotificationViewWithAnimation];
+            [self hideToolbarWithAnimation];
         }
     }
 }
@@ -170,12 +170,12 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     } completion:nil];
 }
 
-- (void)hideNotificationView {
+- (void)hideToolbar {
     self.toolbarBottomConstraint.constant = self.toolbar.bounds.size.height;
     [self.view layoutIfNeeded];
 }
 
-- (void)hideNotificationViewWithAnimation {
+- (void)hideToolbarWithAnimation {
     self.toolbarBottomConstraint.constant = self.toolbar.bounds.size.height;
     [UIView animateWithDuration:0.3 delay:5.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
         [self.view layoutIfNeeded];
