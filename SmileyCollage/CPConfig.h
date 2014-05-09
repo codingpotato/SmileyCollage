@@ -8,6 +8,8 @@
 
 @interface CPConfig : NSObject
 
++ (BOOL)isIPhone;
+
 + (CGFloat)thumbnailSize;
 
 + (CGFloat)noSmileyLabelFontSize;

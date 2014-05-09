@@ -30,6 +30,7 @@
 		FC5704C818F42CE600E373C6 /* CPReversableTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5704C718F42CE600E373C6 /* CPReversableTransition.m */; };
 		FC58103218DDD06100B6BE03 /* CPFaceEditInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */; };
 		FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5E8F6118E45DA20012EB59 /* CPCleanupOperation.m */; };
+		FC5FE21E191D2320002D7A4D /* CPIPadShopTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC5FE21D191D2320002D7A4D /* CPIPadShopTableViewController.m */; };
 		FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */; };
 		FC60EBCF18E1C10B00AD74FB /* CPFaceDetectOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC60EBCE18E1C10B00AD74FB /* CPFaceDetectOperation.m */; };
 		FC61A46D18DD94A3009D9442 /* CPCollageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FC61A46C18DD94A3009D9442 /* CPCollageCell.m */; };
@@ -108,6 +109,8 @@
 		FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceEditInformation.m; sourceTree = "<group>"; };
 		FC5E8F6018E45DA20012EB59 /* CPCleanupOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCleanupOperation.h; sourceTree = "<group>"; };
 		FC5E8F6118E45DA20012EB59 /* CPCleanupOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCleanupOperation.m; sourceTree = "<group>"; };
+		FC5FE21C191D2320002D7A4D /* CPIPadShopTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPIPadShopTableViewController.h; sourceTree = "<group>"; };
+		FC5FE21D191D2320002D7A4D /* CPIPadShopTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPIPadShopTableViewController.m; sourceTree = "<group>"; };
 		FC60EBCA18E1BD8E00AD74FB /* CPCoreDataOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCoreDataOperation.h; sourceTree = "<group>"; };
 		FC60EBCB18E1BD8E00AD74FB /* CPCoreDataOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataOperation.m; sourceTree = "<group>"; };
 		FC60EBCD18E1C10B00AD74FB /* CPFaceDetectOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFaceDetectOperation.h; sourceTree = "<group>"; };
@@ -344,6 +347,8 @@
 				FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */,
 				FC80EC6818C9FD7B008E83B6 /* CPEditViewController.h */,
 				FC80EC6918C9FD7B008E83B6 /* CPEditViewController.m */,
+				FC5FE21C191D2320002D7A4D /* CPIPadShopTableViewController.h */,
+				FC5FE21D191D2320002D7A4D /* CPIPadShopTableViewController.m */,
 				FC91B5B6190BB55900FD8D05 /* CPNavigationController.h */,
 				FC91B5B7190BB55900FD8D05 /* CPNavigationController.m */,
 				FC91B5B3190B7BB000FD8D05 /* CPShopViewController.h */,
@@ -471,6 +476,7 @@
 				FC77E731190BF29F00FC0BBB /* CPActionSheetTransition.m in Sources */,
 				FC8BCA1318D4256900748335 /* SmileyCollage.xcdatamodeld in Sources */,
 				FCF8FE9B18C2E09A007FA358 /* CPPhotoCell.m in Sources */,
+				FC5FE21E191D2320002D7A4D /* CPIPadShopTableViewController.m in Sources */,
 				FC80EC6A18C9FD7B008E83B6 /* CPEditViewController.m in Sources */,
 				FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */,
 				FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */,

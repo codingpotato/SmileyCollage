@@ -8,6 +8,7 @@
 
 #import "CPCollageViewController.h"
 
+#import "CPConfig.h"
 #import "CPSettings.h"
 #import "CPUtility.h"
 
@@ -21,10 +22,11 @@
 #import "CPFace.h"
 #import "CPPhoto.h"
 
-@interface CPCollageViewController () <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface CPCollageViewController () <UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
+@property (strong, nonatomic) UIBarButtonItem *shopBarButtonItem;
 @property (strong, nonatomic) UIBarButtonItem *actionBarButtonItem;
 
 @property (strong, nonatomic) UIImage *watermarkImage;
@@ -38,6 +40,8 @@
 @property (nonatomic) NSInteger selectedIndex;
 @property (strong, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
+
+@property (strong, nonatomic) UIPopoverController *shopPopoverController;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
@@ -74,10 +78,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
     
     self.selectedIndex = -1;
-    UIBarButtonItem *shop = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
+    self.shopBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
     self.actionBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
     self.actionBarButtonItem.enabled = NO;
-    self.navigationItem.rightBarButtonItems = @[self.actionBarButtonItem, shop];
+    self.navigationItem.rightBarButtonItems = @[self.actionBarButtonItem, self.shopBarButtonItem];
     
     [self calculateImageWidthHeightRatio];
     
@@ -152,11 +156,21 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)shopBarButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:g_shopViewControllerSegueName sender:nil];
+    if ([CPConfig isIPhone]) {
+        [self performSegueWithIdentifier:g_shopViewControllerSegueName sender:nil];
+    } else {
+        self.shopPopoverController = [[UIPopoverController alloc] initWithContentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"CPIPadShopViewController"]];
+        [self.shopPopoverController presentPopoverFromBarButtonItem:self.shopBarButtonItem permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    }
 }
 
 - (void)actionBarButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:g_actionViewControllerSegueName sender:nil];
+    if ([CPConfig isIPhone]) {
+        [self performSegueWithIdentifier:g_actionViewControllerSegueName sender:nil];
+    } else {
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
+        [actionSheet showFromBarButtonItem:self.actionBarButtonItem animated:YES];
+    }
 }
 
 - (void)userDefaultsChanged:(NSNotification *)notification {
@@ -410,7 +424,24 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [self.helpViewManager removeHelpView];
 }
 
-#pragma mark - UICollectionViewDataSource and UICollectionViewDelegate implement
+#pragma mark - UIActionSheetDelegate implement
+
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    switch (buttonIndex) {
+        case 0: /* Save */
+            [self saveFromActionSheet:nil];
+            break;
+        case 1: /* Share */
+            [self shareFromActionSheet:nil];
+        case 2: /* Cancel */
+            break;
+        default:
+            NSAssert(NO, @"");
+            break;
+    }
+}
+
+#pragma mark - UICollectionViewDataSource implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     NSAssert(self.collagedFaces.count <= [CPCollageViewController maxNumberOfCollagedFaces], @"");
@@ -425,10 +456,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     NSAssert(faceEditInformation, @"");
     
     if (faceEditInformation.asset) {
-        [cell showImage:[self imageOfFace:faceEditInformation] animated:NO];
-        if ([self allFacesHaveAsset]) {
-            self.actionBarButtonItem.enabled = YES;
-        }
+        // execute later, not block animation
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [cell showImage:[self imageOfFace:faceEditInformation] animated:NO];
+            if ([self allFacesHaveAsset]) {
+                self.actionBarButtonItem.enabled = YES;
+            }
+        });
     } else {
         [self.facesManager assertForURL:[[NSURL alloc] initWithString:faceEditInformation.face.photo.url] resultBlock:^(ALAsset *result) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
@@ -445,6 +479,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
     return cell;
 }
+
+#pragma mark - UICollectionViewDelegate implement
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [CPSettings acknowledgeCollageTapHelp];
