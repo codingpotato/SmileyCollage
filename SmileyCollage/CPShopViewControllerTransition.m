@@ -1,17 +1,17 @@
 //
-//  CPTransparentTransition.m
+//  CPShopViewControllerTransition.m
 //  SmileyCollage
 //
 //  Created by wangyw on 4/26/14.
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
-#import "CPActionSheetTransition.h"
+#import "CPShopViewControllerTransition.h"
 
-#import "CPActionSheetViewController.h"
+#import "CPShopViewController.h"
 #import "CPUtility.h"
 
-@implementation CPActionSheetTransition
+@implementation CPShopViewControllerTransition
 
 static const CGFloat g_cornerRadius = 3.0;
 
@@ -24,8 +24,8 @@ static const NSInteger g_maskViewTag = 200;
     UIView *containerView = [transitionContext containerView];
     CGRect finalFrame  = [transitionContext finalFrameForViewController:toViewController];
     
-    NSAssert([toViewController conformsToProtocol:@protocol(CPActionSheetViewController)], @"");
-    NSArray *glassViews = ((id<CPActionSheetViewController>)toViewController).glassViews;
+    NSAssert([toViewController isMemberOfClass:[CPShopViewController class]], @"");
+    NSArray *glassViews = ((CPShopViewController *)toViewController).glassViews;
     
     // create snapshot view
     UIView *snapshotView = [fromViewController.view snapshotViewAfterScreenUpdates:YES];
@@ -75,8 +75,6 @@ static const NSInteger g_maskViewTag = 200;
     
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
         maskView.alpha = 0.2;
-    }];
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0 usingSpringWithDamping:0.6 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
         toViewController.view.transform = CGAffineTransformMakeTranslation(0.0, 0.0);
     } completion:^(BOOL finished) {
         // remove fromViewController
@@ -91,8 +89,8 @@ static const NSInteger g_maskViewTag = 200;
     UIView *containerView = [transitionContext containerView];
     CGRect finalFrame  = [transitionContext finalFrameForViewController:toViewController];
     
-    NSAssert([fromViewController conformsToProtocol:@protocol(CPActionSheetViewController)], @"");
-    NSArray *glassViews = ((id<CPActionSheetViewController>)fromViewController).glassViews;
+    NSAssert([fromViewController isMemberOfClass:[CPShopViewController class]], @"");
+    NSArray *glassViews = ((CPShopViewController *)fromViewController).glassViews;
     
     // calculate rect of galss views and remove glass effect for glass views
     CGRect rectOfGlassViews = CGRectZero;

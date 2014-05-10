@@ -49,10 +49,6 @@
 
 - (IBAction)cancelFromActionSheet:(UIStoryboardSegue *)segue;
 
-- (IBAction)saveFromActionSheet:(UIStoryboardSegue *)segue;
-
-- (IBAction)shareFromActionSheet:(UIStoryboardSegue *)segue;
-
 @end
 
 @implementation CPCollageViewController
@@ -165,12 +161,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)actionBarButtonPressed:(id)sender {
-    if ([CPConfig isIPhone]) {
-        [self performSegueWithIdentifier:g_actionViewControllerSegueName sender:nil];
-    } else {
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
-        [actionSheet showFromBarButtonItem:self.actionBarButtonItem animated:YES];
-    }
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
+    [actionSheet showFromBarButtonItem:self.actionBarButtonItem animated:YES];
 }
 
 - (void)userDefaultsChanged:(NSNotification *)notification {
@@ -251,20 +243,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)cancelFromActionSheet:(UIStoryboardSegue *)segue {
-}
-
-- (void)saveFromActionSheet:(UIStoryboardSegue *)segue {
-    NSAssert(self.facesManager, @"");
-    NSAssert(self.collagedFaces, @"");
-    [self.facesManager saveStitchedImage:[self collagedImage]];
-}
-
-- (void)shareFromActionSheet:(UIStoryboardSegue *)segue {
-    NSString *sharedText = @"Shared from Smiley app";
-    NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
-    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
-    activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll, UIActivityTypeAddToReadingList];
-    [self presentViewController:activityViewController animated:YES completion:nil];
+    // handle unwind segue from shop view controller
 }
 
 - (UIImage *)collagedImage {
@@ -429,10 +408,18 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
         case 0: /* Save */
-            [self saveFromActionSheet:nil];
+            NSAssert(self.facesManager, @"");
+            NSAssert(self.collagedFaces.count > 0, @"");
+            [self.facesManager saveStitchedImage:[self collagedImage]];
             break;
-        case 1: /* Share */
-            [self shareFromActionSheet:nil];
+        case 1: /* Share */ {
+            NSString *sharedText = @"Shared from Smiley app";
+            NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
+            UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
+            activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll, UIActivityTypeAddToReadingList];
+            [self presentViewController:activityViewController animated:YES completion:nil];
+            break;
+        }
         case 2: /* Cancel */
             break;
         default:

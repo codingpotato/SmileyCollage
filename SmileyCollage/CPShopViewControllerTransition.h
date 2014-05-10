@@ -1,5 +1,5 @@
 //
-//  CPTransparentTransition.h
+//  CPShopViewControllerTransition.h
 //  SmileyCollage
 //
 //  Created by wangyw on 4/26/14.
@@ -8,6 +8,6 @@
 
 #import "CPReversableTransition.h"
 
-@interface CPActionSheetTransition : CPReversableTransition
+@interface CPShopViewControllerTransition : CPReversableTransition
 
 @end

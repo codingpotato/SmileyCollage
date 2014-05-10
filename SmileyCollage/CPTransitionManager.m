@@ -8,13 +8,12 @@
 
 #import "CPTransitionManager.h"
 
-#import "CPActionViewController.h"
 #import "CPCollageViewController.h"
 #import "CPEditViewController.h"
 #import "CPShopViewController.h"
 #import "CPSmileyViewController.h"
 
-#import "CPActionSheetTransition.h"
+#import "CPShopViewControllerTransition.h"
 #import "CPCollageToEditTransition.h"
 #import "CPPortalTransition.h"
 
@@ -32,13 +31,9 @@
     } else if ([fromVC isMemberOfClass:[CPEditViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
         return [[CPCollageToEditTransition alloc] initWithReverseFlag:YES];
     } else if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPShopViewController class]]) {
-        return [[CPActionSheetTransition alloc] initWithReverseFlag:NO];
+        return [[CPShopViewControllerTransition alloc] initWithReverseFlag:NO];
     } else if ([fromVC isMemberOfClass:[CPShopViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
-        return [[CPActionSheetTransition alloc] initWithReverseFlag:YES];
-    } else if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPActionViewController class]]) {
-        return [[CPActionSheetTransition alloc] initWithReverseFlag:NO];
-    } else if ([fromVC isMemberOfClass:[CPActionViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
-        return [[CPActionSheetTransition alloc] initWithReverseFlag:YES];
+        return [[CPShopViewControllerTransition alloc] initWithReverseFlag:YES];
     } else {
         return nil;
     }
