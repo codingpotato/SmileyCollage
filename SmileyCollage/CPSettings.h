@@ -12,6 +12,8 @@
 
 + (void)reset;
 
++ (NSUInteger)numberOfProducts;
+
 + (NSSet *)productsIdentifiers;
 
 + (NSString *)productNameRemoveWatermark;

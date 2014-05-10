@@ -15,6 +15,7 @@
 #import "CPCollageCell.h"
 #import "CPEditViewController.h"
 #import "CPHelpViewManager.h"
+#import "CPPopoverShopViewController.h"
 #import "CPShopViewController.h"
 
 #import "CPFaceEditInformation.h"
@@ -42,12 +43,11 @@
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
 @property (strong, nonatomic) UIPopoverController *shopPopoverController;
+@property (strong, nonatomic) UIActionSheet *actionSheet;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
-
-- (IBAction)cancelFromActionSheet:(UIStoryboardSegue *)segue;
 
 @end
 
@@ -55,7 +55,6 @@
 
 static NSString * g_editViewControllerSegueName = @"CPEditViewControllerSegue";
 static NSString * g_shopViewControllerSegueName = @"CPShopViewControllerSegue";
-static NSString * g_actionViewControllerSegueName = @"CPActionViewControllerSegue";
 
 static NSUInteger g_numberOfColumnsInRows[] = {
     1, 11, 21, 22, 32, 222, 322, 332, 333, 442,
@@ -97,6 +96,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
+    [self dismissPopoverShopViewController];
+    [self dismissActionSheet];
     [self hideHelpView];
 }
 
@@ -130,6 +131,11 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         
         CPEditViewController *editViewController = (CPEditViewController *)segue.destinationViewController;
         editViewController.faceEditInformation = [self.collagedFaces objectAtIndex:self.selectedIndex];
+    } else if ([segue.identifier isEqualToString:g_shopViewControllerSegueName]) {
+        CPShopViewController *shopViewController = (CPShopViewController *)segue.destinationViewController;
+        shopViewController.dismissBlock = ^() {
+            [self dismissShopViewController];
+        };
     }
 }
 
@@ -152,17 +158,46 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)shopBarButtonPressed:(id)sender {
+    [self dismissPopoverShopViewController];
+    [self dismissActionSheet];
+    
     if ([CPConfig isIPhone]) {
         [self performSegueWithIdentifier:g_shopViewControllerSegueName sender:nil];
     } else {
-        self.shopPopoverController = [[UIPopoverController alloc] initWithContentViewController:[self.storyboard instantiateViewControllerWithIdentifier:@"CPIPadShopViewController"]];
+        CPPopoverShopViewController *popoverShopViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"CPPopoverShopViewController"];
+        popoverShopViewController.dismissBlock = ^() {
+            [self dismissPopoverShopViewController];
+        };
+        self.shopPopoverController = [[UIPopoverController alloc] initWithContentViewController:popoverShopViewController];
         [self.shopPopoverController presentPopoverFromBarButtonItem:self.shopBarButtonItem permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
     }
 }
 
+- (void)dismissShopViewController {
+    NSAssert([self.navigationController.topViewController isMemberOfClass:[CPShopViewController class]], @"");
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)dismissPopoverShopViewController {
+    if (self.shopPopoverController) {
+        [self.shopPopoverController dismissPopoverAnimated:YES];
+        self.shopPopoverController = nil;
+    }
+}
+
 - (void)actionBarButtonPressed:(id)sender {
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
-    [actionSheet showFromBarButtonItem:self.actionBarButtonItem animated:YES];
+    [self dismissPopoverShopViewController];
+    [self dismissActionSheet];
+    
+    self.actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
+    [self.actionSheet showFromBarButtonItem:self.actionBarButtonItem animated:YES];
+}
+
+- (void)dismissActionSheet {
+    if (self.actionSheet) {
+        [self.actionSheet dismissWithClickedButtonIndex:self.actionSheet.cancelButtonIndex animated:YES];
+        self.actionSheet = nil;
+    }
 }
 
 - (void)userDefaultsChanged:(NSNotification *)notification {
@@ -242,8 +277,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
-- (void)cancelFromActionSheet:(UIStoryboardSegue *)segue {
-    // handle unwind segue from shop view controller
+- (void)dismissShopViewController:(UIStoryboardSegue *)segue {
+    if (self.shopPopoverController) {
+        [self.shopPopoverController dismissPopoverAnimated:YES];
+        self.shopPopoverController = nil;
+    } else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (UIImage *)collagedImage {

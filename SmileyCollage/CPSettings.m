@@ -20,6 +20,8 @@ static NSString *g_isEditDragAcknowledged = @"IsEditDragAcknowledged";
 
 static NSString *g_isEditZoomHelpAcknowledged = @"IsEditZoomHelpAcknowledged";
 
+static NSSet *g_productsIdentifiers = nil;
+
 + (void)registerDefaults {
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{[self productNameRemoveWatermark]: @(NO), g_isSmileyTapAcknowledged: @(NO), g_isCollageTapAcknowledge: @(NO), g_isCollageDragAcknowledged: @(NO), g_isEditDragAcknowledged: @(NO), g_isEditZoomHelpAcknowledged: @(NO)}];
 }
@@ -33,8 +35,15 @@ static NSString *g_isEditZoomHelpAcknowledged = @"IsEditZoomHelpAcknowledged";
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isEditZoomHelpAcknowledged];
 }
 
++ (NSUInteger)numberOfProducts {
+    return [self productsIdentifiers].count;
+}
+
 + (NSSet *)productsIdentifiers {
-    return [[NSSet alloc] initWithObjects:[self productNameRemoveWatermark], nil];
+    if (!g_productsIdentifiers) {
+        g_productsIdentifiers = [[NSSet alloc] initWithObjects:[self productNameRemoveWatermark], nil];
+    }
+    return g_productsIdentifiers;
 }
 
 + (NSString *)productNameRemoveWatermark {
