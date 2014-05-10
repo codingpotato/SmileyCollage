@@ -25,6 +25,8 @@
 
 - (IBAction)restoreButtonPressed:(id)sender;
 
+- (IBAction)cancelButtonPressed:(id)sender;
+
 @end
 
 @implementation CPShopViewController
@@ -38,7 +40,7 @@
     
     self.navigationItem.hidesBackButton = YES;
     
-    static const CGFloat alpha = 0.7;
+    static const CGFloat alpha = 0.75;
     self.maskOfTableView.alpha = alpha;
     self.maskOfCancelButton.alpha = alpha;
     
@@ -69,6 +71,10 @@
 
 - (IBAction)restoreButtonPressed:(id)sender {
     [self.shopTableViewManager restoreCompletedTransactions];
+}
+
+- (IBAction)cancelButtonPressed:(id)sender {
+    self.dismissBlock();
 }
 
 #pragma mark - CPTouchableViewDelegate implement

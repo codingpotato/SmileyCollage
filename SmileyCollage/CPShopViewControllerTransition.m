@@ -15,8 +15,9 @@
 
 static const CGFloat g_cornerRadius = 3.0;
 
-static const NSInteger g_snapshotViewTag = 100;
-static const NSInteger g_maskViewTag = 200;
+static const NSInteger g_snapshotViewTag = 1;
+static const NSInteger g_maskViewTag = 2;
+static const NSInteger g_firstBluredImageViewTag = 3;
 
 - (void)animateForwardTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
@@ -59,6 +60,7 @@ static const NSInteger g_maskViewTag = 200;
     UIImage *bluredImage = [CPUtility bluredSnapshotForView:fromViewController.view inRect:rectOfGlassViews];
     
     // add glass effect for glass views
+    NSInteger tag = g_firstBluredImageViewTag;
     for (UIView *glassView in glassViews) {
         UIView *panelView = [[UIView alloc] init];
         panelView.clipsToBounds = YES;
@@ -67,12 +69,18 @@ static const NSInteger g_maskViewTag = 200;
         [toViewController.view insertSubview:panelView atIndex:0];
         
         UIImageView *bluredImageView = [[UIImageView alloc] initWithImage:bluredImage];
-        bluredImageView.center = [glassView convertPoint:CGPointMake(rectOfGlassViews.origin.x + rectOfGlassViews.size.width / 2, rectOfGlassViews.origin.y + rectOfGlassViews.size.height / 2) fromView:toViewController.view];
+        bluredImageView.center = [panelView convertPoint:CGPointMake(rectOfGlassViews.origin.x + rectOfGlassViews.size.width / 2, rectOfGlassViews.origin.y + rectOfGlassViews.size.height / 2) fromView:toViewController.view];
+        bluredImageView.tag = tag++;
         [panelView addSubview:bluredImageView];
+        
+        // animate blured image view reversely
+        bluredImageView.transform = CGAffineTransformMakeTranslation(0.0, -rectOfGlassViews.size.height);
+        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+            bluredImageView.transform = CGAffineTransformMakeTranslation(0.0, 0.0);
+        }];
     }
     
     toViewController.view.transform = CGAffineTransformMakeTranslation(0.0, rectOfGlassViews.size.height);
-    
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
         maskView.alpha = 0.2;
         toViewController.view.transform = CGAffineTransformMakeTranslation(0.0, 0.0);
@@ -92,7 +100,7 @@ static const NSInteger g_maskViewTag = 200;
     NSAssert([fromViewController isMemberOfClass:[CPShopViewController class]], @"");
     NSArray *glassViews = ((CPShopViewController *)fromViewController).glassViews;
     
-    // calculate rect of galss views and remove glass effect for glass views
+    // calculate rect of galss views
     CGRect rectOfGlassViews = CGRectZero;
     for (UIView *glassView in glassViews) {
         if (CGRectEqualToRect(rectOfGlassViews, CGRectZero)) {
@@ -100,6 +108,14 @@ static const NSInteger g_maskViewTag = 200;
         } else {
             rectOfGlassViews = CGRectUnion(rectOfGlassViews, glassView.frame);
         }
+    }
+    
+    for (NSUInteger tag = g_firstBluredImageViewTag; tag < g_firstBluredImageViewTag + glassViews.count; tag++) {
+        UIImageView *bluredImageView = (UIImageView *)[containerView viewWithTag:tag];
+        NSAssert(bluredImageView, @"");
+        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+            bluredImageView.transform = CGAffineTransformMakeTranslation(0.0, -rectOfGlassViews.size.height);
+        }];
     }
 
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
