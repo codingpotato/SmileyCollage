@@ -31,8 +31,6 @@
 
 @property (strong, nonatomic) NSMutableDictionary *selectedFaces;
 
-@property (nonatomic) BOOL isScanCancelled;
-
 @property (strong, nonatomic) UIBarButtonItem *cancelBarButtonItem;
 @property (strong, nonatomic) UIBarButtonItem *confirmBarButtonItem;
 @property (strong, nonatomic) UIButton *confirmButton;
@@ -62,7 +60,6 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
     self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %lu", (unsigned long)self.facesManager.facesController.fetchedObjects.count];
 
-    self.isScanCancelled = NO;
     self.facesManager.facesController.delegate = self;
     [self hideToolbar];
     [self.facesManager scanFaces];
@@ -107,10 +104,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     
-    if (self.facesManager.isScanning) {
-        [self.facesManager stopScan];
-        self.isScanCancelled = YES;
-    }
+    [self.facesManager stopScan];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -125,10 +119,9 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(numberOfScannedPhotos)) options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
     [self.facesManager addObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning)) options:NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew context:nil];
     
-    if (self.isScanCancelled) {
+    if (self.facesManager.isScanCancelled) {
         [self showToolbarWithAnimation];
         [self.facesManager scanFaces];
-        self.isScanCancelled = NO;
     }
 }
 
@@ -138,10 +131,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     
     [self hideToolbar];
     
-    if (self.facesManager.isScanning) {
-        [self.facesManager stopScan];
-        self.isScanCancelled = YES;
-    }
+    [self.facesManager stopScan];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -444,7 +434,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (UILabel *)noSmileyLabel {
     if (!_noSmileyLabel) {
         _noSmileyLabel = [[UILabel alloc] init];
-        _noSmileyLabel.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:[CPConfig noSmileyLabelFontSize]];
+        _noSmileyLabel.font = [UIFont fontWithName:[CPConfig helpFontName] size:[CPConfig noSmileyLabelFontSize]];
         _noSmileyLabel.numberOfLines = 0;
         _noSmileyLabel.text = @"No Smiley Face in your Album\n\nTake photos for your Smiley Faces\nor\nimport photos from itunes";
         _noSmileyLabel.textAlignment = NSTextAlignmentCenter;

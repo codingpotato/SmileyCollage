@@ -22,6 +22,10 @@
     }
 }
 
++ (NSString *)helpFontName {
+    return @"ArialRoundedMTBold";
+}
+
 + (CGFloat)noSmileyLabelFontSize {
     if ([self isIPhone]) {
         return 18.0;

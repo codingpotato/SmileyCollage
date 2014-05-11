@@ -144,12 +144,12 @@ static const NSTimeInterval g_animationDuration = 0.5;
     [self.helpView addSubview:self.panelView];
     
     UIView *maskView = [[UIView alloc] init];
-    maskView.alpha = 0.7;
+    maskView.alpha = 0.6;
     maskView.backgroundColor = [UIColor whiteColor];
     [self.panelView addSubview:maskView];
     
     UILabel *label = [[UILabel alloc] init];
-    label.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:[CPConfig helpFontSize]];
+    label.font = [UIFont fontWithName:[CPConfig helpFontName] size:[CPConfig helpFontSize]];
     label.numberOfLines = 0;
     label.text = helpMessage;
     label.textAlignment = NSTextAlignmentCenter;

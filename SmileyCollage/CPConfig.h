@@ -12,6 +12,8 @@
 
 + (CGFloat)thumbnailSize;
 
++ (NSString *)helpFontName;
+
 + (CGFloat)noSmileyLabelFontSize;
 
 + (CGFloat)helpFontSize;
