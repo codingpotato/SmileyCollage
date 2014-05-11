@@ -8,6 +8,7 @@
 
 #import "CPHelpViewManager.h"
 
+#import "CPConfig.h"
 #import "CPSettings.h"
 #import "CPTouchableView.h"
 #import "CPUtility.h"
@@ -20,7 +21,7 @@
 
 @property (strong, nonatomic) UIView *panelView;
 
-@property (nonatomic) BOOL helpShown;
+@property (nonatomic) BOOL isHelpShown;
 
 @end
 
@@ -94,10 +95,13 @@ static const NSTimeInterval g_animationDuration = 0.5;
 }
 
 - (void)removeHelpView {
-    if (self.helpShown) {
-        self.helpShown = NO;
-        [self.helpView removeFromSuperview];
+    if (self.helpView) {
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
+        [self.helpView removeFromSuperview];
+        self.helpView = nil;
+        self.maskView = nil;
+        self.panelView = nil;
+        self.isHelpShown = NO;
     }
 }
 
@@ -109,7 +113,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
     NSAssert(!self.helpView, @"");
     NSAssert(!self.maskView, @"");
     
-    self.helpShown = YES;
+    self.isHelpShown = YES;
     
     self.helpView = [[UIView alloc] init];
     self.helpView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -136,16 +140,16 @@ static const NSTimeInterval g_animationDuration = 0.5;
     self.panelView = [[UIView alloc] init];
     self.panelView.backgroundColor = [UIColor whiteColor];
     self.panelView.clipsToBounds = YES;
-    self.panelView.layer.cornerRadius = 3.0;
+    self.panelView.layer.cornerRadius = 5.0;
     [self.helpView addSubview:self.panelView];
     
     UIView *maskView = [[UIView alloc] init];
-    maskView.alpha = 0.4;
+    maskView.alpha = 0.7;
     maskView.backgroundColor = [UIColor whiteColor];
     [self.panelView addSubview:maskView];
     
     UILabel *label = [[UILabel alloc] init];
-    label.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:18.0];
+    label.font = [UIFont fontWithName:@"ArialRoundedMTBold" size:[CPConfig helpFontSize]];
     label.numberOfLines = 0;
     label.text = helpMessage;
     label.textAlignment = NSTextAlignmentCenter;
@@ -187,8 +191,8 @@ static const NSTimeInterval g_animationDuration = 0.5;
 }
 
 - (void)removeHelpViewWithAnimation {
-    if (self.helpShown) {
-        self.helpShown = NO;
+    if (self.isHelpShown) {
+        self.isHelpShown = NO;
         
         [NSObject cancelPreviousPerformRequestsWithTarget:self];
         [UIView animateWithDuration:g_animationDuration animations:^{

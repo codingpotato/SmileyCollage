@@ -34,9 +34,10 @@
 - (id)initWithTableView:(UITableView *)tableView dismissBlock:(void (^)())dismissBlock {
     self = [super init];
     if (self) {
-        self.tableView = tableView;
         self.dismissBlock = dismissBlock;
         
+        NSAssert(tableView, @"");
+        self.tableView = tableView;
         self.tableView.dataSource = self;
         [self.tableView reloadData];
 
@@ -45,7 +46,6 @@
         [self showActivityIndicatorViewOnView:cell];
 
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
-        
         self.productsRequest = [[SKProductsRequest alloc] initWithProductIdentifiers:[CPSettings productsIdentifiers]];
         self.productsRequest.delegate = self;
         [self.productsRequest start];
@@ -58,7 +58,6 @@
         [self.productsRequest cancel];
         self.productsRequest.delegate = nil;
     }
-    
     [[SKPaymentQueue defaultQueue] removeTransactionObserver:self];
 }
 
@@ -66,30 +65,33 @@
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[CPSettings numberOfProducts] inSection:0]];
     NSAssert(cell, @"");
     [self showActivityIndicatorViewOnView:cell];
+    
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
 - (void)buyButtonPressed:(id)sender {
+    NSAssert(sender && [sender isMemberOfClass:[UIButton class]], @"");
     self.currentBuyButton = sender;
     NSUInteger index = self.currentBuyButton.tag;
-    NSAssert(index < self.products.count, @"");
     
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     NSAssert(cell, @"");
     UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    cell.accessoryType = UITableViewCellAccessoryNone;
     cell.accessoryView = activityIndicatorView;
     [activityIndicatorView startAnimating];
     
     [self setButtonsEnable:NO];
 
-    SKProduct *product = self.products[index];
-    SKPayment *payment = [SKPayment paymentWithProduct:product];
+    NSAssert(index < self.products.count, @"");
+    SKPayment *payment = [SKPayment paymentWithProduct:self.products[index]];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
 }
 
 - (void)showActivityIndicatorViewOnView:(UIView *)view {
     [self setButtonsEnable:NO];
     
+    NSAssert(view, @"");
     self.activityIndicatorView.center = view.center;
     [self.tableView addSubview:self.activityIndicatorView];
     [self.activityIndicatorView startAnimating];
@@ -105,25 +107,24 @@
 }
 
 - (void)setButtonsEnable:(BOOL)enable {
-    self.restoreButton.enabled = enable;
-    
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    NSAssert(cell, @"");
-    if (cell) {
+    for (NSUInteger index = 0; index < [CPSettings numberOfProducts]; index++) {
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+        NSAssert(cell, @"");
         UIView *view = cell.accessoryView;
         if ([view isMemberOfClass:[UIButton class]]) {
             ((UIButton *)view).enabled = enable;
         }
     }
-}
-
-- (UIButton *)restoreButton {
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[CPSettings numberOfProducts] inSection:0]];
     NSAssert(cell, @"");
     NSAssert(cell.contentView.subviews > 0, @"");
     UIButton *restoreButton = [cell.contentView.subviews objectAtIndex:0];
-    NSAssert(restoreButton, @"");
-    return restoreButton;
+    restoreButton.enabled = enable;
+}
+
+- (void)showErrorMessage:(NSString *)errorMessage {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Issue" message:errorMessage delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    [alertView show];
 }
 
 #pragma mark - UIAlertViewDelegate implement
@@ -197,19 +198,18 @@
                 if ([transaction.payment.productIdentifier isEqualToString:[CPSettings productNameRemoveWatermark]]) {
                     [CPSettings purchaseRemoveWatermark];
 
-                    [self hideActivityIndicatorView];                    
                     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
                     NSAssert(cell, @"");
                     cell.accessoryType = UITableViewCellAccessoryCheckmark;
                     cell.accessoryView = nil;
+
+                    [self hideActivityIndicatorView];
                 }
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
             }
             case SKPaymentTransactionStateFailed: {
                 if ([transaction.payment.productIdentifier isEqualToString:[CPSettings productNameRemoveWatermark]]) {
-                    [self hideActivityIndicatorView];
-                    
                     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
                     NSAssert(cell, @"");
                     cell.accessoryType = UITableViewCellAccessoryNone;
@@ -217,8 +217,8 @@
                     cell.accessoryView = self.currentBuyButton;
                     self.currentBuyButton = nil;
                     
-                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Issue" message:transaction.error.localizedDescription delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
-                    [alertView show];
+                    [self hideActivityIndicatorView];
+                    [self showErrorMessage:transaction.error.localizedDescription];
                 }
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
@@ -227,6 +227,11 @@
                 break;
         }
     }
+}
+
+-(void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
+    [self hideActivityIndicatorView];
+    [self showErrorMessage:error.localizedDescription];
 }
 
 #pragma mark - SKProductsRequestDelegate implement
@@ -242,8 +247,7 @@
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
     [self hideActivityIndicatorView];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Issue" message:error.localizedDescription delegate:self cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
-    [alertView show];
+    [self showErrorMessage:error.localizedDescription];
 }
 
 #pragma mark - lazy init

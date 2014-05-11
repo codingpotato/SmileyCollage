@@ -40,7 +40,7 @@
     
     self.navigationItem.hidesBackButton = YES;
     
-    static const CGFloat alpha = 0.75;
+    static const CGFloat alpha = 0.7;
     self.maskOfTableView.alpha = alpha;
     self.maskOfCancelButton.alpha = alpha;
     

@@ -14,4 +14,6 @@
 
 + (CGFloat)noSmileyLabelFontSize;
 
++ (CGFloat)helpFontSize;
+
 @end
