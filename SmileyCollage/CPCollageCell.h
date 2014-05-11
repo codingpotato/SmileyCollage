@@ -8,7 +8,7 @@
 
 @interface CPCollageCell : UICollectionViewCell
 
-- (void)initCell;
+- (void)showActivityIndicatorView;
 
 - (void)showImage:(UIImage *)image animated:(BOOL)animated;
 

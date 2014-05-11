@@ -23,7 +23,10 @@
 
 @implementation CPCollageCell
 
-- (void)initCell {
+- (void)showActivityIndicatorView {
+    [self removeActivityIndicatorView];
+    [self removeImageView];
+    
     self.activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     self.activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.contentView addSubview:self.activityIndicatorView];
@@ -32,11 +35,7 @@
 }
 
 - (void)showImage:(UIImage *)image animated:(BOOL)animated {
-    if (self.activityIndicatorView) {
-        [self.activityIndicatorView stopAnimating];
-        [self.activityIndicatorView removeFromSuperview];
-        self.activityIndicatorView = nil;
-    }
+    [self removeActivityIndicatorView];
     
     if (!self.imageView) {
         self.imageView = [[UIImageView alloc] init];
@@ -44,7 +43,8 @@
         [self.contentView addSubview:self.imageView];
         self.imageViewWidthConstraint = [CPUtility constraintWithView:self.imageView alignToView:self.contentView attribute:NSLayoutAttributeWidth];
         self.imageViewHeightConstraint = [CPUtility constraintWithView:self.imageView alignToView:self.contentView attribute:NSLayoutAttributeHeight];
-        [self.contentView addConstraints:@[[CPUtility constraintWithView:self.imageView alignToView:self.contentView attribute:NSLayoutAttributeCenterX], [CPUtility constraintWithView:self.imageView alignToView:self.contentView attribute:NSLayoutAttributeCenterY], self.imageViewWidthConstraint, self.imageViewHeightConstraint]];
+        [self.contentView addConstraints:@[self.imageViewWidthConstraint, self.imageViewHeightConstraint]];
+        [self.contentView addConstraints:[CPUtility constraintsWithView:self.imageView centerAlignToView:self.contentView]];
     }
     
     self.imageView.image = image;
@@ -54,9 +54,24 @@
         [self.contentView layoutIfNeeded];
         self.imageViewWidthConstraint.constant = 0.0;
         self.imageViewHeightConstraint.constant = 0.0;
-        [UIView animateWithDuration:0.2 animations:^{
+        [UIView animateWithDuration:0.3 animations:^{
             [self.contentView layoutIfNeeded];
         }];
+    }
+}
+
+- (void)removeActivityIndicatorView {
+    if (self.activityIndicatorView) {
+        [self.activityIndicatorView stopAnimating];
+        [self.activityIndicatorView removeFromSuperview];
+        self.activityIndicatorView = nil;
+    }
+}
+
+- (void)removeImageView {
+    if (self.imageView) {
+        [self.imageView removeFromSuperview];
+        self.imageView = nil;
     }
 }
 

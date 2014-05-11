@@ -14,7 +14,7 @@
 
 @property (strong, nonatomic) UIImageView *imageView;
 
-@property (strong, nonatomic) UIView *mask;
+@property (strong, nonatomic) UIView *maskView;
 
 @property (strong, nonatomic) UIImageView *tickView;
 
@@ -22,56 +22,44 @@
 
 @implementation CPPhotoCell
 
-- (void)initCell {
-    [self.contentView addSubview:self.imageView];
-    [self.contentView addConstraints:[CPUtility constraintsWithView:self.imageView edgesAlignToView:self.contentView]];
-}
-
 - (void)showImage:(UIImage *)image {
+    if (!self.imageView) {
+        self.imageView = [[UIImageView alloc] init];
+        self.imageView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.contentView addSubview:self.imageView];
+        [self.contentView addConstraints:[CPUtility constraintsWithView:self.imageView edgesAlignToView:self.contentView]];
+    }
     self.imageView.image = image;
 }
 
-- (void)setIsSelected:(BOOL)isSelected {
-    _isSelected = isSelected;
-    if (isSelected) {
-        [self.contentView addSubview:self.mask];
-        [self.contentView addConstraints:[CPUtility constraintsWithView:self.mask edgesAlignToView:self.contentView]];
-        
+- (void)select {
+    if (!self.maskView) {
+        self.maskView = [[UIView alloc] init];
+        self.maskView.backgroundColor = [UIColor whiteColor];
+        self.maskView.alpha = 0.5;
+        self.maskView.translatesAutoresizingMaskIntoConstraints = NO;
+
+        [self.contentView addSubview:self.maskView];
+        [self.contentView addConstraints:[CPUtility constraintsWithView:self.maskView edgesAlignToView:self.contentView]];
+    }
+    
+    if (!self.tickView) {
+        self.tickView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tick.png"]];
+        self.tickView.translatesAutoresizingMaskIntoConstraints = NO;
         [self.contentView addSubview:self.tickView];
         [self.contentView addConstraints:[CPUtility constraintsWithView:self.tickView alignToView:self.contentView attributes:NSLayoutAttributeRight, NSLayoutAttributeBottom, NSLayoutAttributeNotAnAttribute]];
-    } else {
-        [self.mask removeFromSuperview];
+    }
+}
+
+- (void)unselect {
+    if (self.maskView) {
+        [self.maskView removeFromSuperview];
+        self.maskView = nil;
+    }
+    if (self.tickView) {
         [self.tickView removeFromSuperview];
+        self.tickView = nil;
     }
-}
-
-#pragma mark - lazy init
-
-- (UIImageView *)imageView {
-    if (!_imageView) {
-        _imageView = [[UIImageView alloc] init];
-        _imageView.translatesAutoresizingMaskIntoConstraints = NO;
-    }
-    return _imageView;
-}
-
-- (UIView *)mask {
-    if (!_mask) {
-        _mask = [[UIView alloc] init];
-        _mask.backgroundColor = [UIColor whiteColor];
-        _mask.alpha = 0.5;
-        _mask.translatesAutoresizingMaskIntoConstraints = NO;
-        
-    }
-    return _mask;
-}
-
-- (UIImageView *)tickView {
-    if (!_tickView) {
-        _tickView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tick.png"]];
-        _tickView.translatesAutoresizingMaskIntoConstraints = NO;
-    }
-    return _tickView;
 }
 
 @end

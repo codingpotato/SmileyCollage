@@ -327,11 +327,14 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPPhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPPhotoCell" forIndexPath:indexPath];
-    [cell initCell];
     
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
     [cell showImage:[self.facesManager thumbnailOfFace:face]];
-    cell.isSelected = [self.selectedFaces objectForKey:face.objectID] != nil;
+    if ([self.selectedFaces objectForKey:face.objectID]) {
+        [cell select];
+    } else {
+        [cell unselect];
+    }
     
     return cell;
 }

@@ -8,10 +8,10 @@
 
 @interface CPPhotoCell : UICollectionViewCell
 
-@property (nonatomic) BOOL isSelected;
-
-- (void)initCell;
-
 - (void)showImage:(UIImage *)image;
+
+- (void)select;
+
+- (void)unselect;
 
 @end

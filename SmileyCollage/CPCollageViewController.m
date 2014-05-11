@@ -477,7 +477,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPCollageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPCollageCell" forIndexPath:indexPath];
-    [cell initCell];
+    [cell showActivityIndicatorView];
     
     CPFaceEditInformation *faceEditInformation = [self.collagedFaces objectAtIndex:indexPath.row];
     NSAssert(faceEditInformation, @"");
@@ -485,7 +485,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (faceEditInformation.asset) {
         // execute later, not block animation
         dispatch_async(dispatch_get_main_queue(), ^{
-            [cell showImage:[self imageOfFace:faceEditInformation] animated:NO];
+            [cell showImage:[self imageOfFace:faceEditInformation] animated:YES];
             if ([self allFacesHaveAsset]) {
                 self.actionBarButtonItem.enabled = YES;
             }
