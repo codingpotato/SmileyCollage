@@ -144,7 +144,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
     [self.helpView addSubview:self.panelView];
     
     UIView *maskView = [[UIView alloc] init];
-    maskView.alpha = 0.6;
+    maskView.alpha = 0.4;
     maskView.backgroundColor = [UIColor whiteColor];
     [self.panelView addSubview:maskView];
     
