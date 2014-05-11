@@ -413,7 +413,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (UIImage *)imageOfFace:(CPFaceEditInformation *)faceEditInformation {
     CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.frame);
-    UIImage *image = [UIImage imageWithCGImage:faceImage scale:1.0 orientation:UIImageOrientationUp];
+    UIImage *image = [UIImage imageWithCGImage:faceImage];
     CGImageRelease(faceImage);
     return image;
 }

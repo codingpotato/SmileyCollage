@@ -23,7 +23,7 @@
     NSAssert(photo, @"");
     NSAssert(context, @"");
     
-    CPFace *face = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    CPFace *face = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
     face.x = [NSNumber numberWithFloat:bounds.origin.x];
     face.y = [NSNumber numberWithFloat:bounds.origin.y];
     face.width = [NSNumber numberWithFloat:bounds.size.width];
@@ -38,7 +38,7 @@
     NSAssert(context, @"");
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    request.entity = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    request.entity = [NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
     request.sortDescriptors = [[NSArray alloc] initWithObjects:[[NSSortDescriptor alloc] initWithKey:@"photo.createTime" ascending:YES], nil];
     return request;
 }

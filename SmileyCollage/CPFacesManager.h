@@ -13,6 +13,7 @@
 @property (strong, nonatomic) NSFetchedResultsController *facesController;
 
 @property (nonatomic) BOOL isScanning;
+@property (nonatomic) BOOL isScanCancelled;
 
 @property (nonatomic) NSUInteger numberOfScannedPhotos;
 

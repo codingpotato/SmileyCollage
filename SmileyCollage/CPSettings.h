@@ -24,19 +24,19 @@
 
 + (void)acknowledgeSmileyTapHelp;
 
-+ (BOOL)isSmileyTapAcknowledged;
++ (BOOL)isSmileyTapHelpAcknowledged;
 
 + (void)acknowledgeCollageTapHelp;
 
-+ (BOOL)isCollageTapAcknowledged;
++ (BOOL)isCollageTapHelpAcknowledged;
 
 + (void)acknowledgeCollageDragHelp;
 
-+ (BOOL)isCollageDragAcknowledged;
++ (BOOL)isCollageDragHelpAcknowledged;
 
 + (void)acknowledgeEditDragHelp;
 
-+ (BOOL)isEditDragAcknowledged;
++ (BOOL)isEditDragHelpAcknowledged;
 
 + (void)acknowledgeEditZoomHelp;
 

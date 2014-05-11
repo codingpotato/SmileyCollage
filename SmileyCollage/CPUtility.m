@@ -12,12 +12,21 @@
 
 @implementation CPUtility
 
+static NSString *g_applicationDocumentsPath = nil;
+static NSString *g_thumbnailPath = nil;
+
 + (NSString *)applicationDocumentsPath {
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    if (!g_applicationDocumentsPath) {
+        g_applicationDocumentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    }
+    return g_applicationDocumentsPath;
 }
 
 + (NSString *)thumbnailPath {
-    return [[CPUtility applicationDocumentsPath] stringByAppendingPathComponent:@"thumbnail"];
+    if (!g_thumbnailPath) {
+        g_thumbnailPath = [[CPUtility applicationDocumentsPath] stringByAppendingPathComponent:@"thumbnail"];
+    }
+    return g_thumbnailPath;
 }
 
 + (NSArray *)constraintsWithView:(id)view1 edgesAlignToView:(id)view2 {
@@ -70,23 +79,23 @@
 }
 
 + (UIImage *)bluredSnapshotForView:(UIView *)view inRect:(CGRect)rect {
-    UIGraphicsBeginImageContextWithOptions(rect.size, NO, [[UIScreen mainScreen] scale]);
+    UIGraphicsBeginImageContextWithOptions(rect.size, NO, [UIScreen mainScreen].scale);
     [view drawViewHierarchyInRect:CGRectMake(-rect.origin.x, -rect.origin.y, view.bounds.size.width, view.bounds.size.height) afterScreenUpdates:NO];
     UIImage *snapshotImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    return [self applyBlurWithRadius:10.0 tintColor:[UIColor colorWithWhite:1.0 alpha:0.2] saturationDeltaFactor:1.2 toImage:snapshotImage];
+    return [self applyBlurWithRadius:25.0 tintColor:nil/*[UIColor colorWithWhite:1.0 alpha:0.1]*/ saturationDeltaFactor:1.0 toImage:snapshotImage];
 }
 
 + (UIImage *)applyBlurWithRadius:(CGFloat)blurRadius tintColor:(UIColor *)tintColor saturationDeltaFactor:(CGFloat)saturationDeltaFactor toImage:(UIImage *)image {
     NSAssert(image.CGImage && image.size.width > 0.0 && image.size.height > 0.0, @"");
     
     CGRect imageRect = {CGPointZero, image.size};
-    UIImage *effectImage = image;
+    UIImage *effectImage = nil;
     
     BOOL hasBlur = blurRadius > __FLT_EPSILON__;
     BOOL hasSaturationChange = fabs(saturationDeltaFactor - 1.0) > __FLT_EPSILON__;
     if (hasBlur || hasSaturationChange) {
-        UIGraphicsBeginImageContextWithOptions(image.size, NO, [[UIScreen mainScreen] scale]);
+        UIGraphicsBeginImageContextWithOptions(image.size, NO, [UIScreen mainScreen].scale);
         CGContextRef effectInContext = UIGraphicsGetCurrentContext();
         CGContextScaleCTM(effectInContext, 1.0, -1.0);
         CGContextTranslateCTM(effectInContext, 0, -image.size.height);
@@ -98,7 +107,7 @@
         effectInBuffer.height   = CGBitmapContextGetHeight(effectInContext);
         effectInBuffer.rowBytes = CGBitmapContextGetBytesPerRow(effectInContext);
         
-        UIGraphicsBeginImageContextWithOptions(image.size, NO, [[UIScreen mainScreen] scale]);
+        UIGraphicsBeginImageContextWithOptions(image.size, NO, [UIScreen mainScreen].scale);
         CGContextRef effectOutContext = UIGraphicsGetCurrentContext();
         vImage_Buffer effectOutBuffer;
         effectOutBuffer.data     = CGBitmapContextGetData(effectOutContext);
@@ -119,7 +128,7 @@
             //
             // ... if d is odd, use three box-blurs of size 'd', centered on the output pixel.
             //
-            CGFloat inputRadius = blurRadius * [[UIScreen mainScreen] scale];
+            CGFloat inputRadius = blurRadius * [UIScreen mainScreen].scale;
             unsigned int radius = floor(inputRadius * 3.0 * sqrt(2 * M_PI) / 4 + 0.5);
             if (radius % 2 != 1) {
                 radius += 1; // force radius to be odd so that the three box-blur methodology works.
@@ -153,10 +162,11 @@
         }
         effectImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
+        UIGraphicsEndImageContext();
     }
     
     // Set up output context.
-    UIGraphicsBeginImageContextWithOptions(image.size, NO, [[UIScreen mainScreen] scale]);
+    UIGraphicsBeginImageContextWithOptions(image.size, NO, [UIScreen mainScreen].scale);
     CGContextRef outputContext = UIGraphicsGetCurrentContext();
     CGContextScaleCTM(outputContext, 1.0, -1.0);
     CGContextTranslateCTM(outputContext, 0, -image.size.height);

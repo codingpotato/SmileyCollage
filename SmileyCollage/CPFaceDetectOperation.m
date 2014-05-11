@@ -77,21 +77,28 @@
 
 - (void)writeThumbnailOfName:(NSString *)name fromImage:(CGImageRef)image bounds:(CGRect)bounds {
     CGImageRef faceImage = CGImageCreateWithImageInRect(image, bounds);
-    CGFloat width = MIN(bounds.size.width, [CPConfig thumbnailSize]);
-    UIImage *thumbnail = [UIImage imageWithCGImage:faceImage scale:width orientation:UIImageOrientationUp];
-    CGImageRelease(faceImage);
-    NSString *thumbnailPath = [CPUtility thumbnailPath];
-    NSString *imagePath = [thumbnailPath stringByAppendingPathComponent:name];
     
-    static const float compressionQuality = 0.5;
-    NSData *imageJPEGRepresentationData = UIImageJPEGRepresentation(thumbnail, compressionQuality);
-    if (![imageJPEGRepresentationData writeToFile:imagePath atomically:YES]) {
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        if (![fileManager fileExistsAtPath:thumbnailPath]) {
-            [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
-            [imageJPEGRepresentationData writeToFile:imagePath atomically:YES];
-        }
+    CGFloat size = MIN(bounds.size.width, [CPConfig thumbnailSize]);
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(size, size), YES, [UIScreen mainScreen].scale);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextTranslateCTM(context, 0.0, size);
+    CGContextScaleCTM(context, 1.0, -1.0);
+    CGContextDrawImage(context, CGRectMake(0.0, 0.0, size, size), faceImage);
+    UIImage* thumbnail = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    CGImageRelease(faceImage);
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *thumbnailPath = [CPUtility thumbnailPath];
+    if (![fileManager fileExistsAtPath:thumbnailPath]) {
+        [fileManager createDirectoryAtPath:thumbnailPath withIntermediateDirectories:YES attributes:nil error:nil];
     }
+    
+    NSString *imagePath = [thumbnailPath stringByAppendingPathComponent:name];
+    static const float compressionQuality = 0.6;
+    NSData *imageJPEGRepresentationData = UIImageJPEGRepresentation(thumbnail, compressionQuality);
+    [imageJPEGRepresentationData writeToFile:imagePath atomically:YES];
 }
 
 @end

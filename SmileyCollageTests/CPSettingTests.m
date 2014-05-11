@@ -26,12 +26,12 @@
 }
 
 - (void)testDefault {
-    XCTAssertEqual([CPSettings isWatermarkRemoved], NO, @"");
+    XCTAssertEqual([CPSettings isWatermarkRemovePurchased], NO, @"");
 }
 
 - (void)testRemoveWatermark {
-    [CPSettings removeWatermark];
-    XCTAssertEqual([CPSettings isWatermarkRemoved], YES, @"");
+    [CPSettings purchaseRemoveWatermark];
+    XCTAssertEqual([CPSettings isWatermarkRemovePurchased], YES, @"");
 }
 
 @end

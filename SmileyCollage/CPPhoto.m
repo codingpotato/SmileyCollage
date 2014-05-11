@@ -20,7 +20,7 @@
     NSAssert(url, @"url should be valid");
     NSAssert(context, @"managed object context should be valid");
     
-    CPPhoto *photo = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    CPPhoto *photo = [NSEntityDescription insertNewObjectForEntityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
     photo.createTime = [[NSNumber alloc] initWithDouble:createTime];
     photo.scanTime = [[NSNumber alloc] initWithDouble:scanTime];
     photo.url = url.absoluteString;
@@ -32,7 +32,7 @@
     NSAssert(context, @"");
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    request.entity = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    request.entity = [NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
     request.predicate = [NSPredicate predicateWithFormat:@"url == %@", url.absoluteString];
     
     NSArray *array = [context executeFetchRequest:request error:nil];
@@ -48,7 +48,7 @@
     NSAssert(context, @"");
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    request.entity = [NSEntityDescription entityForName:NSStringFromClass(self.class) inManagedObjectContext:context];
+    request.entity = [NSEntityDescription entityForName:NSStringFromClass([self class]) inManagedObjectContext:context];
     request.predicate = [NSPredicate predicateWithFormat:@"scanTime < %lf", scanTime];
     return [context executeFetchRequest:request error:nil];
 }

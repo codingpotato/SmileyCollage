@@ -32,7 +32,7 @@ static const NSTimeInterval g_helpShownTimeInterval = 10.0;
 static const NSTimeInterval g_animationDuration = 0.5;
 
 - (void)showSmileyHelpInView:(UIView *)view rect:(CGRect)rect {
-    if (![CPSettings isSmileyTapAcknowledged]) {
+    if (![CPSettings isSmileyTapHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
@@ -46,7 +46,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
 }
 
 - (void)showCollageHelpInView:(UIView *)view rect:(CGRect)rect {
-    if (![CPSettings isCollageTapAcknowledged] || ![CPSettings isCollageDragAcknowledged]) {
+    if (![CPSettings isCollageTapHelpAcknowledged] || ![CPSettings isCollageDragHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
@@ -54,10 +54,10 @@ static const NSTimeInterval g_animationDuration = 0.5;
                 [self showHelpViewInView:view];
                 
                 NSString *helpMessage = nil;
-                if (![CPSettings isCollageTapAcknowledged]) {
+                if (![CPSettings isCollageTapHelpAcknowledged]) {
                     helpMessage = @"Tap to edit photo";
                 }
-                if (![CPSettings isCollageDragAcknowledged]) {
+                if (![CPSettings isCollageDragHelpAcknowledged]) {
                     NSString *dragHelpMessage = @"Drag to exchange position";
                     helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
                 }
@@ -70,7 +70,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
 }
 
 - (void)showEditHelpInView:(UIView *)view rect:(CGRect)rect {
-    if (![CPSettings isEditDragAcknowledged] || ![CPSettings isEditZoomHelpAcknowledged]) {
+    if (![CPSettings isEditDragHelpAcknowledged] || ![CPSettings isEditZoomHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
@@ -78,7 +78,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
                 [self showHelpViewInView:view];
                 
                 NSString *helpMessage = nil;
-                if (![CPSettings isEditDragAcknowledged]) {
+                if (![CPSettings isEditDragHelpAcknowledged]) {
                     helpMessage = @"Drag to move photo";
                 }
                 if (![CPSettings isEditZoomHelpAcknowledged]) {

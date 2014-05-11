@@ -10,28 +10,35 @@
 
 @implementation CPSettings
 
-static NSString *g_isSmileyTapAcknowledged = @"IsSmileyTapAcknowledged";
+static NSString *g_isSmileyTapHelpAcknowledged = @"SmileyTapHelpAcknowledged";
 
-static NSString *g_isCollageTapAcknowledge = @"IsCollageTapAcknowledge";
+static NSString *g_isCollageTapHelpAcknowledge = @"CollageTapHelpAcknowledge";
 
-static NSString *g_isCollageDragAcknowledged = @"IsCollageDragAcknowledged";
+static NSString *g_isCollageDragHelpAcknowledged = @"CollageDragHelpAcknowledged";
 
-static NSString *g_isEditDragAcknowledged = @"IsEditDragAcknowledged";
+static NSString *g_isEditDragHelpAcknowledged = @"EditDragHelpAcknowledged";
 
-static NSString *g_isEditZoomHelpAcknowledged = @"IsEditZoomHelpAcknowledged";
+static NSString *g_isEditZoomHelpAcknowledged = @"EditZoomHelpAcknowledged";
 
 static NSSet *g_productsIdentifiers = nil;
 
 + (void)registerDefaults {
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{[self productNameRemoveWatermark]: @(NO), g_isSmileyTapAcknowledged: @(NO), g_isCollageTapAcknowledge: @(NO), g_isCollageDragAcknowledged: @(NO), g_isEditDragAcknowledged: @(NO), g_isEditZoomHelpAcknowledged: @(NO)}];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{
+                                                              [self productNameRemoveWatermark]: @(NO),
+                                                              g_isSmileyTapHelpAcknowledged: @(NO),
+                                                              g_isCollageTapHelpAcknowledge: @(NO),
+                                                              g_isCollageDragHelpAcknowledged: @(NO),
+                                                              g_isEditDragHelpAcknowledged: @(NO),
+                                                              g_isEditZoomHelpAcknowledged: @(NO)
+                                                              }];
 }
 
 + (void)reset {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:[self productNameRemoveWatermark]];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isSmileyTapAcknowledged];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isCollageTapAcknowledge];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isCollageDragAcknowledged];
-    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isEditDragAcknowledged];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isSmileyTapHelpAcknowledged];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isCollageTapHelpAcknowledge];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isCollageDragHelpAcknowledged];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isEditDragHelpAcknowledged];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:g_isEditZoomHelpAcknowledged];
 }
 
@@ -59,35 +66,35 @@ static NSSet *g_productsIdentifiers = nil;
 }
 
 + (void)acknowledgeSmileyTapHelp {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isSmileyTapAcknowledged];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isSmileyTapHelpAcknowledged];
 }
 
-+ (BOOL)isSmileyTapAcknowledged {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isSmileyTapAcknowledged];
++ (BOOL)isSmileyTapHelpAcknowledged {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isSmileyTapHelpAcknowledged];
 }
 
 + (void)acknowledgeCollageTapHelp {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isCollageTapAcknowledge];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isCollageTapHelpAcknowledge];
 }
 
-+ (BOOL)isCollageTapAcknowledged {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isCollageTapAcknowledge];
++ (BOOL)isCollageTapHelpAcknowledged {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isCollageTapHelpAcknowledge];
 }
 
 + (void)acknowledgeCollageDragHelp {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isCollageDragAcknowledged];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isCollageDragHelpAcknowledged];
 }
 
-+ (BOOL)isCollageDragAcknowledged {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isCollageDragAcknowledged];
++ (BOOL)isCollageDragHelpAcknowledged {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isCollageDragHelpAcknowledged];
 }
 
 + (void)acknowledgeEditDragHelp {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isEditDragAcknowledged];
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:g_isEditDragHelpAcknowledged];
 }
 
-+ (BOOL)isEditDragAcknowledged {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isEditDragAcknowledged];
++ (BOOL)isEditDragHelpAcknowledged {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:g_isEditDragHelpAcknowledged];
 }
 
 + (void)acknowledgeEditZoomHelp {

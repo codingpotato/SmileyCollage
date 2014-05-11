@@ -14,7 +14,6 @@
 #import "CPFaceDetectOperation.h"
 
 #import "CPFace.h"
-#import "CPFaceEditInformation.h"
 #import "CPPhoto.h"
 
 @interface CPFacesManager ()
@@ -34,7 +33,7 @@
 @implementation CPFacesManager
 
 + (NSString *)cameraOwnerName {
-    return @"SmileyCollage @ Codingpotato";
+    return @"Smiley Collage @ Codingpotato";
 }
 
 - (id)init {
@@ -44,6 +43,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAssetsLibraryChangeForNotification:) name:ALAssetsLibraryChangedNotification object:nil];
         
         self.isScanning = NO;
+        self.isScanCancelled = NO;
     }
     return self;
 }
@@ -54,9 +54,10 @@
 
 - (void)scanFaces {
     if (!self.isScanning) {
+        self.isScanning = YES;
+        self.isScanCancelled = NO;
         self.numberOfScannedPhotos = 0;
         self.numberOfTotalPhotos = 0;
-        self.isScanning = YES;
         self.scanStartTime = [NSDate timeIntervalSinceReferenceDate];
         
         [self scanAllPhotos];
@@ -68,19 +69,26 @@
         [self.queue cancelAllOperations];
         [self.queue waitUntilAllOperationsAreFinished];
         self.isScanning = NO;
+        self.isScanCancelled = YES;
     }
 }
 
 - (UIImage *)thumbnailOfFace:(CPFace *)face {
+    NSAssert(face, @"");
+    
     NSString *filePath = [[CPUtility thumbnailPath] stringByAppendingPathComponent:face.thumbnail];
     return [UIImage imageWithContentsOfFile:filePath];
 }
 
 - (void)assertForURL:(NSURL *)assetURL resultBlock:(ALAssetsLibraryAssetForURLResultBlock)resultBlock {
+    NSAssert(assetURL, @"");
+    
     [self.assetsLibrary assetForURL:assetURL resultBlock:resultBlock failureBlock:nil];
 }
 
 - (void)saveStitchedImage:(UIImage *)image {
+    NSAssert(image, @"");
+    
     NSMutableDictionary *exifDictionary = [[NSMutableDictionary alloc] init];
     [exifDictionary setObject:[CPFacesManager cameraOwnerName] forKey:(NSString *)kCGImagePropertyExifCameraOwnerName];
     NSMutableDictionary *metadata = [NSMutableDictionary dictionary];
@@ -134,7 +142,7 @@
 - (NSFetchedResultsController *)facesController {
     if (!_facesController) {
         NSFetchRequest * fetechRequest = [CPFace fetchRequestForFacesInManagedObjectContext:self.managedObjectContext];
-        _facesController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetechRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPFaceCache"];
+        _facesController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetechRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"CPFacesCache"];
         [_facesController performFetch:nil];
     }
     return _facesController;
