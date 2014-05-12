@@ -23,13 +23,13 @@
 
 @interface CPSmileyViewController () <NSFetchedResultsControllerDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
-@property (strong, nonatomic) CPHelpViewManager *helpViewManager;
-
 @property (strong, nonatomic) CPFacesManager *facesManager;
 
-@property (strong, nonatomic) NSMutableArray *fetchedResultsChangedObjects;
-
 @property (strong, nonatomic) NSMutableDictionary *selectedFaces;
+
+@property (strong, nonatomic) CPHelpViewManager *helpViewManager;
+
+@property (strong, nonatomic) NSMutableArray *fetchedResultsChangedObjects;
 
 @property (strong, nonatomic) UIBarButtonItem *cancelBarButtonItem;
 @property (strong, nonatomic) UIBarButtonItem *confirmBarButtonItem;
@@ -62,15 +62,14 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
     self.facesManager.facesController.delegate = self;
     [self hideToolbar];
+    [self showToolbarWithAnimation];
     [self.facesManager scanFaces];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self showToolbarWithAnimation];
-    [self showSelectedFacesNumber];
-    
+    [self showSelectedFacesNumberOnConfirmButton];
     if (self.collectionView.visibleCells.count > 0) {
         [self showHelpView];
     } else {
@@ -81,7 +80,6 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
-    [self hideToolbar];
     [self hideHelpView];
 }
 
@@ -104,6 +102,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     
+    [self hideToolbar];
     [self.facesManager stopScan];
 }
 
@@ -130,7 +129,6 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     [self.facesManager removeObserver:self forKeyPath:NSStringFromSelector(@selector(isScanning))];
     
     [self hideToolbar];
-    
     [self.facesManager stopScan];
 }
 
@@ -139,13 +137,15 @@ static const CGFloat g_collectionViewSpacing = 1.0;
         NSNumber *oldValue = change[NSKeyValueChangeOldKey];
         NSNumber *newValue = change[NSKeyValueChangeNewKey];
         if (![oldValue isEqual:newValue]) {
-            self.progressView.progress = newValue.floatValue / self.facesManager.numberOfTotalPhotos;
-            self.informationLabel.text = [NSString stringWithFormat:@"Scanned %d of %d photos", (int)self.facesManager.numberOfScannedPhotos, (int)self.facesManager.numberOfTotalPhotos];
+            [self.progressView setProgress:newValue.floatValue / self.facesManager.numberOfTotalPhotos animated:YES];
+            self.informationLabel.text = [NSString stringWithFormat:@"Scanned %d of %d photos", newValue.intValue, (int)self.facesManager.numberOfTotalPhotos];
         }
     } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(isScanning))]) {
         NSNumber *oldValue = change[NSKeyValueChangeOldKey];
         NSNumber *newValue = change[NSKeyValueChangeNewKey];
-        if (oldValue.boolValue && !newValue.boolValue) {
+        if (!oldValue.boolValue && newValue.boolValue) {
+            [self showToolbarWithAnimation];
+        } else if (oldValue.boolValue && !newValue.boolValue) {
             [self hideToolbarWithAnimation];
         }
     }
@@ -155,7 +155,14 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     self.progressView.progress = 0.0;
     self.informationLabel.text = @"Scanning photos......";
     self.toolbarBottomConstraint.constant = 0.0;
-    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
+    [UIView animateWithDuration:g_animationDuration animations:^{
+        [self.view layoutIfNeeded];
+    }];
+}
+
+- (void)hideToolbarWithAnimation {
+    self.toolbarBottomConstraint.constant = self.toolbar.bounds.size.height;
+    [UIView animateWithDuration:g_animationDuration delay:10.0 options:UIViewAnimationOptionTransitionNone animations:^{
         [self.view layoutIfNeeded];
     } completion:nil];
 }
@@ -165,14 +172,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     [self.view layoutIfNeeded];
 }
 
-- (void)hideToolbarWithAnimation {
-    self.toolbarBottomConstraint.constant = self.toolbar.bounds.size.height;
-    [UIView animateWithDuration:0.3 delay:5.0 options:UIViewAnimationOptionLayoutSubviews animations:^{
-        [self.view layoutIfNeeded];
-    } completion:nil];
-}
-
-- (void)showSelectedFacesNumber {
+- (void)showSelectedFacesNumberOnConfirmButton {
     [self.confirmButton setTitle:[[NSString alloc] initWithFormat:@"%d", (int)self.selectedFaces.count] forState:UIControlStateNormal];
     if (self.selectedFaces.count > 9) {
         [self.confirmButton setImage:[UIImage imageNamed:@"confirm_1.png"] forState:UIControlStateNormal];
@@ -191,9 +191,6 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)hideBarButtonItems {
     self.navigationItem.rightBarButtonItem = nil;
     self.navigationItem.leftBarButtonItem = nil;
-}
-
-- (void)helpBarButtonItemPressed:(id)sender {
 }
 
 - (void)cancelBarButtonItemPressed:(id)sender {
@@ -239,6 +236,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
 - (void)hideHelpView {
     [self.helpViewManager removeHelpView];
+    self.helpViewManager = nil;
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate implement
@@ -334,6 +332,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [CPSettings acknowledgeSmileyTapHelp];
     
+    NSAssert(indexPath.row >= 0 && indexPath.row < self.facesManager.facesController.fetchedObjects.count, @"");
     CPFace *face = [self.facesManager.facesController.fetchedObjects objectAtIndex:indexPath.row];
     NSAssert(face, @"");
 
@@ -344,6 +343,9 @@ static const CGFloat g_collectionViewSpacing = 1.0;
         }
         [collectionView reloadItemsAtIndexPaths:@[indexPath]];
     } else {
+        if (self.selectedFaces.count == 0) {
+            [self showBarButtonItems];
+        }
         if (self.selectedFaces.count < [CPCollageViewController maxNumberOfCollagedFaces]) {
             CPFaceEditInformation *faceEditInformation = [[CPFaceEditInformation alloc] init];
             faceEditInformation.face = face;
@@ -351,15 +353,14 @@ static const CGFloat g_collectionViewSpacing = 1.0;
             faceEditInformation.frame = CGRectMake(face.x.floatValue, face.y.floatValue, face.width.floatValue, face.height.floatValue);
             [self.selectedFaces setObject:faceEditInformation forKey:face.objectID];
             
-            [self showBarButtonItems];
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
         } else {
-            NSString *message = [[NSString alloc] initWithFormat:@"Cannot select more that %lu faces", (unsigned long)[CPCollageViewController maxNumberOfCollagedFaces]];
+            NSString *message = [[NSString alloc] initWithFormat:@"Cannot select more that %d faces", (int)[CPCollageViewController maxNumberOfCollagedFaces]];
             UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"Information" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
             [alertView show];
         }
     }
-    [self showSelectedFacesNumber];
+    [self showSelectedFacesNumberOnConfirmButton];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
@@ -391,18 +392,18 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     return _facesManager;
 }
 
-- (NSMutableArray *)fetchedResultsChangedObjects {
-    if (!_fetchedResultsChangedObjects) {
-        _fetchedResultsChangedObjects = [[NSMutableArray alloc] init];
-    }
-    return _fetchedResultsChangedObjects;
-}
-
 - (NSMutableDictionary *)selectedFaces {
     if (!_selectedFaces) {
         _selectedFaces = [[NSMutableDictionary alloc] initWithCapacity:[CPCollageViewController maxNumberOfCollagedFaces]];
     }
     return _selectedFaces;
+}
+
+- (NSMutableArray *)fetchedResultsChangedObjects {
+    if (!_fetchedResultsChangedObjects) {
+        _fetchedResultsChangedObjects = [[NSMutableArray alloc] init];
+    }
+    return _fetchedResultsChangedObjects;
 }
 
 - (UIBarButtonItem *)cancelBarButtonItem {

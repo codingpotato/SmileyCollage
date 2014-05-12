@@ -123,7 +123,7 @@
 }
 
 - (void)showErrorMessage:(NSString *)errorMessage {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Issue" message:errorMessage delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Issue" message:errorMessage delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     alertView.delegate = self;
     [alertView show];
 }

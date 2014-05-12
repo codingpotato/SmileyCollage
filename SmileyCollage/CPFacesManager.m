@@ -122,7 +122,10 @@
 - (void)removeExpiredPhotos {
     CPCleanupOperation *cleanupOperation = [[CPCleanupOperation alloc] initWithScanTime:self.scanStartTime persistentStoreCoordinator:self.persistentStoreCoordinator];
     cleanupOperation.completionBlock = ^() {
-        self.isScanning = NO;
+        // inform ui thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.isScanning = NO;
+        });
     };
     [self.queue addOperation:cleanupOperation];
 }
@@ -134,7 +137,10 @@
 }
 
 - (void)handleAssetsLibraryChangeForNotification:(NSNotification *)notification {
-    [self scanFaces];
+    // inform ui thread for start scanning
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self scanFaces];
+    });
 }
 
 #pragma mark - lazy init
