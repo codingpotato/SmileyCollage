@@ -38,7 +38,10 @@
 @property (strong, nonatomic) NSArray *sizeOfFaces;
 @property (nonatomic) CGFloat widthHeightRatioOfImage;
 
+@property (nonatomic) BOOL needImageLoadingAnimation;
+
 @property (nonatomic) NSInteger selectedIndex;
+
 @property (weak, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
@@ -58,6 +61,9 @@ static const CGFloat g_animationDuration = 0.3;
 static NSString * g_editViewControllerSegueName = @"CPEditViewControllerSegue";
 static NSString * g_shopViewControllerSegueName = @"CPShopViewControllerSegue";
 
+/*
+ * in reverse order
+ */
 static NSUInteger g_numberOfColumnsInRows[] = {
     1, 11, 21, 22, 32, 222, 322, 332, 333, 442,
     443, 3333, 4333, 4433, 4443, 4444, 53333, 54333, 54433, 54443,
@@ -74,6 +80,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
     
+    self.needImageLoadingAnimation = YES;
     self.selectedIndex = -1;
     self.navigationItem.rightBarButtonItems = @[self.actionBarButtonItem, self.shopBarButtonItem];
     self.actionBarButtonItem.enabled = NO;
@@ -331,21 +338,27 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     NSUInteger height = [self heightOfCollagedImage];
     for (NSUInteger row = 0; row < self.numberOfColumnsInRows.count; ++row) {
         NSNumber *number = [self.numberOfColumnsInRows objectAtIndex:row];
-        NSUInteger rowHeight = 0.0;
+        NSUInteger rowHeight = 0;
         if (row < self.numberOfColumnsInRows.count - 1) {
             rowHeight = roundf([self widthOfCollagedImage] / number.floatValue);
             height -= rowHeight;
         } else {
+            // use remain height, not calculated height
             rowHeight = height;
         }
         NSUInteger width = [self widthOfCollagedImage];
         for (NSUInteger column = 0; column < number.integerValue; ++column) {
-            NSUInteger faceWidth = roundf(width / (number.floatValue - column));
-            width -= faceWidth;
+            NSUInteger faceWidth = 0;
+            if (column < number.integerValue - 1) {
+                faceWidth = roundf(width / (number.floatValue - column));
+                width -= faceWidth;
+            } else {
+                // use remain width, not calculated width
+                faceWidth = width;
+            }
             [sizeOfFaces addObject:[NSValue valueWithCGSize:CGSizeMake(faceWidth, rowHeight)]];
         }
     }
-    
     self.sizeOfFaces = [sizeOfFaces copy];
 }
 
@@ -477,19 +490,26 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     CPCollageCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"CPCollageCell" forIndexPath:indexPath];
-    [cell showActivityIndicatorView];
+    if (self.needImageLoadingAnimation) {
+        [cell showActivityIndicatorView];
+    }
     
     CPFaceEditInformation *faceEditInformation = [self.collagedFaces objectAtIndex:indexPath.row];
     NSAssert(faceEditInformation, @"");
     
     if (faceEditInformation.asset) {
-        // execute later, not block animation
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [cell showImage:[self imageOfFace:faceEditInformation] animated:YES];
-            if ([self allFacesHaveAsset]) {
-                self.actionBarButtonItem.enabled = YES;
-            }
-        });
+        if (self.needImageLoadingAnimation) {
+            // execute later, not block animation
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [cell showImage:[self imageOfFace:faceEditInformation] animated:YES];
+                if ([self allFacesHaveAsset]) {
+                    self.actionBarButtonItem.enabled = YES;
+                    self.needImageLoadingAnimation = NO;
+                }
+            });
+        } else {
+            [cell showImage:[self imageOfFace:faceEditInformation] animated:NO];
+        }
     } else {
         [self.facesManager assertForURL:[[NSURL alloc] initWithString:faceEditInformation.face.photo.url] resultBlock:^(ALAsset *result) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
@@ -499,6 +519,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
                     [cell showImage:image animated:YES];
                     if ([self allFacesHaveAsset]) {
                         self.actionBarButtonItem.enabled = YES;
+                        self.needImageLoadingAnimation = NO;
                     }
                 });
             });
@@ -526,13 +547,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        NSUInteger insetTop = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
-        NSUInteger insetBottom = [self contentSizeOfCollectionView].height - insetTop - [self heightOfCollagedImage];
-        return UIEdgeInsetsMake(insetTop, 0.0, insetBottom, 0.0);
+        NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
+        NSUInteger bottomSpace = [self contentSizeOfCollectionView].height - topSpace - [self heightOfCollagedImage];
+        return UIEdgeInsetsMake(topSpace, 0.0, bottomSpace, 0.0);
     } else {
-        NSUInteger insetLeft = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
-        NSUInteger insetRight = [self contentSizeOfCollectionView].width - insetLeft - [self widthOfCollagedImage];
-        return UIEdgeInsetsMake(0.0, insetLeft, 0.0, insetRight);
+        NSUInteger leftSpace = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
+        NSUInteger rightSpace = [self contentSizeOfCollectionView].width - leftSpace - [self widthOfCollagedImage];
+        return UIEdgeInsetsMake(0.0, leftSpace, 0.0, rightSpace);
     }
 }
 
