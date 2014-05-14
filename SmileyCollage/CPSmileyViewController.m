@@ -21,7 +21,7 @@
 #import "CPFacesManager.h"
 #import "CPPhoto.h"
 
-@interface CPSmileyViewController () <NSFetchedResultsControllerDelegate,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface CPSmileyViewController () <NSFetchedResultsControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @property (strong, nonatomic) CPFacesManager *facesManager;
 
@@ -69,7 +69,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self showSelectedFacesNumberOnConfirmButton];
+    [self showSelectedFacesNumberOnConfirmButton];    
     if (self.collectionView.visibleCells.count > 0) {
         [self showHelpView];
     } else {
@@ -198,6 +198,8 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     [self performSegueWithIdentifier:@"CPCollageViewControllerSegue" sender:nil];
 }
 
+#pragma mark - handle no smiley help label
+
 - (void)showNoSmileyLabel {
     self.noSmileyLabel.alpha = 0.0;
     [self.view addSubview:self.noSmileyLabel];
@@ -216,6 +218,8 @@ static const CGFloat g_collectionViewSpacing = 1.0;
         [self.noSmileyLabel removeFromSuperview];
     }];
 }
+
+#pragma mark - handle help view
 
 - (void)showHelpView {
     NSAssert(self.collectionView.visibleCells.count > 0, @"");
@@ -293,6 +297,23 @@ static const CGFloat g_collectionViewSpacing = 1.0;
         }
     } completion:nil];
     [self.fetchedResultsChangedObjects removeAllObjects];
+    
+    // check and remove selected faces
+    for (NSManagedObjectID *objectID in [self.selectedFaces allKeys]) {
+        if (![self.facesManager isObjectExisting:objectID]) {
+            [self.selectedFaces removeObjectForKey:objectID];
+            if (self.navigationController.topViewController != self) {
+                [self.navigationController popToViewController:self animated:NO];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Information" message:@"One of the selected smiley faces is removed from album, please re-select your smiley faces." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+                [alertView show];
+            }
+        }
+    }
+    if (self.selectedFaces.count > 0) {
+        [self showSelectedFacesNumberOnConfirmButton];
+    } else {
+        [self hideBarButtonItems];
+    }
     
     self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)controller.fetchedObjects.count];
     if (controller.fetchedObjects.count == 0) {

@@ -73,6 +73,11 @@
     }
 }
 
+- (BOOL)isObjectExisting:(NSManagedObjectID *)objectID {
+    NSManagedObject *object = [self.managedObjectContext existingObjectWithID:objectID error:nil];
+    return (object && ![object isDeleted]);
+}
+
 - (UIImage *)thumbnailOfFace:(CPFace *)face {
     NSAssert(face, @"");
     

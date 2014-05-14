@@ -25,6 +25,8 @@
 
 - (void)stopScan;
 
+- (BOOL)isObjectExisting:(NSManagedObjectID *)objectID;
+
 - (UIImage *)thumbnailOfFace:(CPFace *)face;
 
 - (void)assertForURL:(NSURL *)assetURL resultBlock:(ALAssetsLibraryAssetForURLResultBlock)resultBlock;

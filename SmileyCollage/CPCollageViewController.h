@@ -16,7 +16,7 @@
 
 + (NSUInteger)maxNumberOfCollagedFaces;
 
-- (UIView *)selectedFace;
+- (UICollectionViewCell *)selectedFace;
 
 - (void)reloadSelectedFace;
 

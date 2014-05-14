@@ -33,13 +33,13 @@
 @property (strong, nonatomic) UIImage *watermarkImage;
 @property (strong, nonatomic) UIImageView *watermarkImageView;
 
+@property (nonatomic) NSUInteger maxColumns;
 @property (strong, nonatomic) NSArray *numberOfColumnsInRows;
 @property (strong, nonatomic) NSArray *sizeOfFaces;
-@property (nonatomic) NSUInteger maxColumns;
 @property (nonatomic) CGFloat widthHeightRatioOfImage;
 
 @property (nonatomic) NSInteger selectedIndex;
-@property (strong, nonatomic) UICollectionViewCell *draggedCell;
+@property (weak, nonatomic) UICollectionViewCell *draggedCell;
 @property (strong, nonatomic) UIView *snapshotOfDraggedCell;
 
 @property (strong, nonatomic) UIPopoverController *shopPopoverController;
@@ -52,6 +52,8 @@
 @end
 
 @implementation CPCollageViewController
+
+static const CGFloat g_animationDuration = 0.3;
 
 static NSString * g_editViewControllerSegueName = @"CPEditViewControllerSegue";
 static NSString * g_shopViewControllerSegueName = @"CPShopViewControllerSegue";
@@ -73,24 +75,17 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userDefaultsChanged:) name:NSUserDefaultsDidChangeNotification object:nil];
     
     self.selectedIndex = -1;
-    self.shopBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
-    self.actionBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
-    self.actionBarButtonItem.enabled = NO;
     self.navigationItem.rightBarButtonItems = @[self.actionBarButtonItem, self.shopBarButtonItem];
-    
+    self.actionBarButtonItem.enabled = NO;
+
+    [self showWatermarkImageView];
     [self calculateImageWidthHeightRatio];
-    
-    if (![CPSettings isWatermarkRemovePurchased]) {
-        [self showWatermarkImageView];
-    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    if (self.collectionView.visibleCells.count > 0) {
-        [self showHelpView];
-    }
+    [self showHelpView];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -112,9 +107,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     [self calculateSizeOfFaces];
     [self.collectionView.collectionViewLayout invalidateLayout];
-    if (![CPSettings isWatermarkRemovePurchased]) {
-        [self alignWatermarkImageView];
-    }
+    [self alignWatermarkImageView];
 }
 
 - (void)dealloc {
@@ -139,7 +132,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
-- (UIView *)selectedFace {
+- (UICollectionViewCell *)selectedFace {
     NSAssert(self.selectedIndex >= 0 && self.selectedIndex < self.collagedFaces.count, @"");
     return [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
 }
@@ -158,8 +151,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)shopBarButtonPressed:(id)sender {
-    [self dismissPopoverShopViewController];
     [self dismissActionSheet];
+    [self dismissPopoverShopViewController];
     
     if ([CPConfig isIPhone]) {
         [self performSegueWithIdentifier:g_shopViewControllerSegueName sender:nil];
@@ -175,7 +168,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)dismissShopViewController {
     NSAssert([self.navigationController.topViewController isMemberOfClass:[CPShopViewController class]], @"");
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popToViewController:self animated:YES];
 }
 
 - (void)dismissPopoverShopViewController {
@@ -186,8 +179,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)actionBarButtonPressed:(id)sender {
-    [self dismissPopoverShopViewController];
     [self dismissActionSheet];
+    [self dismissPopoverShopViewController];
     
     self.actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
     [self.actionSheet showFromBarButtonItem:self.actionBarButtonItem animated:YES];
@@ -201,9 +194,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (void)userDefaultsChanged:(NSNotification *)notification {
-    if ([CPSettings isWatermarkRemovePurchased] && self.watermarkImageView) {
-        [self.watermarkImageView removeFromSuperview];
-        self.watermarkImageView = nil;
+    if ([CPSettings isWatermarkRemovePurchased]) {
+        [self hideWatermarkView];
     }
 }
 
@@ -216,7 +208,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             NSIndexPath *indexPathOfDraggedCell = [self.collectionView indexPathForItemAtPoint:location];
             if (indexPathOfDraggedCell) {
                 self.draggedCell = [self.collectionView cellForItemAtIndexPath:indexPathOfDraggedCell];
-                self.snapshotOfDraggedCell = [self.draggedCell snapshotViewAfterScreenUpdates:YES];
+                self.snapshotOfDraggedCell = [self.draggedCell snapshotViewAfterScreenUpdates:NO];
                 self.snapshotOfDraggedCell.frame = self.draggedCell.frame;
                 self.snapshotOfDraggedCell.layer.shadowColor = [UIColor blackColor].CGColor;
                 self.snapshotOfDraggedCell.layer.shadowOffset = CGSizeMake(5.0, 5.0);
@@ -241,7 +233,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         
         if (droppedCell) {
             NSIndexPath *indexPath1 = [self.collectionView indexPathForCell:self.draggedCell];
-            NSIndexPath *indexPath2 = [self.collectionView indexPathForCell:droppedCell];
+            NSIndexPath *indexPath2 = indexPathOfDroppedCell;
             NSAssert(indexPath1 && indexPath2, @"");
             
             NSObject *face1 = [self.collagedFaces objectAtIndex:indexPath1.row];
@@ -249,7 +241,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             [self.collagedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
             [self.collagedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
             
-            [UIView animateWithDuration:0.3 animations:^{
+            [UIView animateWithDuration:g_animationDuration animations:^{
                 self.snapshotOfDraggedCell.frame = droppedCell.frame;
             } completion:nil];
 
@@ -260,34 +252,25 @@ static NSUInteger g_numberOfColumnsInRows[] = {
                 [self.snapshotOfDraggedCell removeFromSuperview];
                 self.snapshotOfDraggedCell = nil;
                 self.draggedCell.hidden = NO;
-                self.watermarkImageView.hidden = NO;
                 self.draggedCell = nil;
+                self.watermarkImageView.hidden = NO;
             }];
         } else {
-            [UIView animateWithDuration:0.3 animations:^{
+            [UIView animateWithDuration:g_animationDuration animations:^{
                 self.snapshotOfDraggedCell.frame = self.draggedCell.frame;
             } completion:^(BOOL finished) {
                 [self.snapshotOfDraggedCell removeFromSuperview];
                 self.snapshotOfDraggedCell = nil;
                 self.draggedCell.hidden = NO;
-                self.watermarkImageView.hidden = NO;
                 self.draggedCell = nil;
+                self.watermarkImageView.hidden = NO;
             }];
         }
     }
 }
 
-- (void)dismissShopViewController:(UIStoryboardSegue *)segue {
-    if (self.shopPopoverController) {
-        [self.shopPopoverController dismissPopoverAnimated:YES];
-        self.shopPopoverController = nil;
-    } else {
-        [self.navigationController popViewControllerAnimated:YES];
-    }
-}
-
 - (UIImage *)collagedImage {
-    NSAssert(self.maxColumns > 0, @"");
+    NSAssert(self.maxColumns > 0, @"calculateImageWidthHeightRatio() should be called before this method");
     
     CGFloat width = 256.0 * self.maxColumns;
     CGFloat height = width / self.widthHeightRatioOfImage;
@@ -298,22 +281,23 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     NSUInteger index = 0;
     NSUInteger row = 0;
     NSNumber *numberOfColumns = [self.numberOfColumnsInRows objectAtIndex:row];
-    NSUInteger items = numberOfColumns.integerValue;
+    NSUInteger faces = numberOfColumns.integerValue;
     for (CPFaceEditInformation *faceEditInformation in self.collagedFaces) {
         CGRect faceBounds = faceEditInformation.frame;
         CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceBounds);
         CGFloat widthOfFace = width / numberOfColumns.integerValue;
-        UIImage *image = [UIImage imageWithCGImage:faceImage scale:faceBounds.size.width / widthOfFace orientation:UIImageOrientationUp];
+        UIImage *image = [UIImage imageWithCGImage:faceImage];
         CGImageRelease(faceImage);
-        [image drawAtPoint:CGPointMake(x, y)];
+        [image drawInRect:CGRectMake(x, y, widthOfFace, widthOfFace)];
+        
         x += widthOfFace;
         index++;
-        if (index >= items && index < self.collagedFaces.count) {
+        if (index >= faces && index < self.collagedFaces.count) {
             x = 0.0;
             y += widthOfFace;
             row++;
             numberOfColumns = [self.numberOfColumnsInRows objectAtIndex:row];
-            items += numberOfColumns.integerValue;
+            faces += numberOfColumns.integerValue;
         }
     }
     
@@ -389,28 +373,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
-- (void)showWatermarkImageView {
-    NSAssert(!self.watermarkImageView, @"");
-    
-    self.watermarkImageView = [[UIImageView alloc] initWithImage:self.watermarkImage];
-    [self.view addSubview:self.watermarkImageView];
-}
-
-- (void)alignWatermarkImageView {
-    if (self.watermarkImageView) {
-        CGRect frame = CGRectZero;
-        if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-            NSUInteger inset = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
-            frame = [self.view convertRect:CGRectMake(0.0, inset, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
-        } else {
-            NSUInteger inset = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
-            frame = [self.view convertRect:CGRectMake(inset, 0.0, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
-        }
-        CGFloat height = [self widthOfCollagedImage] / self.watermarkImage.size.width * self.watermarkImage.size.height;
-        self.watermarkImageView.frame = CGRectMake(frame.origin.x, frame.origin.y + frame.size.height - height, frame.size.width, height);
-    }
-}
-
 - (UIImage *)imageOfFace:(CPFaceEditInformation *)faceEditInformation {
     CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.frame);
     UIImage *image = [UIImage imageWithCGImage:faceImage];
@@ -427,20 +389,58 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return YES;
 }
 
+#pragma mark - handle watermark view
+
+- (void)showWatermarkImageView {
+    if (![CPSettings isWatermarkRemovePurchased]) {
+        NSAssert(!self.watermarkImageView, @"");
+        
+        self.watermarkImageView = [[UIImageView alloc] initWithImage:self.watermarkImage];
+        [self.view addSubview:self.watermarkImageView];
+    }
+}
+
+- (void)alignWatermarkImageView {
+    if (![CPSettings isWatermarkRemovePurchased] && self.watermarkImageView) {
+        CGRect frame = CGRectZero;
+        if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
+            NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
+            frame = [self.view convertRect:CGRectMake(0.0, topSpace, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
+        } else {
+            NSUInteger leftSpace = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
+            frame = [self.view convertRect:CGRectMake(leftSpace, 0.0, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
+        }
+        CGFloat height = [self widthOfCollagedImage] / self.watermarkImage.size.width * self.watermarkImage.size.height;
+        self.watermarkImageView.frame = CGRectMake(frame.origin.x, frame.origin.y + frame.size.height - height, frame.size.width, height);
+    }
+}
+
+- (void)hideWatermarkView {
+    if (self.watermarkImageView) {
+        [self.watermarkImageView removeFromSuperview];
+        self.watermarkImageView = nil;
+    }
+}
+
+#pragma mark - handle help view
+
 - (void)showHelpView {
-    NSAssert(self.collectionView.visibleCells.count > 0, @"");
-    
-    NSUInteger index = arc4random_uniform((u_int32_t)self.collectionView.visibleCells.count);
-    UICollectionViewCell *cell = [self.collectionView.visibleCells objectAtIndex:index];
-    NSAssert(cell, @"");
-    CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
-    
-    self.helpViewManager = [[CPHelpViewManager alloc] init];
-    [self.helpViewManager showCollageHelpInView:self.view rect:rect];
+    if (self.collectionView.visibleCells.count > 0) {
+        NSUInteger index = arc4random_uniform((u_int32_t)self.collectionView.visibleCells.count);
+        UICollectionViewCell *cell = [self.collectionView.visibleCells objectAtIndex:index];
+        NSAssert(cell, @"");
+        CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
+        
+        self.helpViewManager = [[CPHelpViewManager alloc] init];
+        [self.helpViewManager showCollageHelpInView:self.view rect:rect];
+    }
 }
 
 - (void)hideHelpView {
-    [self.helpViewManager removeHelpView];
+    if (self.helpViewManager) {
+        [self.helpViewManager removeHelpView];
+        self.helpViewManager = nil;
+    }
 }
 
 #pragma mark - UIActionSheetDelegate implement
@@ -513,7 +513,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [CPSettings acknowledgeCollageTapHelp];
     
     self.selectedIndex = indexPath.row;
-    [self performSegueWithIdentifier:@"CPEditViewControllerSegue" sender:nil];
+    [self performSegueWithIdentifier:g_editViewControllerSegueName sender:nil];
 }
 
 #pragma mark - UICollectionViewDelegateFlowLayout implement
@@ -545,6 +545,20 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 #pragma mark - lazy init
+
+- (UIBarButtonItem *)shopBarButtonItem {
+    if (!_shopBarButtonItem) {
+        _shopBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
+    }
+    return _shopBarButtonItem;
+}
+
+- (UIBarButtonItem *)actionBarButtonItem {
+    if (!_actionBarButtonItem) {
+        _actionBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(actionBarButtonPressed:)];
+    }
+    return _actionBarButtonItem;
+}
 
 - (NSArray *)numberOfColumnsInRows {
     if (!_numberOfColumnsInRows) {
