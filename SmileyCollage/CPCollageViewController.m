@@ -112,6 +112,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
+    NSLog(@"%@", [NSValue valueWithCGRect:self.view.frame]);
+    [self.navigationController.navigationBar sizeToFit];
     [self calculateSizeOfFaces];
     [self.collectionView.collectionViewLayout invalidateLayout];
     [self alignWatermarkImageView];
@@ -360,19 +362,27 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         }
     }
     self.sizeOfFaces = [sizeOfFaces copy];
+    NSLog(@"widthOfCollageImage: %d, %@", [self widthOfCollagedImage], self.sizeOfFaces);
+}
+
+- (CGFloat)adjustInset {
+    UIApplication *application = [UIApplication sharedApplication];
+    CGFloat statusBarHeight = UIInterfaceOrientationIsPortrait(application.statusBarOrientation) ? application.statusBarFrame.size.height : application.statusBarFrame.size.width;
+    return statusBarHeight + self.navigationController.navigationBar.bounds.size.height;
 }
 
 - (CGSize)contentSizeOfCollectionView {
-    return CGSizeMake(self.collectionView.bounds.size.width, self.collectionView.bounds.size.height);
+    return CGSizeMake(self.collectionView.bounds.size.width, self.collectionView.bounds.size.height - [self adjustInset]);
 }
 
 - (CGFloat)widthHeightRatioOfCollectionView {
+    NSLog(@"contentSizeOfCollectionView: %@", [NSValue valueWithCGSize:[self contentSizeOfCollectionView]]);
     return [self contentSizeOfCollectionView].width / [self contentSizeOfCollectionView].height;
 }
 
 - (NSUInteger)widthOfCollagedImage {
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        return roundf(self.collectionView.bounds.size.width);
+        return roundf([self contentSizeOfCollectionView].width);
     } else {
         return roundf([self contentSizeOfCollectionView].height * self.widthHeightRatioOfImage);
     }
@@ -417,11 +427,11 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     if (![CPSettings isWatermarkRemovePurchased] && self.watermarkImageView) {
         CGRect frame = CGRectZero;
         if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-            NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
-            frame = [self.view convertRect:CGRectMake(0.0, topSpace, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
+            NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2 + [self adjustInset]);
+            frame = CGRectMake(0.0, topSpace, [self widthOfCollagedImage], [self heightOfCollagedImage]);
         } else {
             NSUInteger leftSpace = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
-            frame = [self.view convertRect:CGRectMake(leftSpace, 0.0, [self widthOfCollagedImage], [self heightOfCollagedImage]) fromView:self.collectionView];
+            frame = CGRectMake(leftSpace, [self adjustInset], [self widthOfCollagedImage], [self heightOfCollagedImage]);
         }
         CGFloat height = [self widthOfCollagedImage] / self.watermarkImage.size.width * self.watermarkImage.size.height;
         self.watermarkImageView.frame = CGRectMake(frame.origin.x, frame.origin.y + frame.size.height - height, frame.size.width, height);
@@ -547,12 +557,13 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
+        NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2 + [self adjustInset]);
         NSUInteger bottomSpace = [self contentSizeOfCollectionView].height - topSpace - [self heightOfCollagedImage];
         return UIEdgeInsetsMake(topSpace, 0.0, bottomSpace, 0.0);
     } else {
         NSUInteger leftSpace = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
         NSUInteger rightSpace = [self contentSizeOfCollectionView].width - leftSpace - [self widthOfCollagedImage];
+        NSLog(@"width: %f, leftSpace: %d, imageWidth: %d, rightSpace: %d", [self contentSizeOfCollectionView].width, leftSpace, [self widthOfCollagedImage], rightSpace);
         return UIEdgeInsetsMake(0.0, leftSpace, 0.0, rightSpace);
     }
 }
