@@ -14,7 +14,7 @@
 #import "CPSmileyViewController.h"
 
 #import "CPShopViewControllerTransition.h"
-#import "CPCollageToEditTransition.h"
+#import "CPEditViewControllerTransition.h"
 #import "CPPortalTransition.h"
 
 @implementation CPTransitionManager
@@ -33,11 +33,11 @@
         
     } else if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPEditViewController class]]) {
         
-        return [[CPCollageToEditTransition alloc] initWithReverseFlag:NO];
+        return [[CPEditViewControllerTransition alloc] initWithReverseFlag:NO];
         
     } else if ([fromVC isMemberOfClass:[CPEditViewController class]] && [toVC isMemberOfClass:[CPCollageViewController class]]) {
         
-        return [[CPCollageToEditTransition alloc] initWithReverseFlag:YES];
+        return [[CPEditViewControllerTransition alloc] initWithReverseFlag:YES];
         
     } else if ([fromVC isMemberOfClass:[CPCollageViewController class]] && [toVC isMemberOfClass:[CPShopViewController class]]) {
         

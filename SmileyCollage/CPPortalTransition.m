@@ -16,9 +16,11 @@
     UIView *containerView = [transitionContext containerView];
     CGRect finalFrame  = [transitionContext finalFrameForViewController:toViewController];
     
+    // add to view
     [containerView addSubview:toViewController.view];
     toViewController.view.frame = finalFrame;
 
+    // create left and right snapshot
     CGRect leftFrame = finalFrame;
     leftFrame.size.width /= 2;
     UIView *leftSnapshot = [fromViewController.view resizableSnapshotViewFromRect:leftFrame afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
@@ -27,6 +29,7 @@
     rightFrame.origin.x += rightFrame.size.width;
     UIView *rightSnapshot = [fromViewController.view resizableSnapshotViewFromRect:rightFrame afterScreenUpdates:NO withCapInsets:UIEdgeInsetsZero];
     
+    // remove from view
     [fromViewController.view removeFromSuperview];
 
     leftSnapshot.frame = leftFrame;
@@ -50,9 +53,11 @@
     UIView *containerView = [transitionContext containerView];
     CGRect finalFrame  = [transitionContext finalFrameForViewController:toViewController];
     
+    // add to view
     [containerView insertSubview:toViewController.view belowSubview:fromViewController.view];
     toViewController.view.frame = finalFrame;
     
+    // create left and right snapshot
     CGRect leftFrame = finalFrame;
     leftFrame.size.width /= 2;
     UIView *leftSnapshot = [toViewController.view resizableSnapshotViewFromRect:leftFrame afterScreenUpdates:YES withCapInsets:UIEdgeInsetsZero];

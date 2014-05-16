@@ -1,5 +1,5 @@
 //
-//  CPCollageToEditTransition.h
+//  CPEditViewControllerTransition.h
 //  Smiley
 //
 //  Created by wangyw on 3/9/14.
@@ -8,6 +8,6 @@
 
 #import "CPReversableTransition.h"
 
-@interface CPCollageToEditTransition : CPReversableTransition
+@interface CPEditViewControllerTransition : CPReversableTransition
 
 @end

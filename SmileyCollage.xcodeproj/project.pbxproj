@@ -10,7 +10,7 @@
 		FC11BBFA190E8C9000C2D7CF /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC11BBF9190E8C9000C2D7CF /* Accelerate.framework */; };
 		FC1A3A3618DB2875004E4C38 /* CPCollageViewControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */; };
 		FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287418CC6A960050AD08 /* CPTransitionManager.m */; };
-		FC2B287818CC6C300050AD08 /* CPCollageToEditTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287718CC6C300050AD08 /* CPCollageToEditTransition.m */; };
+		FC2B287818CC6C300050AD08 /* CPEditViewControllerTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = FC2B287718CC6C300050AD08 /* CPEditViewControllerTransition.m */; };
 		FC46714018C2CAF600E472BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46713F18C2CAF600E472BF /* Foundation.framework */; };
 		FC46714218C2CAF600E472BF /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714118C2CAF600E472BF /* CoreGraphics.framework */; };
 		FC46714418C2CAF600E472BF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC46714318C2CAF600E472BF /* UIKit.framework */; };
@@ -78,8 +78,8 @@
 		FC1A3A3518DB2875004E4C38 /* CPCollageViewControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageViewControllerTests.m; sourceTree = "<group>"; };
 		FC2B287318CC6A960050AD08 /* CPTransitionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTransitionManager.h; sourceTree = "<group>"; };
 		FC2B287418CC6A960050AD08 /* CPTransitionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTransitionManager.m; sourceTree = "<group>"; };
-		FC2B287618CC6C300050AD08 /* CPCollageToEditTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCollageToEditTransition.h; sourceTree = "<group>"; };
-		FC2B287718CC6C300050AD08 /* CPCollageToEditTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageToEditTransition.m; sourceTree = "<group>"; };
+		FC2B287618CC6C300050AD08 /* CPEditViewControllerTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEditViewControllerTransition.h; sourceTree = "<group>"; };
+		FC2B287718CC6C300050AD08 /* CPEditViewControllerTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEditViewControllerTransition.m; sourceTree = "<group>"; };
 		FC46713C18C2CAF600E472BF /* SmileyCollage.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmileyCollage.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC46713F18C2CAF600E472BF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FC46714118C2CAF600E472BF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -190,8 +190,8 @@
 		FC2B287218CC69F50050AD08 /* Transitions */ = {
 			isa = PBXGroup;
 			children = (
-				FC2B287618CC6C300050AD08 /* CPCollageToEditTransition.h */,
-				FC2B287718CC6C300050AD08 /* CPCollageToEditTransition.m */,
+				FC2B287618CC6C300050AD08 /* CPEditViewControllerTransition.h */,
+				FC2B287718CC6C300050AD08 /* CPEditViewControllerTransition.m */,
 				FC5704C318F42C6900E373C6 /* CPPortalTransition.h */,
 				FC5704C418F42C6900E373C6 /* CPPortalTransition.m */,
 				FC5704C618F42CE600E373C6 /* CPReversableTransition.h */,
@@ -484,7 +484,7 @@
 				FC2B287518CC6A960050AD08 /* CPTransitionManager.m in Sources */,
 				FC5E8F6218E45DA20012EB59 /* CPCleanupOperation.m in Sources */,
 				FC46715018C2CAF600E472BF /* CPAppDelegate.m in Sources */,
-				FC2B287818CC6C300050AD08 /* CPCollageToEditTransition.m in Sources */,
+				FC2B287818CC6C300050AD08 /* CPEditViewControllerTransition.m in Sources */,
 				FC61A46D18DD94A3009D9442 /* CPCollageCell.m in Sources */,
 				FC91B5B8190BB55900FD8D05 /* CPNavigationController.m in Sources */,
 				FC60EBCC18E1BD8E00AD74FB /* CPCoreDataOperation.m in Sources */,

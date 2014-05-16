@@ -39,6 +39,7 @@
 
 - (IBAction)restoreButtonPressed:(id)sender {
     NSAssert(self.shopTableViewManager, @"");
+    
     [self.shopTableViewManager restoreCompletedTransactions];
 }
 

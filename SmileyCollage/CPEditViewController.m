@@ -18,11 +18,13 @@
 @property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
 @property (strong, nonatomic) UIImageView *imageView;
+
 @property (strong, nonatomic) UIView *faceIndicator;
 
 @property (nonatomic) CGSize originalImageSize;
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
+
 - (IBAction)handlePinchGesture:(UIPinchGestureRecognizer *)pinchGesture;
 
 @end
@@ -58,12 +60,15 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
+    // face insicator should be layout first
     [self layoutFaceIndicator];
     [self layoutImageView];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+    
+    [self hideHelpView];
 }
 
 - (CGRect)faceIndicatorFrame {
@@ -77,6 +82,8 @@
 }
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
+    [CPSettings acknowledgeEditDragHelp];
+    
     if (panGesture.state == UIGestureRecognizerStateChanged) {
         CGPoint translation = [panGesture translationInView:self.view];
         self.imageView.frame = CGRectOffset(self.imageView.frame, translation.x, translation.y);
@@ -84,12 +91,12 @@
         [self validateImageViewPosition];
     }
     [panGesture setTranslation:CGPointZero inView:self.view];
-    [self updateFaceFrame];
-    
-    [CPSettings acknowledgeEditDragHelp];
+    [self updateFaceEditInformation];
 }
 
 - (IBAction)handlePinchGesture:(UIPinchGestureRecognizer *)pinchGesture {
+    [CPSettings acknowledgeEditZoomHelp];
+    
     if (pinchGesture.state == UIGestureRecognizerStateChanged) {
         CGFloat width = self.imageView.frame.size.width * pinchGesture.scale;
         CGFloat height = self.imageView.frame.size.height * pinchGesture.scale;
@@ -105,16 +112,19 @@
         [self validateImageViewPosition];
     }
     pinchGesture.scale = 1.0;
-    [self updateFaceFrame];
-    
-    [CPSettings acknowledgeEditZoomHelp];
+    [self updateFaceEditInformation];
 }
 
-- (void)updateFaceFrame {
+- (void)updateFaceEditInformation {
     CGFloat ratioX = self.originalImageSize.width / self.imageView.frame.size.width;
     CGFloat ratioY = self.originalImageSize.height / self.imageView.frame.size.height;
-    self.faceEditInformation.frame = CGRectMake((self.faceIndicator.frame.origin.x - self.imageView.frame.origin.x) * ratioX, (self.faceIndicator.frame.origin.y - self.imageView.frame.origin.y) * ratioY, self.faceIndicator.frame.size.width * ratioX, self.faceIndicator.frame.size.height * ratioY);
+    self.faceEditInformation.frame = CGRectMake((self.faceIndicator.frame.origin.x - self.imageView.frame.origin.x) * ratioX,
+                                                (self.faceIndicator.frame.origin.y - self.imageView.frame.origin.y) * ratioY,
+                                                self.faceIndicator.frame.size.width * ratioX,
+                                                self.faceIndicator.frame.size.height * ratioY);
 }
+
+#pragma mark - handle face indicator
 
 - (void)showFaceIndicator {
     [self.view addSubview:self.faceIndicator];
@@ -124,6 +134,8 @@
     self.faceIndicator.frame = self.faceIndicatorFrame;
 }
 
+#pragma mark - handle image view
+
 - (void)showImageView {
     CGImageRef fullScreenImage = self.faceEditInformation.asset.defaultRepresentation.fullScreenImage;
     self.originalImageSize = CGSizeMake(CGImageGetWidth(fullScreenImage), CGImageGetHeight(fullScreenImage));
@@ -132,9 +144,14 @@
 }
 
 - (void)layoutImageView {
+    NSAssert(self.faceIndicator.frame.size.width > 0 && self.faceIndicator.frame.size.height > 0, @"face indicator should be layout first");
+    
     CGFloat ratioWidth = self.faceIndicator.frame.size.width / self.faceEditInformation.frame.size.width;
     CGFloat ratioHeight = self.faceIndicator.frame.size.height / self.faceEditInformation.frame.size.height;
-    self.imageView.frame = CGRectMake(self.faceIndicator.frame.origin.x - self.faceEditInformation.frame.origin.x * ratioWidth, self.faceIndicator.frame.origin.y - self.faceEditInformation.frame.origin.y * ratioHeight, self.originalImageSize.width * ratioWidth, self.originalImageSize.height * ratioHeight);
+    self.imageView.frame = CGRectMake(self.faceIndicator.frame.origin.x - self.faceEditInformation.frame.origin.x * ratioWidth,
+                                      self.faceIndicator.frame.origin.y - self.faceEditInformation.frame.origin.y * ratioHeight,
+                                      self.originalImageSize.width * ratioWidth,
+                                      self.originalImageSize.height * ratioHeight);
 }
 
 - (void)validateImageViewPosition {
@@ -165,13 +182,18 @@
     }];
 }
 
+#pragma mark - handle help view
+
 - (void)showHelpView {
     self.helpViewManager = [[CPHelpViewManager alloc] init];
     [self.helpViewManager showEditHelpInView:self.view rect:self.faceIndicator.frame];
 }
 
 - (void)hideHelpView {
-    [self.helpViewManager removeHelpView];
+    if (self.helpViewManager) {
+        [self.helpViewManager removeHelpView];
+        self.helpViewManager = nil;
+    }
 }
 
 #pragma mark - lazy init
