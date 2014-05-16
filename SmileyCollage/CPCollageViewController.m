@@ -112,7 +112,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    NSLog(@"%@", [NSValue valueWithCGRect:self.view.frame]);
     [self.navigationController.navigationBar sizeToFit];
     [self calculateSizeOfFaces];
     [self.collectionView.collectionViewLayout invalidateLayout];
@@ -362,7 +361,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         }
     }
     self.sizeOfFaces = [sizeOfFaces copy];
-    NSLog(@"widthOfCollageImage: %d, %@", [self widthOfCollagedImage], self.sizeOfFaces);
 }
 
 - (CGFloat)adjustInset {
@@ -376,7 +374,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (CGFloat)widthHeightRatioOfCollectionView {
-    NSLog(@"contentSizeOfCollectionView: %@", [NSValue valueWithCGSize:[self contentSizeOfCollectionView]]);
     return [self contentSizeOfCollectionView].width / [self contentSizeOfCollectionView].height;
 }
 
@@ -557,13 +554,12 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     NSAssert(section == 0, @"");
     if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2 + [self adjustInset]);
+        NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
         NSUInteger bottomSpace = [self contentSizeOfCollectionView].height - topSpace - [self heightOfCollagedImage];
         return UIEdgeInsetsMake(topSpace, 0.0, bottomSpace, 0.0);
     } else {
         NSUInteger leftSpace = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
         NSUInteger rightSpace = [self contentSizeOfCollectionView].width - leftSpace - [self widthOfCollagedImage];
-        NSLog(@"width: %f, leftSpace: %d, imageWidth: %d, rightSpace: %d", [self contentSizeOfCollectionView].width, leftSpace, [self widthOfCollagedImage], rightSpace);
         return UIEdgeInsetsMake(0.0, leftSpace, 0.0, rightSpace);
     }
 }
