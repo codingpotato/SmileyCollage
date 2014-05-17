@@ -12,6 +12,12 @@
 
 + (CGFloat)thumbnailSize;
 
++ (CGFloat)confirmButtonTitleFontSize;
+
++ (UIEdgeInsets)confirmButtonTitleEdgeInsetsForOneDigit;
+
++ (UIEdgeInsets)confirmButtonTitleEdgeInsetsForTwoDigits;
+
 + (NSString *)helpFontName;
 
 + (CGFloat)noSmileyLabelFontSize;

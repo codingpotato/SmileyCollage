@@ -170,11 +170,11 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)showSelectedFacesNumberOnConfirmButton {
     [self.confirmButton setTitle:[[NSString alloc] initWithFormat:@"%d", (int)self.selectedFaces.count] forState:UIControlStateNormal];
     if (self.selectedFaces.count > 9) {
-        [self.confirmButton setImage:[UIImage imageNamed:@"confirm_1.png"] forState:UIControlStateNormal];
-        self.confirmButton.titleEdgeInsets = UIEdgeInsetsMake(-10.0, -16.0, 0.0, 0.0);
+        [self.confirmButton setImage:[UIImage imageNamed:@"confirm-2.png"] forState:UIControlStateNormal];
+        self.confirmButton.titleEdgeInsets = [CPConfig confirmButtonTitleEdgeInsetsForTwoDigits];
     } else {
-        [self.confirmButton setImage:[UIImage imageNamed:@"confirm.png"] forState:UIControlStateNormal];
-        self.confirmButton.titleEdgeInsets = UIEdgeInsetsMake(-10.0, -11.0, 0.0, 0.0);
+        [self.confirmButton setImage:[UIImage imageNamed:@"confirm-1.png"] forState:UIControlStateNormal];
+        self.confirmButton.titleEdgeInsets = [CPConfig confirmButtonTitleEdgeInsetsForOneDigit];
     }
 }
 
@@ -440,7 +440,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 	if (!_confirmButton) {
 		_confirmButton = [[UIButton alloc] init];
         _confirmButton.frame = CGRectMake(0.0, 0.0, 22.0, 22.0);
-        _confirmButton.titleLabel.font = [UIFont boldSystemFontOfSize:10.0];
+        _confirmButton.titleLabel.font = [UIFont boldSystemFontOfSize:[CPConfig confirmButtonTitleFontSize]];
         [_confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_confirmButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
 		[_confirmButton addTarget:self action:@selector(confirmButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
