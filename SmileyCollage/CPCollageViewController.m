@@ -13,6 +13,7 @@
 #import "CPUtility.h"
 
 #import "CPCollageCell.h"
+#import "CPCollageCollectionViewLayout.h"
 #import "CPEditViewController.h"
 #import "CPHelpViewManager.h"
 #import "CPPopoverShopViewController.h"
@@ -23,7 +24,7 @@
 #import "CPFace.h"
 #import "CPPhoto.h"
 
-@interface CPCollageViewController () <UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
+@interface CPCollageViewController () <CPCollageCollectionViewLayoutDataSource, UIActionSheetDelegate, UICollectionViewDataSource, UICollectionViewDelegate>
 
 @property (strong, nonatomic) CPHelpViewManager *helpViewManager;
 
@@ -32,11 +33,6 @@
 
 @property (strong, nonatomic) UIImage *watermarkImage;
 @property (strong, nonatomic) UIImageView *watermarkImageView;
-
-@property (nonatomic) NSUInteger maxColumns;
-@property (strong, nonatomic) NSArray *numberOfColumnsInRows;
-@property (strong, nonatomic) NSArray *sizeOfFaces;
-@property (nonatomic) CGFloat widthHeightRatioOfImage;
 
 @property (nonatomic) BOOL needImageLoadingAnimation;
 
@@ -48,7 +44,13 @@
 @property (strong, nonatomic) UIPopoverController *shopPopoverController;
 @property (strong, nonatomic) UIActionSheet *actionSheet;
 
+@property (nonatomic) NSUInteger maxColumns;
+@property (nonatomic) CGFloat imageWidthHeightRatio;
+@property (strong, nonatomic) NSArray *numberOfColumnsInRows;
+
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
+@property (weak, nonatomic) IBOutlet CPCollageCollectionViewLayout *collageCollectionViewLayout;
 
 - (IBAction)handlePanGesture:(UIPanGestureRecognizer *)panGesture;
 
@@ -71,7 +73,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     655555, 665555, 666555, 666655, 666665, 666666
 };
 
-+ (NSUInteger)maxNumberOfCollagedFaces {
++ (NSUInteger)maxNumberOfSmiley {
     return sizeof(g_numberOfColumnsInRows) / sizeof(NSUInteger);
 }
 
@@ -86,7 +88,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     self.actionBarButtonItem.enabled = NO;
 
     [self showWatermarkImageView];
-    [self calculateImageWidthHeightRatio];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -112,9 +113,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    [self.navigationController.navigationBar sizeToFit];
-    [self calculateSizeOfFaces];
-    [self.collectionView.collectionViewLayout invalidateLayout];
     [self alignWatermarkImageView];
 }
 
@@ -278,12 +276,12 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 }
 
 - (UIImage *)collagedImage {
-    NSAssert(self.maxColumns > 0, @"calculateImageWidthHeightRatio() should be called before this method");
+    NSAssert(self.maxColumns > 0, @"maxColumn should be calculated before");
     
     CGFloat width = 256.0 * self.maxColumns;
-    CGFloat height = width / self.widthHeightRatioOfImage;
+    CGFloat height = width / self.imageWidthHeightRatio;
     UIGraphicsBeginImageContext(CGSizeMake(width, height));
-
+    
     CGFloat x = 0.0;
     CGFloat y = 0.0;
     NSUInteger index = 0;
@@ -320,79 +318,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return resultImage;
 }
 
-- (void)calculateImageWidthHeightRatio {
-    self.maxColumns = 0;
-    for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
-        if (numberOfColumns.integerValue > self.maxColumns) {
-            self.maxColumns = numberOfColumns.integerValue;
-        }
-    }
-    CGFloat width = self.maxColumns, height = 0.0;
-    for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
-        height += width / numberOfColumns.integerValue;
-    }
-    self.widthHeightRatioOfImage = width / height;
-}
-
-- (void)calculateSizeOfFaces {
-    NSMutableArray *sizeOfFaces = [[NSMutableArray alloc] initWithCapacity:self.collagedFaces.count];
-    NSUInteger height = [self heightOfCollagedImage];
-    for (NSUInteger row = 0; row < self.numberOfColumnsInRows.count; ++row) {
-        NSNumber *number = [self.numberOfColumnsInRows objectAtIndex:row];
-        NSUInteger rowHeight = 0;
-        if (row < self.numberOfColumnsInRows.count - 1) {
-            rowHeight = roundf([self widthOfCollagedImage] / number.floatValue);
-            height -= rowHeight;
-        } else {
-            // use remain height, not calculated height
-            rowHeight = height;
-        }
-        NSUInteger width = [self widthOfCollagedImage];
-        for (NSUInteger column = 0; column < number.integerValue; ++column) {
-            NSUInteger faceWidth = 0;
-            if (column < number.integerValue - 1) {
-                faceWidth = roundf(width / (number.floatValue - column));
-                width -= faceWidth;
-            } else {
-                // use remain width, not calculated width
-                faceWidth = width;
-            }
-            [sizeOfFaces addObject:[NSValue valueWithCGSize:CGSizeMake(faceWidth, rowHeight)]];
-        }
-    }
-    self.sizeOfFaces = [sizeOfFaces copy];
-}
-
-- (CGFloat)adjustInset {
-    UIApplication *application = [UIApplication sharedApplication];
-    CGFloat statusBarHeight = UIInterfaceOrientationIsPortrait(application.statusBarOrientation) ? application.statusBarFrame.size.height : application.statusBarFrame.size.width;
-    return statusBarHeight + self.navigationController.navigationBar.bounds.size.height;
-}
-
-- (CGSize)contentSizeOfCollectionView {
-    return CGSizeMake(self.collectionView.bounds.size.width, self.collectionView.bounds.size.height - [self adjustInset]);
-}
-
-- (CGFloat)widthHeightRatioOfCollectionView {
-    return [self contentSizeOfCollectionView].width / [self contentSizeOfCollectionView].height;
-}
-
-- (NSUInteger)widthOfCollagedImage {
-    if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        return roundf([self contentSizeOfCollectionView].width);
-    } else {
-        return roundf([self contentSizeOfCollectionView].height * self.widthHeightRatioOfImage);
-    }
-}
-
-- (NSUInteger)heightOfCollagedImage {
-    if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        return roundf([self contentSizeOfCollectionView].width / self.widthHeightRatioOfImage);
-    } else {
-        return roundf([self contentSizeOfCollectionView].height);
-    }
-}
-
 - (UIImage *)imageOfFace:(CPFaceEditInformation *)faceEditInformation {
     CGImageRef faceImage = CGImageCreateWithImageInRect(faceEditInformation.asset.defaultRepresentation.fullScreenImage, faceEditInformation.frame);
     UIImage *image = [UIImage imageWithCGImage:faceImage];
@@ -420,17 +345,21 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
+- (CGFloat)topInset {
+    [self.navigationController.navigationBar sizeToFit];
+    
+    UIApplication *application = [UIApplication sharedApplication];
+    CGFloat statusBarHeight = UIInterfaceOrientationIsPortrait(application.statusBarOrientation) ? application.statusBarFrame.size.height : application.statusBarFrame.size.width;
+    return statusBarHeight + self.navigationController.navigationBar.bounds.size.height;
+}
+
 - (void)alignWatermarkImageView {
     if (![CPSettings isWatermarkRemovePurchased] && self.watermarkImageView) {
-        CGRect frame = CGRectZero;
-        if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-            NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2 + [self adjustInset]);
-            frame = CGRectMake(0.0, topSpace, [self widthOfCollagedImage], [self heightOfCollagedImage]);
-        } else {
-            NSUInteger leftSpace = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
-            frame = CGRectMake(leftSpace, [self adjustInset], [self widthOfCollagedImage], [self heightOfCollagedImage]);
-        }
-        CGFloat height = [self widthOfCollagedImage] / self.watermarkImage.size.width * self.watermarkImage.size.height;
+        [self.navigationController.navigationBar sizeToFit];
+        
+        CGRect frame = self.collageCollectionViewLayout.imageFrame;
+        frame.origin.y += [self topInset];
+        CGFloat height = frame.size.width / self.watermarkImage.size.width * self.watermarkImage.size.height;
         self.watermarkImageView.frame = CGRectMake(frame.origin.x, frame.origin.y + frame.size.height - height, frame.size.width, height);
     }
 }
@@ -463,6 +392,20 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
+#pragma mark - CPCollageCollectionViewLayoutDataSource implement
+
+- (CGFloat)topInsetForCollectionView:(UICollectionView *)collectionView {
+    return [self topInset];
+}
+
+- (CGFloat)imageWidthHeightRatioForCollectionView:(UICollectionView *)collectionView {
+    return self.imageWidthHeightRatio;
+}
+
+- (NSArray *)numberOfColumnsInRowsForCollectionView:(UICollectionView *)collectionView {
+    return self.numberOfColumnsInRows;
+}
+
 #pragma mark - UIActionSheetDelegate implement
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
@@ -491,7 +434,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - UICollectionViewDataSource implement
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    NSAssert(self.collagedFaces.count <= [CPCollageViewController maxNumberOfCollagedFaces], @"");
+    NSAssert(self.collagedFaces.count <= [CPCollageViewController maxNumberOfSmiley], @"");
     return self.collagedFaces.count;
 }
 
@@ -544,34 +487,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [self performSegueWithIdentifier:g_editViewControllerSegueName sender:nil];
 }
 
-#pragma mark - UICollectionViewDelegateFlowLayout implement
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    NSValue *size = [self.sizeOfFaces objectAtIndex:indexPath.row];
-    return size.CGSizeValue;
-}
-
-- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    NSAssert(section == 0, @"");
-    if (self.widthHeightRatioOfCollectionView < self.widthHeightRatioOfImage) {
-        NSUInteger topSpace = roundf(([self contentSizeOfCollectionView].height - [self heightOfCollagedImage]) / 2);
-        NSUInteger bottomSpace = [self contentSizeOfCollectionView].height - topSpace - [self heightOfCollagedImage];
-        return UIEdgeInsetsMake(topSpace, 0.0, bottomSpace, 0.0);
-    } else {
-        NSUInteger leftSpace = roundf(([self contentSizeOfCollectionView].width - [self widthOfCollagedImage]) / 2);
-        NSUInteger rightSpace = [self contentSizeOfCollectionView].width - leftSpace - [self widthOfCollagedImage];
-        return UIEdgeInsetsMake(0.0, leftSpace, 0.0, rightSpace);
-    }
-}
-
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 0.0;
-}
-
-- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    return 0.0;
-}
-
 #pragma mark - lazy init
 
 - (UIBarButtonItem *)shopBarButtonItem {
@@ -588,10 +503,41 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return _actionBarButtonItem;
 }
 
+- (UIImage *)watermarkImage {
+    if (!_watermarkImage) {
+        _watermarkImage = [UIImage imageNamed:@"watermark.png"];
+    }
+    return _watermarkImage;
+}
+
+- (NSUInteger)maxColumns {
+    if (_maxColumns == 0) {
+        [self imageWidthHeightRatio];
+    }
+    return _maxColumns;
+}
+
+- (CGFloat)imageWidthHeightRatio {
+    if (_imageWidthHeightRatio == 0.0) {
+        _maxColumns = 0;
+        for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
+            if (numberOfColumns.integerValue > _maxColumns) {
+                _maxColumns = numberOfColumns.integerValue;
+            }
+        }
+        CGFloat width = _maxColumns, height = 0.0;
+        for (NSNumber *numberOfColumns in self.numberOfColumnsInRows) {
+            height += width / numberOfColumns.integerValue;
+        }
+        _imageWidthHeightRatio = width / height;
+    }
+    return _imageWidthHeightRatio;
+}
+
 - (NSArray *)numberOfColumnsInRows {
     if (!_numberOfColumnsInRows) {
-        NSAssert(self.collagedFaces.count > 0 && self.collagedFaces.count <= [CPCollageViewController maxNumberOfCollagedFaces], @"");
-
+        NSAssert(self.collagedFaces.count > 0 && self.collagedFaces.count <= [CPCollageViewController maxNumberOfSmiley], @"");
+        
         NSMutableArray *numberOfColumnsInRows = [[NSMutableArray alloc] init];
         NSUInteger numbers = g_numberOfColumnsInRows[self.collagedFaces.count - 1];
         while (numbers > 0) {
@@ -601,13 +547,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         _numberOfColumnsInRows = [numberOfColumnsInRows copy];
     }
     return _numberOfColumnsInRows;
-}
-
-- (UIImage *)watermarkImage {
-    if (!_watermarkImage) {
-        _watermarkImage = [UIImage imageNamed:@"watermark.png"];
-    }
-    return _watermarkImage;
 }
 
 @end

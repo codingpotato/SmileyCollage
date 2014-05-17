@@ -14,7 +14,7 @@
 
 @property (strong, nonatomic) NSMutableArray *collagedFaces;
 
-+ (NSUInteger)maxNumberOfCollagedFaces;
++ (NSUInteger)maxNumberOfSmiley;
 
 - (UICollectionViewCell *)selectedFace;
 

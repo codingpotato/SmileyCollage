@@ -362,7 +362,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
         if (self.selectedFaces.count == 0) {
             [self showBarButtonItems];
         }
-        if (self.selectedFaces.count < [CPCollageViewController maxNumberOfCollagedFaces]) {
+        if (self.selectedFaces.count < [CPCollageViewController maxNumberOfSmiley]) {
             CPFaceEditInformation *faceEditInformation = [[CPFaceEditInformation alloc] init];
             faceEditInformation.face = face;
             faceEditInformation.asset = nil;
@@ -371,7 +371,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
             
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
         } else {
-            NSString *message = [[NSString alloc] initWithFormat:@"Cannot select more that %d faces", (int)[CPCollageViewController maxNumberOfCollagedFaces]];
+            NSString *message = [[NSString alloc] initWithFormat:@"Cannot select more that %d faces", (int)[CPCollageViewController maxNumberOfSmiley]];
             UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"Information" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
             [alertView show];
         }
@@ -410,7 +410,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
 - (NSMutableDictionary *)selectedFaces {
     if (!_selectedFaces) {
-        _selectedFaces = [[NSMutableDictionary alloc] initWithCapacity:[CPCollageViewController maxNumberOfCollagedFaces]];
+        _selectedFaces = [[NSMutableDictionary alloc] initWithCapacity:[CPCollageViewController maxNumberOfSmiley]];
     }
     return _selectedFaces;
 }

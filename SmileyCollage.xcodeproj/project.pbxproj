@@ -48,6 +48,7 @@
 		FC92759C18F58CF700031FD0 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC92759B18F58CF700031FD0 /* ImageIO.framework */; };
 		FC93443918C363F500657BBC /* CPFacesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FC93443818C363F500657BBC /* CPFacesManager.m */; };
 		FC94BD3C190FDD8900E46629 /* CPTouchableView.m in Sources */ = {isa = PBXBuildFile; fileRef = FC94BD3B190FDD8900E46629 /* CPTouchableView.m */; };
+		FC9B19561926F88B001FFAE5 /* CPCollageCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = FC9B19551926F88B001FFAE5 /* CPCollageCollectionViewLayout.m */; };
 		FCA292E718FD64AB0029583E /* CPCoreDataTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */; };
 		FCA292E918FD664A0029583E /* CPFaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E818FD664A0029583E /* CPFaceTests.m */; };
 		FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
@@ -139,6 +140,8 @@
 		FC93443818C363F500657BBC /* CPFacesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFacesManager.m; sourceTree = "<group>"; };
 		FC94BD3A190FDD8900E46629 /* CPTouchableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTouchableView.h; sourceTree = "<group>"; };
 		FC94BD3B190FDD8900E46629 /* CPTouchableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTouchableView.m; sourceTree = "<group>"; };
+		FC9B19541926F88B001FFAE5 /* CPCollageCollectionViewLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCollageCollectionViewLayout.h; sourceTree = "<group>"; };
+		FC9B19551926F88B001FFAE5 /* CPCollageCollectionViewLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCollageCollectionViewLayout.m; sourceTree = "<group>"; };
 		FCA292E518FD64AB0029583E /* CPCoreDataTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCoreDataTestHelper.h; sourceTree = "<group>"; };
 		FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataTestHelper.m; sourceTree = "<group>"; };
 		FCA292E818FD664A0029583E /* CPFaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceTests.m; sourceTree = "<group>"; };
@@ -243,7 +246,7 @@
 		FC46714518C2CAF600E472BF /* SmileyCollage */ = {
 			isa = PBXGroup;
 			children = (
-				FC61A46718DD9390009D9442 /* Collection View Cells */,
+				FC61A46718DD9390009D9442 /* Collection View Cells and Layouts */,
 				FC46714E18C2CAF600E472BF /* CPAppDelegate.h */,
 				FC46714F18C2CAF600E472BF /* CPAppDelegate.m */,
 				FC56ED3718E6C49700DFE80C /* CPConfig.h */,
@@ -319,15 +322,17 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
-		FC61A46718DD9390009D9442 /* Collection View Cells */ = {
+		FC61A46718DD9390009D9442 /* Collection View Cells and Layouts */ = {
 			isa = PBXGroup;
 			children = (
 				FC61A46B18DD94A3009D9442 /* CPCollageCell.h */,
 				FC61A46C18DD94A3009D9442 /* CPCollageCell.m */,
+				FC9B19541926F88B001FFAE5 /* CPCollageCollectionViewLayout.h */,
+				FC9B19551926F88B001FFAE5 /* CPCollageCollectionViewLayout.m */,
 				FCF8FE9918C2E09A007FA358 /* CPPhotoCell.h */,
 				FCF8FE9A18C2E09A007FA358 /* CPPhotoCell.m */,
 			);
-			name = "Collection View Cells";
+			name = "Collection View Cells and Layouts";
 			sourceTree = "<group>";
 		};
 		FC94BD3D190FDFC100E46629 /* View Controllers */ = {
@@ -476,6 +481,7 @@
 				FC80A0C8190158D7003B278E /* CPHelpViewManager.m in Sources */,
 				FCC3C7F6191DF675005E9320 /* CPPopoverShopViewController.m in Sources */,
 				FC80EC6418C9F5D2008E83B6 /* CPCollageViewController.m in Sources */,
+				FC9B19561926F88B001FFAE5 /* CPCollageCollectionViewLayout.m in Sources */,
 				FC91B5B5190B7BB000FD8D05 /* CPShopViewController.m in Sources */,
 				FC77E731190BF29F00FC0BBB /* CPShopViewControllerTransition.m in Sources */,
 				FC8BCA1318D4256900748335 /* SmileyCollage.xcdatamodeld in Sources */,
