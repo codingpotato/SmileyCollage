@@ -23,39 +23,15 @@
 }
 
 + (CGFloat)confirmButtonTitleFontSize {
-    CGFloat scale = [UIScreen mainScreen].scale;
-    if (scale == 1.0) {
-        return 12.0;
-    } else if (scale == 2.0) {
-        return 11.0;
-    } else {
-        NSAssert(NO, @"");
-        return 0.0;
-    }
+    return 16.0;
 }
 
 + (UIEdgeInsets)confirmButtonTitleEdgeInsetsForOneDigit {
-    CGFloat scale = [UIScreen mainScreen].scale;
-    if (scale == 1.0) {
-        return UIEdgeInsetsMake(-5.0, -15.5, 0.0, 0.0);
-    } else if (scale == 2.0) {
-        return UIEdgeInsetsMake(-6.0, -14.0, 0.0, 0.0);
-    } else {
-        NSAssert(NO, @"");
-        return UIEdgeInsetsZero;
-    }
+    return UIEdgeInsetsMake(-3.5, -19.5, 0.0, 0.0);
 }
 
 + (UIEdgeInsets)confirmButtonTitleEdgeInsetsForTwoDigits {
-    CGFloat scale = [UIScreen mainScreen].scale;
-    if (scale == 1.0) {
-        return UIEdgeInsetsMake(-5.0, -19.0, 0.0, 0.0);
-    } else if (scale == 2.0) {
-        return UIEdgeInsetsMake(-6.0, -18.0, 0.0, 0.0);
-    } else {
-        NSAssert(NO, @"");
-        return UIEdgeInsetsZero;
-    }
+    return UIEdgeInsetsMake(-3.5, -28.0, 0.0, 0.0);
 }
 
 + (NSString *)helpFontName {

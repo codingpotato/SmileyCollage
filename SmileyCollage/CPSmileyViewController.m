@@ -439,7 +439,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (UIButton *)confirmButton {
 	if (!_confirmButton) {
 		_confirmButton = [[UIButton alloc] init];
-        _confirmButton.frame = CGRectMake(0.0, 0.0, 22.0, 22.0);
+        _confirmButton.frame = CGRectMake(0.0, 0.0, 32.0, 25.0);
         _confirmButton.titleLabel.font = [UIFont boldSystemFontOfSize:[CPConfig confirmButtonTitleFontSize]];
         [_confirmButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [_confirmButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
