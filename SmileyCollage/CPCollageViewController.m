@@ -491,7 +491,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (UIBarButtonItem *)shopBarButtonItem {
     if (!_shopBarButtonItem) {
-        _shopBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemOrganize target:self action:@selector(shopBarButtonPressed:)];
+        _shopBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"shop.png"] style:UIBarButtonItemStylePlain target:self action:@selector(shopBarButtonPressed:)];
     }
     return _shopBarButtonItem;
 }
