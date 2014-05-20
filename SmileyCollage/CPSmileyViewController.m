@@ -69,7 +69,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self showSelectedFacesNumberOnConfirmButton];    
+    [self showSelectedFacesNumberOnConfirmButton];
     if (self.collectionView.visibleCells.count > 0) {
         [self showHelpView];
     } else {
@@ -88,6 +88,14 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     
     [self.collectionView.collectionViewLayout invalidateLayout];
     [self hideHelpView];
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    
+    CGRect frame = self.progressView.superview.frame;
+    frame.size.width = self.toolbar.bounds.size.width - frame.origin.x * 2;
+    self.progressView.superview.frame = frame;
 }
 
 - (void)dealloc {

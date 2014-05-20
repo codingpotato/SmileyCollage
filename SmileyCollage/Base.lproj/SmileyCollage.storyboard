@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Ni9-eK-q07">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="Ni9-eK-q07">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
@@ -150,28 +150,35 @@
                                 <rect key="frame" x="0.0" y="524" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                                 <items>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="kcI-YS-huH"/>
                                     <barButtonItem style="plain" id="h4a-QN-Fyd">
                                         <view key="customView" contentMode="scaleToFill" id="3uG-fO-pqr">
                                             <rect key="frame" x="16" y="6" width="288" height="33"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q07-4O-rk6">
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q07-4O-rk6">
                                                     <rect key="frame" x="0.0" y="2" width="288" height="21"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="EBG-9U-1y5">
+                                                <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EBG-9U-1y5">
                                                     <rect key="frame" x="0.0" y="26" width="288" height="2"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </progressView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="EBG-9U-1y5" secondAttribute="trailing" id="ChD-2p-uus"/>
+                                                <constraint firstItem="EBG-9U-1y5" firstAttribute="top" secondItem="q07-4O-rk6" secondAttribute="bottom" constant="3" id="E93-t7-PPW"/>
+                                                <constraint firstAttribute="bottom" secondItem="EBG-9U-1y5" secondAttribute="bottom" constant="5" id="J06-jr-beh"/>
+                                                <constraint firstItem="q07-4O-rk6" firstAttribute="top" secondItem="3uG-fO-pqr" secondAttribute="top" constant="2" id="JMI-zy-wKN"/>
+                                                <constraint firstItem="q07-4O-rk6" firstAttribute="leading" secondItem="EBG-9U-1y5" secondAttribute="leading" id="Rfy-Ng-ejH"/>
+                                                <constraint firstItem="EBG-9U-1y5" firstAttribute="leading" secondItem="3uG-fO-pqr" secondAttribute="leading" id="alx-6p-t2Q"/>
+                                                <constraint firstItem="EBG-9U-1y5" firstAttribute="trailing" secondItem="q07-4O-rk6" secondAttribute="trailing" id="yFx-Nr-aGa"/>
+                                            </constraints>
                                         </view>
                                     </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Wpm-Zs-VCm"/>
                                 </items>
                             </toolbar>
                         </subviews>
