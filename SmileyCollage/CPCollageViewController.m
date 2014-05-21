@@ -341,7 +341,12 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         NSAssert(!self.watermarkImageView, @"");
         
         self.watermarkImageView = [[UIImageView alloc] initWithImage:self.watermarkImage];
+        self.watermarkImageView.alpha = 0.0;
         [self.view addSubview:self.watermarkImageView];
+        
+        [UIView animateWithDuration:0.0 delay:g_animationDuration options:UIViewAnimationOptionTransitionNone animations:^{
+            self.watermarkImageView.alpha = 1.0;
+        } completion:nil];
     }
 }
 

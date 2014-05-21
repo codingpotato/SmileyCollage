@@ -36,7 +36,7 @@
     if (!self.maskView) {
         self.maskView = [[UIView alloc] init];
         self.maskView.backgroundColor = [UIColor whiteColor];
-        self.maskView.alpha = 0.5;
+        self.maskView.alpha = 0.2;
         self.maskView.translatesAutoresizingMaskIntoConstraints = NO;
 
         [self.contentView addSubview:self.maskView];
