@@ -39,11 +39,14 @@
     [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
         snapshot.frame = [containerView convertRect:editViewController.faceIndicatorFrame fromView:editViewController.view];
     } completion:^(BOOL finished) {
-        [snapshot removeFromSuperview];
-        selectedFace.hidden = NO;
-        [collageViewController.view removeFromSuperview];
-        editViewController.view.alpha = 1.0;
-        [transitionContext completeTransition:YES];
+        [UIView animateWithDuration:0.1 animations:^{
+            editViewController.view.alpha = 1.0;
+        } completion:^(BOOL finished) {
+            [snapshot removeFromSuperview];
+            selectedFace.hidden = NO;
+            [collageViewController.view removeFromSuperview];
+            [transitionContext completeTransition:YES];
+        }];
     }];
 }
 

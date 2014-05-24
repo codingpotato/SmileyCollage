@@ -86,8 +86,13 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
     
-    [self.collectionView.collectionViewLayout invalidateLayout];
     [self hideHelpView];
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    
+    [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
 - (void)viewDidLayoutSubviews {

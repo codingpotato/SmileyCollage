@@ -143,15 +143,18 @@ static const CGFloat g_maskViewAlpha = 0.5;
 - (void)layoutFaceIndicator {
     CGRect faceIndicatorFrame = self.faceIndicatorFrame;
     self.faceIndicator.frame = faceIndicatorFrame;
-    if (faceIndicatorFrame.size.width == self.view.bounds.size.width) {
-        self.maskView1.frame = CGRectMake(0.0, 0.0, faceIndicatorFrame.size.width, faceIndicatorFrame.origin.y);
-        self.maskView2.frame = CGRectMake(0.0, faceIndicatorFrame.origin.y + faceIndicatorFrame.size.height, faceIndicatorFrame.size.width, self.view.bounds.size.height - faceIndicatorFrame.origin.y - faceIndicatorFrame.size.height);
-    } else if (faceIndicatorFrame.size.height == self.view.bounds.size.height) {
-        self.maskView1.frame = CGRectMake(0.0, 0.0, faceIndicatorFrame.origin.x, faceIndicatorFrame.size.height);
-        self.maskView2.frame = CGRectMake(faceIndicatorFrame.origin.x + faceIndicatorFrame.size.width, 0.0, self.view.bounds.size.width - faceIndicatorFrame.origin.x - faceIndicatorFrame.size.width, faceIndicatorFrame.size.height);
-    } else {
-        NSAssert(NO, @"");
-    }
+
+    [UIView performWithoutAnimation:^{
+        if (faceIndicatorFrame.size.width == self.view.bounds.size.width) {
+            self.maskView1.frame = CGRectMake(0.0, 0.0, faceIndicatorFrame.size.width, faceIndicatorFrame.origin.y);
+            self.maskView2.frame = CGRectMake(0.0, faceIndicatorFrame.origin.y + faceIndicatorFrame.size.height, faceIndicatorFrame.size.width, self.view.bounds.size.height - faceIndicatorFrame.origin.y - faceIndicatorFrame.size.height);
+        } else if (faceIndicatorFrame.size.height == self.view.bounds.size.height) {
+            self.maskView1.frame = CGRectMake(0.0, 0.0, faceIndicatorFrame.origin.x, faceIndicatorFrame.size.height);
+            self.maskView2.frame = CGRectMake(faceIndicatorFrame.origin.x + faceIndicatorFrame.size.width, 0.0, self.view.bounds.size.width - faceIndicatorFrame.origin.x - faceIndicatorFrame.size.width, faceIndicatorFrame.size.height);
+        } else {
+            NSAssert(NO, @"");
+        }
+    }];
 }
 
 #pragma mark - handle image view
