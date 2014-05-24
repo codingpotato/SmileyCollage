@@ -20,6 +20,8 @@
 @property (strong, nonatomic) UIImageView *imageView;
 
 @property (strong, nonatomic) UIView *faceIndicator;
+@property (strong, nonatomic) UIView *maskView1;
+@property (strong, nonatomic) UIView *maskView2;
 
 @property (nonatomic) CGSize originalImageSize;
 
@@ -30,6 +32,8 @@
 @end
 
 @implementation CPEditViewController
+
+static const CGFloat g_maskViewAlpha = 0.5;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -127,16 +131,34 @@
 #pragma mark - handle face indicator
 
 - (void)showFaceIndicator {
+    NSAssert(!self.faceIndicator.superview, @"");
+    NSAssert(!self.maskView1.superview, @"");
+    NSAssert(!self.maskView2.superview, @"");
+    
     [self.view addSubview:self.faceIndicator];
+    [self.view addSubview:self.maskView1];
+    [self.view addSubview:self.maskView2];
 }
 
 - (void)layoutFaceIndicator {
-    self.faceIndicator.frame = self.faceIndicatorFrame;
+    CGRect faceIndicatorFrame = self.faceIndicatorFrame;
+    self.faceIndicator.frame = faceIndicatorFrame;
+    if (faceIndicatorFrame.size.width == self.view.bounds.size.width) {
+        self.maskView1.frame = CGRectMake(0.0, 0.0, faceIndicatorFrame.size.width, faceIndicatorFrame.origin.y);
+        self.maskView2.frame = CGRectMake(0.0, faceIndicatorFrame.origin.y + faceIndicatorFrame.size.height, faceIndicatorFrame.size.width, self.view.bounds.size.height - faceIndicatorFrame.origin.y - faceIndicatorFrame.size.height);
+    } else if (faceIndicatorFrame.size.height == self.view.bounds.size.height) {
+        self.maskView1.frame = CGRectMake(0.0, 0.0, faceIndicatorFrame.origin.x, faceIndicatorFrame.size.height);
+        self.maskView2.frame = CGRectMake(faceIndicatorFrame.origin.x + faceIndicatorFrame.size.width, 0.0, self.view.bounds.size.width - faceIndicatorFrame.origin.x - faceIndicatorFrame.size.width, faceIndicatorFrame.size.height);
+    } else {
+        NSAssert(NO, @"");
+    }
 }
 
 #pragma mark - handle image view
 
 - (void)showImageView {
+    NSAssert(!self.imageView.superview, @"");
+    
     CGImageRef fullScreenImage = self.faceEditInformation.asset.defaultRepresentation.fullScreenImage;
     self.originalImageSize = CGSizeMake(CGImageGetWidth(fullScreenImage), CGImageGetHeight(fullScreenImage));
     self.imageView.image = [UIImage imageWithCGImage:fullScreenImage];
@@ -215,10 +237,28 @@
 - (UIView *)faceIndicator {
     if (!_faceIndicator) {
         _faceIndicator = [[UIView alloc] init];
-        _faceIndicator.layer.borderColor = [UIColor redColor].CGColor;
-        _faceIndicator.layer.borderWidth = 2.0;
+        _faceIndicator.layer.borderColor = [UIColor whiteColor].CGColor;
+        _faceIndicator.layer.borderWidth = [UIScreen mainScreen].scale;
     }
     return _faceIndicator;
+}
+
+- (UIView *)maskView1 {
+    if (!_maskView1) {
+        _maskView1 = [[UIView alloc] init];
+        _maskView1.backgroundColor = [UIColor blackColor];
+        _maskView1.alpha = g_maskViewAlpha;
+    }
+    return _maskView1;
+}
+
+- (UIView *)maskView2 {
+    if (!_maskView2) {
+        _maskView2 = [[UIView alloc] init];
+        _maskView2.backgroundColor = [UIColor blackColor];
+        _maskView2.alpha = g_maskViewAlpha;
+    }
+    return _maskView2;
 }
 
 @end
