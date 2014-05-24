@@ -238,27 +238,36 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         UICollectionViewCell *droppedCell = [self.collectionView cellForItemAtIndexPath:indexPathOfDroppedCell];
         
         if (droppedCell) {
+            UIView *snapshotOfDroppedCell = [droppedCell snapshotViewAfterScreenUpdates:NO];
+            snapshotOfDroppedCell.frame = droppedCell.frame;
+            [self.collectionView insertSubview:snapshotOfDroppedCell belowSubview:self.snapshotOfDraggedCell];
+            droppedCell.hidden = YES;
+            
+            [UIView animateWithDuration:g_animationDuration animations:^{
+                self.snapshotOfDraggedCell.frame = droppedCell.frame;
+                snapshotOfDroppedCell.frame = self.draggedCell.frame;
+            } completion:^(BOOL finished) {
+                [self.snapshotOfDraggedCell removeFromSuperview];
+                self.snapshotOfDraggedCell = nil;
+                [snapshotOfDroppedCell removeFromSuperview];
+            }];
+            
             NSIndexPath *indexPath1 = [self.collectionView indexPathForCell:self.draggedCell];
             NSIndexPath *indexPath2 = indexPathOfDroppedCell;
             NSAssert(indexPath1 && indexPath2, @"");
-            
+
             NSObject *face1 = [self.collagedFaces objectAtIndex:indexPath1.row];
             NSObject *face2 = [self.collagedFaces objectAtIndex:indexPath2.row];
             [self.collagedFaces setObject:face2 atIndexedSubscript:indexPath1.row];
             [self.collagedFaces setObject:face1 atIndexedSubscript:indexPath2.row];
             
-            [UIView animateWithDuration:g_animationDuration animations:^{
-                self.snapshotOfDraggedCell.frame = droppedCell.frame;
-            } completion:nil];
-
             [self.collectionView performBatchUpdates:^{
                 [self.collectionView moveItemAtIndexPath:indexPath1 toIndexPath:indexPath2];
                 [self.collectionView moveItemAtIndexPath:indexPath2 toIndexPath:indexPath1];
             } completion:^(BOOL finished) {
-                [self.snapshotOfDraggedCell removeFromSuperview];
-                self.snapshotOfDraggedCell = nil;
                 self.draggedCell.hidden = NO;
                 self.draggedCell = nil;
+                droppedCell.hidden = NO;
                 self.watermarkImageView.hidden = NO;
             }];
         } else {
