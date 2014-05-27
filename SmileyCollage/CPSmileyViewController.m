@@ -214,22 +214,35 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 #pragma mark - handle no smiley help label
 
 - (void)showNoSmileyLabel {
-    self.noSmileyLabel.alpha = 0.0;
-    [self.view addSubview:self.noSmileyLabel];
-    [self.view addConstraints:[CPUtility constraintsWithView:self.noSmileyLabel centerAlignToView:self.view]];
-    [self.view addConstraint:[CPUtility constraintWithView:self.noSmileyLabel alignToView:self.view attribute:NSLayoutAttributeWidth]];
-
-    [UIView animateWithDuration:g_animationDuration animations:^{
-        self.noSmileyLabel.alpha = 1.0;
-    }];
+    if (!self.noSmileyLabel) {
+        self.noSmileyLabel = [[UILabel alloc] init];
+        self.noSmileyLabel.font = [UIFont fontWithName:[CPConfig helpFontName] size:[CPConfig noSmileyLabelFontSize]];
+        self.noSmileyLabel.numberOfLines = 0;
+        self.noSmileyLabel.text = @"No Smiley Face in your Album\n\nTake photos for your Smiley Faces\nor\nimport photos from itunes";
+        self.noSmileyLabel.textAlignment = NSTextAlignmentCenter;
+        self.noSmileyLabel.textColor = [UIColor lightGrayColor];
+        self.noSmileyLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.noSmileyLabel sizeToFit];
+        [self.view addSubview:self.noSmileyLabel];
+        [self.view addConstraints:[CPUtility constraintsWithView:self.noSmileyLabel centerAlignToView:self.view]];
+        [self.view addConstraint:[CPUtility constraintWithView:self.noSmileyLabel alignToView:self.view attribute:NSLayoutAttributeWidth]];
+        
+        self.noSmileyLabel.alpha = 0.0;
+        [UIView animateWithDuration:g_animationDuration animations:^{
+            self.noSmileyLabel.alpha = 1.0;
+        }];
+    }    
 }
 
 - (void)hideNoSmileyLabel {
-    [UIView animateWithDuration:g_animationDuration animations:^{
-        self.noSmileyLabel.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        [self.noSmileyLabel removeFromSuperview];
-    }];
+    if (self.noSmileyLabel) {
+        [UIView animateWithDuration:g_animationDuration animations:^{
+            self.noSmileyLabel.alpha = 0.0;
+        } completion:^(BOOL finished) {
+            [self.noSmileyLabel removeFromSuperview];
+            self.noSmileyLabel = nil;
+        }];
+    }
 }
 
 #pragma mark - handle help view
@@ -333,6 +346,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
         [self showNoSmileyLabel];
     } else {
         [self hideNoSmileyLabel];
+        [self showHelpView];
     }
 }
 
@@ -459,20 +473,6 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 		[_confirmButton addTarget:self action:@selector(confirmButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 	}
 	return _confirmButton;
-}
-
-- (UILabel *)noSmileyLabel {
-    if (!_noSmileyLabel) {
-        _noSmileyLabel = [[UILabel alloc] init];
-        _noSmileyLabel.font = [UIFont fontWithName:[CPConfig helpFontName] size:[CPConfig noSmileyLabelFontSize]];
-        _noSmileyLabel.numberOfLines = 0;
-        _noSmileyLabel.text = @"No Smiley Face in your Album\n\nTake photos for your Smiley Faces\nor\nimport photos from itunes";
-        _noSmileyLabel.textAlignment = NSTextAlignmentCenter;
-        _noSmileyLabel.textColor = [UIColor lightGrayColor];
-        _noSmileyLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [_noSmileyLabel sizeToFit];
-    }
-    return _noSmileyLabel;
 }
 
 @end
