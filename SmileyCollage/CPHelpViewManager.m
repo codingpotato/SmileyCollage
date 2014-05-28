@@ -124,7 +124,6 @@ static const NSTimeInterval g_animationDuration = 0.5;
     self.maskView.alpha = 0.0;
     self.maskView.backgroundColor = [UIColor blackColor];
     self.maskView.delegate = self;
-    self.maskView.frame = self.helpView.bounds;
     self.maskView.translatesAutoresizingMaskIntoConstraints = NO;
     [self.helpView addSubview:self.maskView];
     [self.helpView addConstraints:[CPUtility constraintsWithView:self.maskView edgesAlignToView:self.helpView]];

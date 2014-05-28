@@ -109,9 +109,6 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    
-    [self hideToolbar];
-    [self.facesManager stopScan];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {

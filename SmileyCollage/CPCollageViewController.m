@@ -424,17 +424,39 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
     switch (buttonIndex) {
-        case 0: /* Save */
+        case 0: /* Save */ {
             NSAssert(self.facesManager, @"");
             NSAssert(self.collagedFaces.count > 0, @"");
-            [self.facesManager saveStitchedImage:[self collagedImage]];
+
+            UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+            activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
+            [activityIndicatorView startAnimating];
+            [self.view addSubview:activityIndicatorView];
+            [self.view addConstraints:[CPUtility constraintsWithView:activityIndicatorView centerAlignToView:self.view]];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.facesManager saveStitchedImage:[self collagedImage]];
+
+                [activityIndicatorView removeFromSuperview];
+            });
             break;
+        }
         case 1: /* Share */ {
-            NSString *sharedText = @"Shared from Smiley app";
-            NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
-            UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
-            activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll, UIActivityTypeAddToReadingList];
-            [self presentViewController:activityViewController animated:YES completion:nil];
+            UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+            activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
+            [activityIndicatorView startAnimating];
+            [self.view addSubview:activityIndicatorView];
+            [self.view addConstraints:[CPUtility constraintsWithView:activityIndicatorView centerAlignToView:self.view]];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSString *sharedText = @"Shared from Smiley app";
+                NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
+                UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
+                activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll, UIActivityTypeAddToReadingList];
+                [self presentViewController:activityViewController animated:YES completion:nil];
+                
+                [activityIndicatorView removeFromSuperview];
+            });
             break;
         }
         case 2: /* Cancel */
