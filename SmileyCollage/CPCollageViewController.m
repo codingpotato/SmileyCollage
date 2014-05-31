@@ -343,6 +343,32 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return YES;
 }
 
+- (UIView *)showActivityIndicatorView {
+    UIView *panel = [[UIView alloc] init];
+    panel.clipsToBounds = YES;
+    panel.layer.cornerRadius = 5.0;
+    panel.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:panel];
+    [self.view addConstraints:[CPUtility constraintsWithView:panel centerAlignToView:self.view]];
+    [panel addConstraint:[CPUtility constraintWithView:panel width:100.0]];
+    [panel addConstraint:[CPUtility constraintWithView:panel height:100.0]];
+    
+    UIView *panelMask = [[UIView alloc] init];
+    panelMask.alpha = 0.95;
+    panelMask.backgroundColor = [UIColor grayColor];
+    panelMask.translatesAutoresizingMaskIntoConstraints = NO;
+    [panel addSubview:panelMask];
+    [panel addConstraints:[CPUtility constraintsWithView:panelMask edgesAlignToView:panel]];
+    
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
+    [panel addSubview:activityIndicatorView];
+    [panel addConstraints:[CPUtility constraintsWithView:activityIndicatorView centerAlignToView:panel]];
+    [activityIndicatorView startAnimating];
+    
+    return panel;
+}
+
 #pragma mark - handle watermark view
 
 - (void)showWatermarkImageView {
@@ -428,12 +454,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             NSAssert(self.facesManager, @"");
             NSAssert(self.collagedFaces.count > 0, @"");
 
-            UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-            activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
-            [activityIndicatorView startAnimating];
-            [self.view addSubview:activityIndicatorView];
-            [self.view addConstraints:[CPUtility constraintsWithView:activityIndicatorView centerAlignToView:self.view]];
-            
+            UIView *activityIndicatorView = [self showActivityIndicatorView];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.facesManager saveStitchedImage:[self collagedImage]];
 
@@ -442,12 +463,10 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             break;
         }
         case 1: /* Share */ {
-            UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-            activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
-            [activityIndicatorView startAnimating];
-            [self.view addSubview:activityIndicatorView];
-            [self.view addConstraints:[CPUtility constraintsWithView:activityIndicatorView centerAlignToView:self.view]];
+            NSAssert(self.facesManager, @"");
+            NSAssert(self.collagedFaces.count > 0, @"");
             
+            UIView *activityIndicatorView = [self showActivityIndicatorView];
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSString *sharedText = @"Shared from Smiley app";
                 NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
