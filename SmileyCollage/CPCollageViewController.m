@@ -104,12 +104,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [self removeHelpView];
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    
-    [self removeHelpView];
-}
-
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
@@ -358,17 +352,17 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     panel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:panel];
     [self.view addConstraints:[CPUtility constraintsWithView:panel centerAlignToView:self.view]];
-    [panel addConstraint:[CPUtility constraintWithView:panel width:100.0]];
-    [panel addConstraint:[CPUtility constraintWithView:panel height:100.0]];
+    [panel addConstraint:[CPUtility constraintWithView:panel width:60.0]];
+    [panel addConstraint:[CPUtility constraintWithView:panel height:60.0]];
     
     UIView *panelMask = [[UIView alloc] init];
     panelMask.alpha = 0.95;
-    panelMask.backgroundColor = [UIColor grayColor];
+    panelMask.backgroundColor = [UIColor whiteColor];
     panelMask.translatesAutoresizingMaskIntoConstraints = NO;
     [panel addSubview:panelMask];
     [panel addConstraints:[CPUtility constraintsWithView:panelMask edgesAlignToView:panel]];
     
-    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
     [panel addSubview:activityIndicatorView];
     [panel addConstraints:[CPUtility constraintsWithView:activityIndicatorView centerAlignToView:panel]];
@@ -412,14 +406,9 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - handle help view
 
 - (void)showHelpView {
-    if (self.collectionView.visibleCells.count > 0 && !self.helpViewManager) {
-        NSUInteger index = arc4random_uniform((u_int32_t)self.collectionView.visibleCells.count);
-        UICollectionViewCell *cell = [self.collectionView.visibleCells objectAtIndex:index];
-        NSAssert(cell, @"");
-        CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
-        
+    if (!self.helpViewManager) {
         self.helpViewManager = [[CPHelpViewManager alloc] init];
-        [self.helpViewManager showCollageHelpInView:self.view rect:rect];
+        [self.helpViewManager showCollageHelpInSuperview:self.view];
     }
 }
 

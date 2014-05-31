@@ -15,13 +15,13 @@
 
 @interface CPHelpViewManager () <CPTouchableViewDelegate>
 
+@property (weak, nonatomic) UIView *superview;
+
 @property (strong, nonatomic) UIView *helpView;
 
 @property (strong, nonatomic) CPTouchableView *maskView;
 
 @property (strong, nonatomic) UIView *panelView;
-
-@property (nonatomic) BOOL isHelpShown;
 
 @end
 
@@ -31,27 +31,26 @@ static const NSTimeInterval g_minDelayTimeInterval = 5.0;
 static const NSTimeInterval g_maxDelayTimeInterval = 10.0;
 static const NSTimeInterval g_animationDuration = 0.5;
 
-- (void)showSmileyHelpInView:(UIView *)view rect:(CGRect)rect {
+- (void)showSmileyHelpInSuperview:(UIView *)superview {
     if (![CPSettings isSmileyTapHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
             dispatch_after(time, dispatch_get_main_queue(), ^{
-                [self showHelpViewInView:view];
-                [self showHelpMessage:@"Tap to select smiley" inView:view rect:rect];
+                self.superview = superview;
+                [self showHelpMessage:@"Tap to select smiley"];
             });
         });
     }
 }
 
-- (void)showCollageHelpInView:(UIView *)view rect:(CGRect)rect {
+- (void)showCollageHelpInSuperview:(UIView *)superview {
     if (![CPSettings isCollageTapHelpAcknowledged] || ![CPSettings isCollageDragHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
             dispatch_after(time, dispatch_get_main_queue(), ^{
-                [self showHelpViewInView:view];
-                
+                self.superview = superview;
                 NSString *helpMessage = nil;
                 if (![CPSettings isCollageTapHelpAcknowledged]) {
                     helpMessage = @"Tap to edit photo";
@@ -60,20 +59,19 @@ static const NSTimeInterval g_animationDuration = 0.5;
                     NSString *dragHelpMessage = @"Drag to exchange position";
                     helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
                 }
-                [self showHelpMessage:helpMessage inView:view rect:rect];
+                [self showHelpMessage:helpMessage];
             });
         });
     }
 }
 
-- (void)showEditHelpInView:(UIView *)view rect:(CGRect)rect {
+- (void)showEditHelpInSuperview:(UIView *)superview {
     if (![CPSettings isEditDragHelpAcknowledged] || ![CPSettings isEditZoomHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
             dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
             dispatch_after(time, dispatch_get_main_queue(), ^{
-                [self showHelpViewInView:view];
-                
+                self.superview = superview;
                 NSString *helpMessage = nil;
                 if (![CPSettings isEditDragHelpAcknowledged]) {
                     helpMessage = @"Drag to move photo";
@@ -82,7 +80,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
                     NSString *dragHelpMessage = @"Pinch to zoom in/out";
                     helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
                 }
-                [self showHelpMessage:helpMessage inView:view rect:rect];
+                [self showHelpMessage:helpMessage];
             });
         });
     }
@@ -90,12 +88,10 @@ static const NSTimeInterval g_animationDuration = 0.5;
 
 - (void)removeHelpView {
     if (self.helpView) {
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
         [self.helpView removeFromSuperview];
         self.helpView = nil;
         self.maskView = nil;
         self.panelView = nil;
-        self.isHelpShown = NO;
     }
 }
 
@@ -103,16 +99,13 @@ static const NSTimeInterval g_animationDuration = 0.5;
     [self removeHelpView];
 }
 
-- (void)showHelpViewInView:(UIView *)view {
-    NSAssert(!self.helpView, @"");
-    NSAssert(!self.maskView, @"");
-    
-    self.isHelpShown = YES;
+- (void)showHelpMessage:(NSString *)helpMessage {
+    NSAssert(!self.helpView && !self.maskView && !self.panelView, @"");
     
     self.helpView = [[UIView alloc] init];
     self.helpView.translatesAutoresizingMaskIntoConstraints = NO;
-    [view addSubview:self.helpView];
-    [view addConstraints:[CPUtility constraintsWithView:self.helpView edgesAlignToView:view]];
+    [self.superview addSubview:self.helpView];
+    [self.superview addConstraints:[CPUtility constraintsWithView:self.helpView edgesAlignToView:self.superview]];
     
     self.maskView = [[CPTouchableView alloc] init];
     self.maskView.alpha = 0.0;
@@ -122,26 +115,20 @@ static const NSTimeInterval g_animationDuration = 0.5;
     [self.helpView addSubview:self.maskView];
     [self.helpView addConstraints:[CPUtility constraintsWithView:self.maskView edgesAlignToView:self.helpView]];
     
-    [UIView animateWithDuration:g_animationDuration animations:^{
-        self.maskView.alpha = 0.2;
-    }];
-}
-
-- (void)showHelpMessage:(NSString *)helpMessage inView:(UIView *)view rect:(CGRect)rect {
-    NSAssert(!self.panelView, @"");
-    
     self.panelView = [[UIView alloc] init];
-    self.panelView.backgroundColor = [UIColor whiteColor];
     self.panelView.clipsToBounds = YES;
     self.panelView.layer.cornerRadius = 5.0;
+    self.panelView.translatesAutoresizingMaskIntoConstraints = NO;
     self.panelView.userInteractionEnabled = NO;
     [self.helpView addSubview:self.panelView];
     
-    UIView *maskView = [[UIView alloc] init];
-    maskView.alpha = 0.4;
-    maskView.backgroundColor = [UIColor whiteColor];
-    maskView.userInteractionEnabled = NO;
-    [self.panelView addSubview:maskView];
+    UIView *panelMaskView = [[UIView alloc] init];
+    panelMaskView.alpha = 0.93;
+    panelMaskView.backgroundColor = [UIColor whiteColor];
+    panelMaskView.translatesAutoresizingMaskIntoConstraints = NO;
+    panelMaskView.userInteractionEnabled = NO;
+    [self.panelView addSubview:panelMaskView];
+    [self.panelView addConstraints:[CPUtility constraintsWithView:panelMaskView edgesAlignToView:self.panelView]];
     
     UILabel *label = [[UILabel alloc] init];
     label.font = [UIFont fontWithName:[CPConfig helpFontName] size:[CPConfig helpFontSize]];
@@ -149,37 +136,24 @@ static const NSTimeInterval g_animationDuration = 0.5;
     label.text = helpMessage;
     label.textAlignment = NSTextAlignmentCenter;
     label.textColor = [UIColor darkGrayColor];
+    label.translatesAutoresizingMaskIntoConstraints = NO;
     label.userInteractionEnabled = NO;
     [label sizeToFit];
     [self.panelView addSubview:label];
+    [self.panelView addConstraints:[CPUtility constraintsWithView:label edgesAlignToView:self.panelView]];
     
     static const CGFloat inset = 8.0;
-    CGFloat left = rect.origin.x + arc4random_uniform(rect.size.width);
-    CGFloat top = rect.origin.y + arc4random_uniform(rect.size.height);
     CGFloat width = label.bounds.size.width + inset * 2;
     CGFloat height = label.bounds.size.height + inset * 2;
+    [self.panelView addConstraint:[CPUtility constraintWithView:self.panelView width:width]];
+    [self.panelView addConstraint:[CPUtility constraintWithView:self.panelView height:height]];
+    CGFloat size = (MIN(self.superview.bounds.size.width, self.superview.bounds.size.height) - MAX(width, height)) / 2;
+    [self.helpView addConstraint:[CPUtility constraintWithView:self.panelView alignToView:self.helpView attribute:NSLayoutAttributeCenterX constant:-size + arc4random_uniform(size * 2)]];
+    [self.helpView addConstraint:[CPUtility constraintWithView:self.panelView alignToView:self.helpView attribute:NSLayoutAttributeCenterY constant:-size + arc4random_uniform(size * 2)]];
     
-    if (left < inset) {
-        left = inset;
-    }
-    if (top < inset) {
-        top = inset;
-    }
-    if (left + width > view.bounds.origin.x + view.bounds.size.width - inset) {
-        left = view.bounds.origin.x + view.bounds.size.width - width - inset;
-    }
-    if (top + height > view.bounds.origin.y + view.bounds.size.height - inset) {
-        top = view.bounds.origin.y + view.bounds.size.height - height - inset;
-    }
-    
-    self.panelView.frame = CGRectMake(left, top, width, height);
-    maskView.frame = self.panelView.bounds;
-    label.frame = self.panelView.bounds;
-    
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[CPUtility bluredSnapshotForView:view inRect:self.panelView.frame]];
-    imageView.frame = self.panelView.bounds;
-    imageView.userInteractionEnabled = NO;
-    [self.panelView insertSubview:imageView belowSubview:maskView];
+    [UIView animateWithDuration:g_animationDuration animations:^{
+        self.maskView.alpha = 0.2;
+    }];
     
     self.panelView.transform = CGAffineTransformMakeScale(0.0, 0.0);
     [UIView animateWithDuration:g_animationDuration delay:0.0 usingSpringWithDamping:0.5 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
@@ -187,27 +161,15 @@ static const NSTimeInterval g_animationDuration = 0.5;
     } completion:nil];
 }
 
-- (void)removeHelpViewWithAnimation {
-    if (self.isHelpShown) {
-        self.isHelpShown = NO;
-        
-        [NSObject cancelPreviousPerformRequestsWithTarget:self];
-        [UIView animateWithDuration:g_animationDuration animations:^{
-            self.maskView.alpha = 0.0;
-            self.panelView.transform = CGAffineTransformMakeScale(0.0, 0.0);
-        } completion:^(BOOL finished) {
-            [self.helpView removeFromSuperview];
-            self.helpView = nil;
-            self.maskView = nil;
-            self.panelView = nil;
-        }];
-    }
-}
-
 #pragma maek - CPTouchableViewDelegate implement
 
 - (void)viewIsTouched:(CPTouchableView *)view {
-    [self removeHelpViewWithAnimation];
+    [UIView animateWithDuration:g_animationDuration animations:^{
+        self.maskView.alpha = 0.0;
+        self.panelView.transform = CGAffineTransformMakeScale(0.0, 0.0);
+    } completion:^(BOOL finished) {
+        [self removeHelpView];
+    }];
 }
 
 @end

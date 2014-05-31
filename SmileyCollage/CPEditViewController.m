@@ -55,12 +55,6 @@ static const CGFloat g_maskViewAlpha = 0.5;
     [self removeHelpView];
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    
-    [self removeHelpView];
-}
-
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
@@ -210,7 +204,7 @@ static const CGFloat g_maskViewAlpha = 0.5;
 - (void)showHelpView {
     if (!self.helpViewManager) {
         self.helpViewManager = [[CPHelpViewManager alloc] init];
-        [self.helpViewManager showEditHelpInView:self.view rect:self.faceIndicator.frame];
+        [self.helpViewManager showEditHelpInSuperview:self.view];
     }
 }
 

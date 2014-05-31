@@ -8,11 +8,11 @@
 
 @interface CPHelpViewManager : NSObject
 
-- (void)showSmileyHelpInView:(UIView *)view rect:(CGRect)rect;
+- (void)showSmileyHelpInSuperview:(UIView *)superview;
 
-- (void)showCollageHelpInView:(UIView *)view rect:(CGRect)rect;
+- (void)showCollageHelpInSuperview:(UIView *)superview;
 
-- (void)showEditHelpInView:(UIView *)view rect:(CGRect)rect;
+- (void)showEditHelpInSuperview:(UIView *)superview;
 
 - (void)removeHelpView;
 

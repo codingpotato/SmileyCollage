@@ -83,12 +83,6 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     [self removeHelpView];
 }
 
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
-    
-    [self removeHelpView];
-}
-
 - (void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
     
@@ -245,14 +239,9 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 #pragma mark - handle help view
 
 - (void)showHelpView {
-    if (self.collectionView.visibleCells.count > 0 && !self.helpViewManager) {
-        NSUInteger index = arc4random_uniform((u_int32_t)self.collectionView.visibleCells.count);
-        UICollectionViewCell *cell = [self.collectionView.visibleCells objectAtIndex:index];
-        NSAssert(cell, @"");
-        CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
-        
+    if (!self.helpViewManager) {
         self.helpViewManager = [[CPHelpViewManager alloc] init];
-        [self.helpViewManager showSmileyHelpInView:self.view rect:rect];
+        [self.helpViewManager showSmileyHelpInSuperview:self.view];
     }
 }
 
