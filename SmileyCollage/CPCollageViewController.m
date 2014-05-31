@@ -352,17 +352,17 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     panel.translatesAutoresizingMaskIntoConstraints = NO;
     [self.view addSubview:panel];
     [self.view addConstraints:[CPUtility constraintsWithView:panel centerAlignToView:self.view]];
-    [panel addConstraint:[CPUtility constraintWithView:panel width:60.0]];
-    [panel addConstraint:[CPUtility constraintWithView:panel height:60.0]];
+    [panel addConstraint:[CPUtility constraintWithView:panel width:100.0]];
+    [panel addConstraint:[CPUtility constraintWithView:panel height:100.0]];
     
     UIView *panelMask = [[UIView alloc] init];
     panelMask.alpha = 0.95;
-    panelMask.backgroundColor = [UIColor whiteColor];
+    panelMask.backgroundColor = [UIColor grayColor];
     panelMask.translatesAutoresizingMaskIntoConstraints = NO;
     [panel addSubview:panelMask];
     [panel addConstraints:[CPUtility constraintsWithView:panelMask edgesAlignToView:panel]];
     
-    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    UIActivityIndicatorView *activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     activityIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
     [panel addSubview:activityIndicatorView];
     [panel addConstraints:[CPUtility constraintsWithView:activityIndicatorView centerAlignToView:panel]];

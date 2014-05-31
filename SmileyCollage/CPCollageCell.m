@@ -49,8 +49,8 @@
     
     self.imageView.image = image;
     if (animated) {
-        self.imageViewWidthConstraint.constant = -self.contentView.bounds.size.width;
-        self.imageViewHeightConstraint.constant = -self.contentView.bounds.size.height;
+        self.imageViewWidthConstraint.constant = -self.contentView.bounds.size.width + 1;
+        self.imageViewHeightConstraint.constant = -self.contentView.bounds.size.height + 1;
         [self.contentView layoutIfNeeded];
         self.imageViewWidthConstraint.constant = 0.0;
         self.imageViewHeightConstraint.constant = 0.0;
