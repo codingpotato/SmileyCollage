@@ -52,13 +52,13 @@ static const CGFloat g_maskViewAlpha = 0.5;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [self hideHelpView];
+    [self removeHelpView];
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
     
-    [self hideHelpView];
+    [self removeHelpView];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -71,8 +71,6 @@ static const CGFloat g_maskViewAlpha = 0.5;
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    
-    [self hideHelpView];
 }
 
 - (CGRect)faceIndicatorFrame {
@@ -210,11 +208,13 @@ static const CGFloat g_maskViewAlpha = 0.5;
 #pragma mark - handle help view
 
 - (void)showHelpView {
-    self.helpViewManager = [[CPHelpViewManager alloc] init];
-    [self.helpViewManager showEditHelpInView:self.view rect:self.faceIndicator.frame];
+    if (!self.helpViewManager) {
+        self.helpViewManager = [[CPHelpViewManager alloc] init];
+        [self.helpViewManager showEditHelpInView:self.view rect:self.faceIndicator.frame];
+    }
 }
 
-- (void)hideHelpView {
+- (void)removeHelpView {
     if (self.helpViewManager) {
         [self.helpViewManager removeHelpView];
         self.helpViewManager = nil;
@@ -222,13 +222,6 @@ static const CGFloat g_maskViewAlpha = 0.5;
 }
 
 #pragma mark - lazy init
-
-- (CPHelpViewManager *)helpViewManager {
-    if (!_helpViewManager) {
-        _helpViewManager = [[CPHelpViewManager alloc] init];
-    }
-    return _helpViewManager;
-}
 
 - (UIImageView *)imageView {
     if (!_imageView) {

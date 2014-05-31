@@ -80,13 +80,13 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
-    [self hideHelpView];
+    [self removeHelpView];
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
     
-    [self hideHelpView];
+    [self removeHelpView];
 }
 
 - (void)viewWillLayoutSubviews {
@@ -231,7 +231,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     }    
 }
 
-- (void)hideNoSmileyLabel {
+- (void)removeNoSmileyLabel {
     if (self.noSmileyLabel) {
         [UIView animateWithDuration:g_animationDuration animations:^{
             self.noSmileyLabel.alpha = 0.0;
@@ -245,20 +245,22 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 #pragma mark - handle help view
 
 - (void)showHelpView {
-    NSAssert(self.collectionView.visibleCells.count > 0, @"");
-    
-    NSUInteger index = arc4random_uniform((u_int32_t)self.collectionView.visibleCells.count);
-    UICollectionViewCell *cell = [self.collectionView.visibleCells objectAtIndex:index];
-    NSAssert(cell, @"");
-    CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
-    
-    self.helpViewManager = [[CPHelpViewManager alloc] init];
-    [self.helpViewManager showSmileyHelpInView:self.view rect:rect];
+    if (self.collectionView.visibleCells.count > 0 && !self.helpViewManager) {
+        NSUInteger index = arc4random_uniform((u_int32_t)self.collectionView.visibleCells.count);
+        UICollectionViewCell *cell = [self.collectionView.visibleCells objectAtIndex:index];
+        NSAssert(cell, @"");
+        CGRect rect = [self.view convertRect:cell.frame fromView:self.collectionView];
+        
+        self.helpViewManager = [[CPHelpViewManager alloc] init];
+        [self.helpViewManager showSmileyHelpInView:self.view rect:rect];
+    }
 }
 
-- (void)hideHelpView {
-    [self.helpViewManager removeHelpView];
-    self.helpViewManager = nil;
+- (void)removeHelpView {
+    if (self.helpViewManager) {
+        [self.helpViewManager removeHelpView];
+        self.helpViewManager = nil;
+    }
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate implement
@@ -342,7 +344,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     if (controller.fetchedObjects.count == 0) {
         [self showNoSmileyLabel];
     } else {
-        [self hideNoSmileyLabel];
+        [self removeNoSmileyLabel];
         [self showHelpView];
     }
 }

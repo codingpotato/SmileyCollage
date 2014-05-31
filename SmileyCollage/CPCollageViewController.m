@@ -86,13 +86,12 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     self.selectedIndex = -1;
     self.navigationItem.rightBarButtonItems = @[self.actionBarButtonItem, self.shopBarButtonItem];
     self.actionBarButtonItem.enabled = NO;
-
-    [self showWatermarkImageView];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
+    [self showWatermarkImageView];
     [self showHelpView];
 }
 
@@ -101,13 +100,14 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     
     [self dismissPopoverShopViewController];
     [self dismissActionSheet];
-    [self hideHelpView];
+    [self removeWatermarkView];
+    [self removeHelpView];
 }
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
     [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
     
-    [self hideHelpView];
+    [self removeHelpView];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -201,7 +201,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 
 - (void)userDefaultsChanged:(NSNotification *)notification {
     if ([CPSettings isWatermarkRemovePurchased]) {
-        [self hideWatermarkView];
+        [self removeWatermarkView];
     }
 }
 
@@ -237,7 +237,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
         NSIndexPath *indexPathOfDroppedCell = [self.collectionView indexPathForItemAtPoint:self.snapshotOfDraggedCell.center];
         UICollectionViewCell *droppedCell = [self.collectionView cellForItemAtIndexPath:indexPathOfDroppedCell];
         
-        if (droppedCell) {
+        if (droppedCell && droppedCell != self.draggedCell) {
             UIView *snapshotOfDroppedCell = [droppedCell snapshotViewAfterScreenUpdates:NO];
             snapshotOfDroppedCell.frame = droppedCell.frame;
             [self.collectionView insertSubview:snapshotOfDroppedCell belowSubview:self.snapshotOfDraggedCell];
@@ -334,6 +334,14 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return image;
 }
 
+- (CGFloat)topInset {
+    [self.navigationController.navigationBar sizeToFit];
+    
+    UIApplication *application = [UIApplication sharedApplication];
+    CGFloat statusBarHeight = UIInterfaceOrientationIsPortrait(application.statusBarOrientation) ? application.statusBarFrame.size.height : application.statusBarFrame.size.width;
+    return statusBarHeight + self.navigationController.navigationBar.bounds.size.height;
+}
+
 - (BOOL)allFacesHaveAsset {
     for (CPFaceEditInformation *faceEditInformation in self.collagedFaces) {
         if (!faceEditInformation.asset) {
@@ -372,9 +380,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - handle watermark view
 
 - (void)showWatermarkImageView {
-    if (![CPSettings isWatermarkRemovePurchased]) {
-        NSAssert(!self.watermarkImageView, @"");
-        
+    if (![CPSettings isWatermarkRemovePurchased] && !self.watermarkImageView) {
         self.watermarkImageView = [[UIImageView alloc] initWithImage:self.watermarkImage];
         self.watermarkImageView.alpha = 0.0;
         [self.view addSubview:self.watermarkImageView];
@@ -383,14 +389,6 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             self.watermarkImageView.alpha = 1.0;
         } completion:nil];
     }
-}
-
-- (CGFloat)topInset {
-    [self.navigationController.navigationBar sizeToFit];
-    
-    UIApplication *application = [UIApplication sharedApplication];
-    CGFloat statusBarHeight = UIInterfaceOrientationIsPortrait(application.statusBarOrientation) ? application.statusBarFrame.size.height : application.statusBarFrame.size.width;
-    return statusBarHeight + self.navigationController.navigationBar.bounds.size.height;
 }
 
 - (void)alignWatermarkImageView {
@@ -404,7 +402,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
-- (void)hideWatermarkView {
+- (void)removeWatermarkView {
     if (self.watermarkImageView) {
         [self.watermarkImageView removeFromSuperview];
         self.watermarkImageView = nil;
@@ -414,7 +412,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
 #pragma mark - handle help view
 
 - (void)showHelpView {
-    if (self.collectionView.visibleCells.count > 0) {
+    if (self.collectionView.visibleCells.count > 0 && !self.helpViewManager) {
         NSUInteger index = arc4random_uniform((u_int32_t)self.collectionView.visibleCells.count);
         UICollectionViewCell *cell = [self.collectionView.visibleCells objectAtIndex:index];
         NSAssert(cell, @"");
@@ -425,7 +423,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     }
 }
 
-- (void)hideHelpView {
+- (void)removeHelpView {
     if (self.helpViewManager) {
         [self.helpViewManager removeHelpView];
         self.helpViewManager = nil;

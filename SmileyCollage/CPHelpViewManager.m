@@ -29,7 +29,6 @@
 
 static const NSTimeInterval g_minDelayTimeInterval = 5.0;
 static const NSTimeInterval g_maxDelayTimeInterval = 10.0;
-static const NSTimeInterval g_helpShownTimeInterval = 10.0;
 static const NSTimeInterval g_animationDuration = 0.5;
 
 - (void)showSmileyHelpInView:(UIView *)view rect:(CGRect)rect {
@@ -40,7 +39,6 @@ static const NSTimeInterval g_animationDuration = 0.5;
             dispatch_after(time, dispatch_get_main_queue(), ^{
                 [self showHelpViewInView:view];
                 [self showHelpMessage:@"Tap to select smiley" inView:view rect:rect];
-                [self performSelector:@selector(removeHelpViewWithAnimation) withObject:nil afterDelay:g_helpShownTimeInterval];
             });
         });
     }
@@ -63,8 +61,6 @@ static const NSTimeInterval g_animationDuration = 0.5;
                     helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
                 }
                 [self showHelpMessage:helpMessage inView:view rect:rect];
-                
-                [self performSelector:@selector(removeHelpViewWithAnimation) withObject:nil afterDelay:g_helpShownTimeInterval];
             });
         });
     }
@@ -87,8 +83,6 @@ static const NSTimeInterval g_animationDuration = 0.5;
                     helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
                 }
                 [self showHelpMessage:helpMessage inView:view rect:rect];
-                
-                [self performSelector:@selector(removeHelpViewWithAnimation) withObject:nil afterDelay:g_helpShownTimeInterval];
             });
         });
     }
@@ -140,11 +134,13 @@ static const NSTimeInterval g_animationDuration = 0.5;
     self.panelView.backgroundColor = [UIColor whiteColor];
     self.panelView.clipsToBounds = YES;
     self.panelView.layer.cornerRadius = 5.0;
+    self.panelView.userInteractionEnabled = NO;
     [self.helpView addSubview:self.panelView];
     
     UIView *maskView = [[UIView alloc] init];
     maskView.alpha = 0.4;
     maskView.backgroundColor = [UIColor whiteColor];
+    maskView.userInteractionEnabled = NO;
     [self.panelView addSubview:maskView];
     
     UILabel *label = [[UILabel alloc] init];
@@ -153,6 +149,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
     label.text = helpMessage;
     label.textAlignment = NSTextAlignmentCenter;
     label.textColor = [UIColor darkGrayColor];
+    label.userInteractionEnabled = NO;
     [label sizeToFit];
     [self.panelView addSubview:label];
     
@@ -181,6 +178,7 @@ static const NSTimeInterval g_animationDuration = 0.5;
     
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[CPUtility bluredSnapshotForView:view inRect:self.panelView.frame]];
     imageView.frame = self.panelView.bounds;
+    imageView.userInteractionEnabled = NO;
     [self.panelView insertSubview:imageView belowSubview:maskView];
     
     self.panelView.transform = CGAffineTransformMakeScale(0.0, 0.0);
