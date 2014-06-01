@@ -137,8 +137,16 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     return [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:self.selectedIndex inSection:0]];
 }
 
+/*
+ * reload selected face while transite back from edit view controller, if the selected area is changed
+ * only called by CPEditViewControllerTransition
+ */
 - (void)reloadSelectedFace {
     if (self.selectedIndex >= 0 && self.selectedIndex < self.collagedFaces.count) {
+        // relayout if the devide is rotated
+        [self.collageCollectionViewLayout invalidateLayout];
+        [self.collectionView layoutIfNeeded];
+        
         // disable animation for reload items
         [CATransaction begin];
         [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
