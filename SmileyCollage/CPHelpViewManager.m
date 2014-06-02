@@ -27,18 +27,17 @@
 
 @implementation CPHelpViewManager
 
-static const NSTimeInterval g_minDelayTimeInterval = 5.0;
-static const NSTimeInterval g_maxDelayTimeInterval = 10.0;
+static const NSTimeInterval g_delayTimeInterval = 5.0;
 static const NSTimeInterval g_animationDuration = 0.5;
 
 - (void)showSmileyHelpInSuperview:(UIView *)superview {
     if (![CPSettings isSmileyTapHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
-            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
+            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, g_delayTimeInterval * NSEC_PER_SEC);
             dispatch_after(time, dispatch_get_main_queue(), ^{
                 self.superview = superview;
-                [self showHelpMessage:@"Tap to select smiley"];
+                [self showHelpMessage:CPLocalizedString(@"CPTapSmileyHelp")];
             });
         });
     }
@@ -48,15 +47,15 @@ static const NSTimeInterval g_animationDuration = 0.5;
     if (![CPSettings isCollageTapHelpAcknowledged] || ![CPSettings isCollageDragHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
-            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
+            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, g_delayTimeInterval * NSEC_PER_SEC);
             dispatch_after(time, dispatch_get_main_queue(), ^{
                 self.superview = superview;
                 NSString *helpMessage = nil;
                 if (![CPSettings isCollageTapHelpAcknowledged]) {
-                    helpMessage = @"Tap to edit photo";
+                    helpMessage = CPLocalizedString(@"CPTapCollageHelp");
                 }
                 if (![CPSettings isCollageDragHelpAcknowledged]) {
-                    NSString *dragHelpMessage = @"Drag to exchange position";
+                    NSString *dragHelpMessage = CPLocalizedString(@"CPDragCollageHelp");
                     helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
                 }
                 [self showHelpMessage:helpMessage];
@@ -69,15 +68,15 @@ static const NSTimeInterval g_animationDuration = 0.5;
     if (![CPSettings isEditDragHelpAcknowledged] || ![CPSettings isEditZoomHelpAcknowledged]) {
         static dispatch_once_t once;
         dispatch_once(&once, ^{
-            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, (arc4random_uniform(g_maxDelayTimeInterval - g_minDelayTimeInterval) + g_minDelayTimeInterval) * NSEC_PER_SEC);
+            dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, g_delayTimeInterval * NSEC_PER_SEC);
             dispatch_after(time, dispatch_get_main_queue(), ^{
                 self.superview = superview;
                 NSString *helpMessage = nil;
                 if (![CPSettings isEditDragHelpAcknowledged]) {
-                    helpMessage = @"Drag to move photo";
+                    helpMessage = CPLocalizedString(@"CPDragEditHelp");
                 }
                 if (![CPSettings isEditZoomHelpAcknowledged]) {
-                    NSString *dragHelpMessage = @"Pinch to zoom in/out";
+                    NSString *dragHelpMessage = CPLocalizedString(@"CPPinchEditHelp");
                     helpMessage = helpMessage ? [[helpMessage stringByAppendingString:@"\n"] stringByAppendingString:dragHelpMessage] : dragHelpMessage;
                 }
                 [self showHelpMessage:helpMessage];

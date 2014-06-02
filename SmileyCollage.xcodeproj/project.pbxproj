@@ -51,6 +51,7 @@
 		FC9B19561926F88B001FFAE5 /* CPCollageCollectionViewLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = FC9B19551926F88B001FFAE5 /* CPCollageCollectionViewLayout.m */; };
 		FCA292E718FD64AB0029583E /* CPCoreDataTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */; };
 		FCA292E918FD664A0029583E /* CPFaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCA292E818FD664A0029583E /* CPFaceTests.m */; };
+		FCA9D41D193C260500E1FD83 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FCA9D41F193C260500E1FD83 /* Localizable.strings */; };
 		FCC2E58C18F2392000D7163F /* CPCollageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FC80EC6318C9F5D2008E83B6 /* CPCollageViewController.m */; };
 		FCC2E58D18F2392600D7163F /* CPFaceEditInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = FC58103118DDD06100B6BE03 /* CPFaceEditInformation.m */; };
 		FCC2E59518F244AF00D7163F /* CPSettingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FCC2E59418F244AF00D7163F /* CPSettingTests.m */; };
@@ -145,6 +146,9 @@
 		FCA292E518FD64AB0029583E /* CPCoreDataTestHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCoreDataTestHelper.h; sourceTree = "<group>"; };
 		FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataTestHelper.m; sourceTree = "<group>"; };
 		FCA292E818FD664A0029583E /* CPFaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceTests.m; sourceTree = "<group>"; };
+		FCA9D41A193C1D3D00E1FD83 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SmileyCollage.strings; sourceTree = "<group>"; };
+		FCA9D41E193C260500E1FD83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		FCA9D420193C260B00E1FD83 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FCC2E59418F244AF00D7163F /* CPSettingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSettingTests.m; sourceTree = "<group>"; };
 		FCC2E59718F246EB00D7163F /* CPSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSettings.h; sourceTree = "<group>"; };
 		FCC2E59818F246EB00D7163F /* CPSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSettings.m; sourceTree = "<group>"; };
@@ -271,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				FC46714818C2CAF600E472BF /* InfoPlist.strings */,
+				FCA9D41F193C260500E1FD83 /* Localizable.strings */,
 				FC46714B18C2CAF600E472BF /* main.m */,
 				FC46714718C2CAF600E472BF /* SmileyCollage-Info.plist */,
 				FC46714D18C2CAF600E472BF /* SmileyCollage-Prefix.pch */,
@@ -450,6 +455,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC46715B18C2CAF600E472BF /* Images.xcassets in Resources */,
+				FCA9D41D193C260500E1FD83 /* Localizable.strings in Resources */,
 				FC46715318C2CAF600E472BF /* SmileyCollage.storyboard in Resources */,
 				FC46714A18C2CAF600E472BF /* InfoPlist.strings in Resources */,
 			);
@@ -542,6 +548,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				FC46715218C2CAF600E472BF /* Base */,
+				FCA9D41A193C1D3D00E1FD83 /* en */,
 			);
 			name = SmileyCollage.storyboard;
 			sourceTree = "<group>";
@@ -552,6 +559,15 @@
 				FC46716B18C2CAF600E472BF /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		FCA9D41F193C260500E1FD83 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FCA9D41E193C260500E1FD83 /* Base */,
+				FCA9D420193C260B00E1FD83 /* en */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

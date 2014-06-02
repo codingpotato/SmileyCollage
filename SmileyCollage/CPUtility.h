@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 codingpotato. All rights reserved.
 //
 
+#define CPLocalizedString(key) [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
+
 @interface CPUtility : NSObject
 
 + (NSString *)applicationDocumentsPath;

@@ -190,7 +190,7 @@ static NSUInteger g_numberOfColumnsInRows[] = {
     [self dismissActionSheet];
     [self dismissPopoverShopViewController];
     
-    self.actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Save", @"Share", nil];
+    self.actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:CPLocalizedString(@"CPCancel") destructiveButtonTitle:nil otherButtonTitles:CPLocalizedString(@"CPSave"), CPLocalizedString(@"CPShare"), nil];
     [self.actionSheet showFromBarButtonItem:self.actionBarButtonItem animated:YES];
 }
 
@@ -463,8 +463,8 @@ static NSUInteger g_numberOfColumnsInRows[] = {
             
             UIView *activityIndicatorView = [self showActivityIndicatorView];
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSString *sharedText = @"Shared from Smiley app";
-                NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://www.codingpotato.com"];
+                NSString *sharedText = CPLocalizedString(@"CPSharedText");
+                NSURL *sharedURL = [[NSURL alloc] initWithString:@"http://codingpotato.bl.ee"];
                 UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:@[sharedText, [self collagedImage], sharedURL] applicationActivities:nil];
                 activityViewController.excludedActivityTypes = @[UIActivityTypeSaveToCameraRoll, UIActivityTypeAddToReadingList];
                 [self presentViewController:activityViewController animated:YES completion:nil];

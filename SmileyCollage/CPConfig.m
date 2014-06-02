@@ -38,7 +38,7 @@
     return @"ArialRoundedMTBold";
 }
 
-+ (CGFloat)noSmileyLabelFontSize {
++ (CGFloat)helpFontSize {
     if ([self isIPhone]) {
         return 18.0;
     } else {
@@ -46,11 +46,35 @@
     }
 }
 
-+ (CGFloat)helpFontSize {
++ (CGFloat)introductionLabelWidth {
+    if ([self isIPhone]) {
+        return 270.0;
+    } else {
+        return 380.0;
+    }
+}
+
++ (CGFloat)introductionLineSpacing {
+    if ([self isIPhone]) {
+        return 5.0;
+    } else {
+        return 10.0;
+    }
+}
+
++ (CGFloat)introductionTitleFontSize {
+    if ([self isIPhone]) {
+        return 25.0;
+    } else {
+        return 35.0;
+    }
+}
+
++ (CGFloat)introductionTextFontSize {
     if ([self isIPhone]) {
         return 18.0;
     } else {
-        return 22.0;
+        return 25.0;
     }
 }
 

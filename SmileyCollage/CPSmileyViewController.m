@@ -35,7 +35,7 @@
 @property (strong, nonatomic) UIBarButtonItem *confirmBarButtonItem;
 @property (strong, nonatomic) UIButton *confirmButton;
 
-@property (strong, nonatomic) UILabel *noSmileyLabel;
+@property (strong, nonatomic) UILabel *introductionLabel;
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 
@@ -48,6 +48,8 @@
 
 @implementation CPSmileyViewController
 
+static NSString *g_collageViewControllerSegueName = @"CPCollageViewControllerSegue";
+
 static const CGFloat g_animationDuration = 0.3;
 
 static const CGFloat g_collectionViewSpacing = 1.0;
@@ -58,9 +60,9 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidBecomeActiveNotification:) name:UIApplicationDidBecomeActiveNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleApplicationDidEnterBackgroundNotification:) name:UIApplicationDidEnterBackgroundNotification object:nil];
 
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %lu", (unsigned long)self.facesManager.facesController.fetchedObjects.count];
-
     self.facesManager.facesController.delegate = self;
+    [self updateTitle];
+    
     [self hideToolbar];
     [self showToolbarWithAnimation];
     [self.facesManager scanFaces];
@@ -73,7 +75,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     if (self.collectionView.visibleCells.count > 0) {
         [self showHelpView];
     } else {
-        [self showNoSmileyLabel];
+        [self showIntroductionLabel];
     }
 }
 
@@ -106,7 +108,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"CPCollageViewControllerSegue"]) {
+    if ([segue.identifier isEqualToString:g_collageViewControllerSegueName]) {
         CPCollageViewController *collageViewController = (CPCollageViewController *)segue.destinationViewController;
         collageViewController.facesManager = self.facesManager;
         collageViewController.collagedFaces = [self.selectedFaces.allValues mutableCopy];
@@ -137,7 +139,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
         NSNumber *newValue = change[NSKeyValueChangeNewKey];
         if (![oldValue isEqual:newValue]) {
             [self.progressView setProgress:newValue.floatValue / self.facesManager.numberOfTotalPhotos animated:YES];
-            self.informationLabel.text = [NSString stringWithFormat:@"Scanned %d of %d photos", newValue.intValue, (int)self.facesManager.numberOfTotalPhotos];
+            self.informationLabel.text = [NSString stringWithFormat:CPLocalizedString(@"CPScanStatus"), newValue.intValue, (int)self.facesManager.numberOfTotalPhotos];
         }
     } else if ([keyPath isEqualToString:NSStringFromSelector(@selector(isScanning))]) {
         NSNumber *oldValue = change[NSKeyValueChangeOldKey];
@@ -152,7 +154,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
 - (void)showToolbarWithAnimation {
     self.progressView.progress = 0.0;
-    self.informationLabel.text = @"Scanning photos......";
+    self.informationLabel.text = CPLocalizedString(@"CPScanning");
     self.toolbarBottomConstraint.constant = 0.0;
     [UIView animateWithDuration:g_animationDuration animations:^{
         [self.view layoutIfNeeded];
@@ -199,39 +201,61 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 }
 
 - (void)confirmButtonPressed:(id)sender {
-    [self performSegueWithIdentifier:@"CPCollageViewControllerSegue" sender:nil];
+    [self performSegueWithIdentifier:g_collageViewControllerSegueName sender:nil];
 }
 
-#pragma mark - handle no smiley help label
+- (void)updateTitle {
+    self.navigationItem.title = [NSString stringWithFormat:@"%@: %lu", CPLocalizedString(@"CPSmileyViewControllerTitle"), (unsigned long)self.facesManager.facesController.fetchedObjects.count];
+}
 
-- (void)showNoSmileyLabel {
-    if (!self.noSmileyLabel) {
-        self.noSmileyLabel = [[UILabel alloc] init];
-        self.noSmileyLabel.font = [UIFont fontWithName:[CPConfig helpFontName] size:[CPConfig noSmileyLabelFontSize]];
-        self.noSmileyLabel.numberOfLines = 0;
-        self.noSmileyLabel.text = @"No Smiley Face in your Album\n\nTake photos for your Smiley Faces\nor\nimport photos from itunes";
-        self.noSmileyLabel.textAlignment = NSTextAlignmentCenter;
-        self.noSmileyLabel.textColor = [UIColor lightGrayColor];
-        self.noSmileyLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [self.noSmileyLabel sizeToFit];
-        [self.view addSubview:self.noSmileyLabel];
-        [self.view addConstraints:[CPUtility constraintsWithView:self.noSmileyLabel centerAlignToView:self.view]];
-        [self.view addConstraint:[CPUtility constraintWithView:self.noSmileyLabel alignToView:self.view attribute:NSLayoutAttributeWidth]];
+- (void)showReachSelectLimitationAlert {
+    NSString *title = [[NSString alloc] initWithFormat:CPLocalizedString(@"CPReachSelectLimitation"), (int)[CPCollageViewController maxNumberOfSmiley]];
+    UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:title message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:CPLocalizedString(@"CPOK"), nil];
+    [alertView show];
+}
+
+#pragma mark - handle introduction label
+
+- (void)showIntroductionLabel {
+    if (!self.introductionLabel) {
+        self.introductionLabel = [[UILabel alloc] init];
         
-        self.noSmileyLabel.alpha = 0.0;
+        NSString *title = CPLocalizedString(@"CPIntroductionTitle");
+        NSString *labelText = [title stringByAppendingString:CPLocalizedString(@"CPIntroductionText")];
+        NSRange titleRange = [labelText rangeOfString:title];
+        
+        NSMutableParagraphStyle *allParagraphStyle = [[NSMutableParagraphStyle alloc] init];
+        allParagraphStyle.alignment = NSTextAlignmentNatural;
+        allParagraphStyle.lineSpacing = [CPConfig introductionLineSpacing];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:labelText attributes:@{ NSFontAttributeName: [UIFont fontWithName:[CPConfig helpFontName] size:[CPConfig introductionTextFontSize]],NSForegroundColorAttributeName: [UIColor lightGrayColor], NSParagraphStyleAttributeName: allParagraphStyle}];
+        
+        [attributedString addAttribute:NSFontAttributeName value:[UIFont fontWithName:[CPConfig helpFontName] size:[CPConfig introductionTitleFontSize]] range:titleRange];
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        paragraphStyle.alignment = NSTextAlignmentCenter;
+        [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:titleRange];
+        
+        self.introductionLabel.attributedText = attributedString;
+        self.introductionLabel.numberOfLines = 0;
+        self.introductionLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.introductionLabel sizeToFit];
+        [self.view addSubview:self.introductionLabel];
+        [self.view addConstraints:[CPUtility constraintsWithView:self.introductionLabel centerAlignToView:self.view]];
+        [self.introductionLabel addConstraint:[CPUtility constraintWithView:self.introductionLabel width:[CPConfig introductionLabelWidth]]];
+        
+        self.introductionLabel.alpha = 0.0;
         [UIView animateWithDuration:g_animationDuration animations:^{
-            self.noSmileyLabel.alpha = 1.0;
+            self.introductionLabel.alpha = 1.0;
         }];
     }    
 }
 
-- (void)removeNoSmileyLabel {
-    if (self.noSmileyLabel) {
+- (void)removeIntroductionLabel {
+    if (self.introductionLabel) {
         [UIView animateWithDuration:g_animationDuration animations:^{
-            self.noSmileyLabel.alpha = 0.0;
+            self.introductionLabel.alpha = 0.0;
         } completion:^(BOOL finished) {
-            [self.noSmileyLabel removeFromSuperview];
-            self.noSmileyLabel = nil;
+            [self.introductionLabel removeFromSuperview];
+            self.introductionLabel = nil;
         }];
     }
 }
@@ -318,8 +342,6 @@ static const CGFloat g_collectionViewSpacing = 1.0;
             [self.selectedFaces removeObjectForKey:objectID];
             if (self.navigationController.topViewController != self) {
                 [self.navigationController popToViewController:self animated:NO];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Information" message:@"One of the selected smiley faces is removed from album, please re-select your smiley faces." delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-                [alertView show];
             }
         }
     }
@@ -328,12 +350,13 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     } else {
         [self hideBarButtonItems];
     }
-    
-    self.navigationItem.title = [NSString stringWithFormat:@"Smiley: %d", (int)controller.fetchedObjects.count];
+
+    [self updateTitle];
     if (controller.fetchedObjects.count == 0) {
-        [self showNoSmileyLabel];
+        [self showIntroductionLabel];
+        [self removeHelpView];
     } else {
-        [self removeNoSmileyLabel];
+        [self removeIntroductionLabel];
         [self showHelpView];
     }
 }
@@ -386,9 +409,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
             
             [collectionView reloadItemsAtIndexPaths:@[indexPath]];
         } else {
-            NSString *message = [[NSString alloc] initWithFormat:@"Cannot select more that %d faces", (int)[CPCollageViewController maxNumberOfSmiley]];
-            UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"Information" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-            [alertView show];
+            [self showReachSelectLimitationAlert];
         }
     }
     [self showSelectedFacesNumberOnConfirmButton];
@@ -439,7 +460,7 @@ static const CGFloat g_collectionViewSpacing = 1.0;
 
 - (UIBarButtonItem *)cancelBarButtonItem {
     if (!_cancelBarButtonItem) {
-        _cancelBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelBarButtonItemPressed:)];
+        _cancelBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:CPLocalizedString(@"CPCancel") style:UIBarButtonItemStyleBordered target:self action:@selector(cancelBarButtonItemPressed:)];
     }
     return _cancelBarButtonItem;
 }

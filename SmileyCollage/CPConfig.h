@@ -20,8 +20,14 @@
 
 + (NSString *)helpFontName;
 
-+ (CGFloat)noSmileyLabelFontSize;
-
 + (CGFloat)helpFontSize;
+
++ (CGFloat)introductionLabelWidth;
+
++ (CGFloat)introductionLineSpacing;
+
++ (CGFloat)introductionTitleFontSize;
+
++ (CGFloat)introductionTextFontSize;
 
 @end

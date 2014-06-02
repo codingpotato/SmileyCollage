@@ -207,7 +207,7 @@
             </objects>
             <point key="canvasLocation" x="675" y="-228"/>
         </scene>
-        <!--Collage View Controller - Smiley Collage-->
+        <!--Collage View Controller - Collage-->
         <scene sceneID="km2-Yy-FMC">
             <objects>
                 <viewController id="RNr-7G-8mP" customClass="CPCollageViewController" sceneMemberID="viewController">
@@ -257,7 +257,7 @@
                             <outletCollection property="gestureRecognizers" destination="Hsf-Zf-yx1" appends="YES" id="ydj-Fc-Kr6"/>
                         </connections>
                     </view>
-                    <navigationItem key="navigationItem" title="Smiley Collage" id="k7i-rc-daj"/>
+                    <navigationItem key="navigationItem" title="Collage" id="k7i-rc-daj"/>
                     <connections>
                         <outlet property="collageCollectionViewLayout" destination="iAU-E6-lJa" id="gjo-6m-BNf"/>
                         <outlet property="collectionView" destination="h2J-26-ace" id="Cmq-ND-qqs"/>
@@ -274,7 +274,7 @@
             </objects>
             <point key="canvasLocation" x="1192" y="-228"/>
         </scene>
-        <!--Edit View Controller - Smiley Edit-->
+        <!--Edit View Controller - Edit-->
         <scene sceneID="LPt-de-zO5">
             <objects>
                 <viewController id="8HI-ey-MKV" customClass="CPEditViewController" sceneMemberID="viewController">
@@ -293,7 +293,7 @@
                         </connections>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
-                    <navigationItem key="navigationItem" title="Smiley Edit" id="9k4-Qf-iWA"/>
+                    <navigationItem key="navigationItem" title="Edit" id="9k4-Qf-iWA"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4M1-mf-Wti" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <panGestureRecognizer minimumNumberOfTouches="1" id="4tI-KM-L7w">

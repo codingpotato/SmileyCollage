@@ -9,6 +9,7 @@
 #import "CPShopTableViewManager.h"
 
 #import "CPSettings.h"
+#import "CPUtility.h"
 
 /*
  * only support one product "Remove Watermark" now
@@ -123,7 +124,7 @@
 }
 
 - (void)showErrorMessage:(NSString *)errorMessage {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Network Issue" message:errorMessage delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:errorMessage message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:CPLocalizedString(@"CPOK"), nil];
     alertView.delegate = self;
     [alertView show];
 }
