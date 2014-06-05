@@ -121,6 +121,10 @@ static const CGFloat g_collectionViewSpacing = 1.0;
     
     if (self.facesManager.isScanCancelled) {
         [self showToolbarWithAnimation];
+        // pop to smiley view controller to indicate user the scan status
+        if (self.navigationController.topViewController != self) {
+            [self.navigationController popToViewController:self animated:NO];
+        }
         [self.facesManager scanFaces];
     }
 }

@@ -147,7 +147,6 @@
 		FCA292E618FD64AB0029583E /* CPCoreDataTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCoreDataTestHelper.m; sourceTree = "<group>"; };
 		FCA292E818FD664A0029583E /* CPFaceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFaceTests.m; sourceTree = "<group>"; };
 		FCA9D41A193C1D3D00E1FD83 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SmileyCollage.strings; sourceTree = "<group>"; };
-		FCA9D41E193C260500E1FD83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FCA9D420193C260B00E1FD83 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		FCC2E59418F244AF00D7163F /* CPSettingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSettingTests.m; sourceTree = "<group>"; };
 		FCC2E59718F246EB00D7163F /* CPSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSettings.h; sourceTree = "<group>"; };
@@ -564,7 +563,6 @@
 		FCA9D41F193C260500E1FD83 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				FCA9D41E193C260500E1FD83 /* Base */,
 				FCA9D420193C260B00E1FD83 /* en */,
 			);
 			name = Localizable.strings;

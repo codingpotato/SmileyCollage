@@ -137,7 +137,6 @@ static NSString *g_thumbnailPath = nil;
             vImageBoxConvolve_ARGB8888(&effectOutBuffer, &effectInBuffer, NULL, 0, 0, radius, radius, 0, kvImageEdgeExtend);
             vImageBoxConvolve_ARGB8888(&effectInBuffer, &effectOutBuffer, NULL, 0, 0, radius, radius, 0, kvImageEdgeExtend);
         }
-        BOOL effectImageBuffersAreSwapped = NO;
         if (hasSaturationChange) {
             CGFloat s = saturationDeltaFactor;
             CGFloat floatingPointSaturationMatrix[] = {
@@ -154,7 +153,6 @@ static NSString *g_thumbnailPath = nil;
             }
             if (hasBlur) {
                 vImageMatrixMultiply_ARGB8888(&effectOutBuffer, &effectInBuffer, saturationMatrix, divisor, NULL, NULL, kvImageNoFlags);
-                effectImageBuffersAreSwapped = YES;
             }
             else {
                 vImageMatrixMultiply_ARGB8888(&effectInBuffer, &effectOutBuffer, saturationMatrix, divisor, NULL, NULL, kvImageNoFlags);
