@@ -42,7 +42,7 @@
     if ([self isIPhone]) {
         return 18.0;
     } else {
-        return 22.0;
+        return 25.0;
     }
 }
 
